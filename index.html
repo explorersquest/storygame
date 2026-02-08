@@ -221,7 +221,6 @@ h2 {
   <div id="sceneLabel"></div>
   <div id="sceneText"></div>
   <div id="choices"></div>
-  <button id="backFromGameBtn" style="margin-top:20px; padding:10px 20px; border:none; border-radius:8px; background:#6655aa; color:#ffd700; cursor:pointer;">Zurück zum Menü</button>
 </div>
 
 
@@ -349,9 +348,14 @@ function showScene(){
 
   sceneText.style.display = 'block';
   choicesDiv.style.visibility = 'hidden';
+  choicesDiv.innerHTML = ''; // reset
 
-  typeText(sceneText, scene.text, 40, () => {
-    choicesDiv.innerHTML = '';
+  // Stop vorheriger Typing
+  if(stopTyping) stopTyping();
+
+  // Typen starten
+  stopTyping = typeText(sceneText, scene.text, 40, () => {
+    // Choices Buttons
     scene.choices.forEach(choice => {
       const btn = document.createElement('button');
       btn.innerText = choice.text;
@@ -368,16 +372,26 @@ function showScene(){
       };
       choicesDiv.appendChild(btn);
     });
+
+    // 🎯 Zurück-Button hinzufügen (wie beim Chat)
+    const backBtn = document.createElement('button');
+    backBtn.innerText = 'Zurück';
+    backBtn.style.background = '#6655aa'; // wie chatBack
+    backBtn.onclick = function(){
+      // stoppe alles
+      if(stopTyping) stopTyping();
+      music.pause();
+      music.currentTime = 0;
+
+      // Szene zurücksetzen & Menü zeigen
+      document.getElementById('gameContainer').style.display = 'none';
+      document.getElementById('mainMenu').style.display = 'flex';
+    };
+    choicesDiv.appendChild(backBtn);
+
     choicesDiv.style.visibility = 'visible';
   });
 }
-
-document.getElementById('backFromGameBtn').onclick = function() {
-  document.getElementById('gameContainer').style.display = 'none';
-  document.getElementById('mainMenu').style.display = 'flex';
-  music.pause();  // optional: Musik stoppen
-  music.currentTime = 0;
-};
 
 /********* FIREBASE CONFIG *********/
 const firebaseConfig = {
@@ -458,6 +472,7 @@ function addMessage(msgData) {
 </script>
 </body>
 </html>
+
 
 
 
