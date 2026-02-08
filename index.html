@@ -145,32 +145,38 @@ h2 {
   padding:20px;
   min-height:400px;
 }
+/* Eigene Nachrichten */
+.myMessage {
+  background: rgba(0, 120, 255, 0.15);
+  color: #4db8ff;
+  padding: 8px 12px;
+  margin: 5px 0;
+  border-radius: 12px;
+  box-shadow: 0 0 8px #4db8ff, 0 0 16px #00aaff80;
+  max-width: 80%;
+  align-self: flex-end;
+  word-wrap: break-word;
+}
+
+/* Luisas Nachrichten */
+.theirMessage {
+  background: rgba(255, 77, 192, 0.15);
+  color: #ff77cc;
+  padding: 8px 12px;
+  margin: 5px 0;
+  border-radius: 12px;
+  box-shadow: 0 0 8px #ff77cc, 0 0 16px #ff77cc80;
+  max-width: 80%;
+  align-self: flex-start;
+  word-wrap: break-word;
+}
+
 #chatMessages {
   flex:1;
   overflow-y:auto;
   width:100%;
   margin-bottom:10px;
-  color:#ff77cc;
-}
-.myMessage {
-  background-color: #0099ff;  /* blau für dich */
-  color: white;
-  padding: 8px 12px;
-  border-radius: 12px;
-  margin: 5px 0;
-  align-self: flex-end;
-  max-width: 80%;
-  word-wrap: break-word;
-}
-.theirMessage {
-  background-color: #ff77cc;  /* pink für sie */
-  color: white;
-  padding: 8px 12px;
-  border-radius: 12px;
-  margin: 5px 0;
-  align-self: flex-start;
-  max-width: 80%;
-  word-wrap: break-word;
+  color:#ffd700;
 }
 #chatInput {
   width:100%;
@@ -395,11 +401,13 @@ document.getElementById('backFromChatBtn').onclick = function() {
 document.getElementById('sendChatBtn').onclick = function() {
   const msg = document.getElementById('chatInput').value.trim();
   if(msg === '') return;
+
   chatCollection.add({
     text: msg,
-    sender: 'me',   // 🔹 markiert als eigene Nachricht
+    sender: 'me',  // markiert als eigene Nachricht
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
+
   document.getElementById('chatInput').value = '';
 };
 
@@ -408,28 +416,29 @@ function loadChat() {
   const chatMessages = document.getElementById('chatMessages');
   chatMessages.innerHTML = '';
   chatCollection.orderBy('timestamp', 'asc').onSnapshot(snapshot => {
-    chatMessages.innerHTML = '';
+    const chatMessages = document.getElementById('chatMessages');
+    chatMessages.innerHTML = ''; // clear
     snapshot.forEach(doc => {
-      addMessage(doc.data()); // 🔹 hier wird jetzt die Farbe automatisch gesetzt
+      addMessage(doc.data());
     });
   });
 }
-
 function addMessage(msgData) {
-  const chatWindow = document.getElementById('chatMessages');
-  const msgDiv = document.createElement('div');
+  const chatMessages = document.getElementById('chatMessages');
+  const div = document.createElement('div');
 
-  // Prüfen, ob die Nachricht von dir kommt oder nicht
+  // Unterscheide eigene vs. andere Nachrichten
   if(msgData.sender === 'me') {
-    msgDiv.className = 'myMessage';
+    div.className = 'myMessage';
   } else {
-    msgDiv.className = 'theirMessage';
+    div.className = 'theirMessage';
   }
 
-  msgDiv.innerText = msgData.text;
-  chatWindow.appendChild(msgDiv);
-  chatWindow.scrollTop = chatWindow.scrollHeight;
+  div.innerText = msgData.text;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
 }
+
 </script>
 </body>
 </html>
