@@ -1,27 +1,99 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Testseite für Luisa</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 50px;
-      background-color: #fff9f2;
-      color: #333;
-    }
-    h1 {
-      color: #ff7f50;
-    }
-    p {
-      font-size: 18px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Für Luisa 🌸</title>
+<style>
+body { font-family: Arial, sans-serif; text-align:center; padding:50px; background:#fff9f2; color:#333; }
+h1 { color:#ff7f50; }
+button { background:#ff7f50; border:none; padding:10px 20px; color:white; font-size:16px; cursor:pointer; margin:10px; border-radius:8px; }
+button:hover { background:#ff6347; }
+.popup { background:#fff0f0; padding:20px; border-radius:10px; display:inline-block; margin-top:20px; }
+.hidden { display:none; }
+</style>
 </head>
 <body>
-  <h1>Hallo Luisa! 🌸</h1>
-  <p>Dies ist nur ein Test, um zu sehen, dass die GitHub Pages-Seite funktioniert.</p>
-  <p>Wenn du das siehst, läuft alles perfekt!</p>
+
+<h1>Eine kleine Überraschung für dich, Luisa ✨</h1>
+<p id="intro">Willkommen! Klick auf „Spiel starten“ um deine Entdeckungsreise zu beginnen.</p>
+
+<button id="startBtn">Spiel starten</button>
+<button id="newGameBtn">Neuer Spielstand</button>
+
+<div id="sceneContainer" class="popup hidden"></div>
+
+<script>
+/********* STORY DATA *********/
+const story = [
+  { akt: 1, szenen: [
+    "🌸 Kompliment 1: Dein Lächeln macht jeden Moment heller.",
+    "🌸 Kompliment 2: Deine Ruhe und Stärke beeindrucken mich."
+  ]},
+  { akt: 2, szenen: [
+    "🌸 Kompliment 3: Du achtest auf kleine Details, das ist bewundernswert.",
+    "🌸 Kompliment 4: Dein Humor ist ansteckend und macht mich froh."
+  ]},
+  { akt: 3, szenen: [
+    "🌸 Kompliment 5: Ich mag, wie neugierig und motiviert du bist.",
+    "🌸 Kompliment 6: Du bringst Farbe in jeden kleinen Moment – danke, dass du so bist."
+  ]}
+];
+
+/********* LOCAL STORAGE *********/
+let currentAkt = parseInt(localStorage.getItem('akt')) || 1;
+let currentSzene = parseInt(localStorage.getItem('szene')) || 0;
+
+function saveProgress() {
+  localStorage.setItem('akt', currentAkt);
+  localStorage.setItem('szene', currentSzene);
+}
+
+/********* START & NEW GAME *********/
+document.getElementById('startBtn').onclick = function() {
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('startBtn').classList.add('hidden');
+  document.getElementById('newGameBtn').classList.add('hidden');
+  
+  // Unauffällig Signal senden (nur einmal)
+  fetch('https://tinyurl.com/spielstart-ping').catch(()=>{}); // Beispiel: ping auf kleine URL
+  
+  showNextScene();
+}
+
+document.getElementById('newGameBtn').onclick = function() {
+  localStorage.clear();
+  currentAkt = 1;
+  currentSzene = 0;
+  showNextScene();
+}
+
+/********* SCENE LOGIC *********/
+function showNextScene() {
+  const container = document.getElementById('sceneContainer');
+  const aktData = story[currentAkt-1];
+
+  if(currentSzene < aktData.szenen.length){
+    container.innerHTML = `<p>${aktData.szenen[currentSzene]}</p><button onclick="nextScene()">Weiter</button>`;
+    container.classList.remove('hidden');
+  } else if(currentAkt < story.length){
+    currentAkt++;
+    currentSzene = 0;
+    saveProgress();
+    showNextScene();
+  } else {
+    container.innerHTML = "<p>🎉 Deine kleine Entdeckungsreise ist beendet! Danke, dass du gespielt hast ❤️</p>";
+    saveProgress();
+  }
+}
+
+function nextScene() {
+  currentSzene++;
+  saveProgress();
+  showNextScene();
+}
+</script>
+
 </body>
 </html>
+
+
