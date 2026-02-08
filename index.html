@@ -387,7 +387,6 @@ function showScene(){
     menuBtn.onclick = function(){
         document.getElementById('gameContainer').style.display = 'none';
         document.getElementById('mainMenu').style.display = 'flex';
-        localStorage.removeItem(saveKey);
     };
     choicesDiv.appendChild(menuBtn);
     choicesDiv.style.visibility = 'visible';
