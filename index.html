@@ -151,6 +151,7 @@ h2 {
 </div>
 
 <audio id="bgMusic" src="momedeiros88-mystical.mp3" type="audio/mpeg" loop></audio>
+<audio id="typeSound" src="game-text.mp3" preload="auto"></audio>
 
 <script>
 /********* STERNE GENERIEREN *********/
@@ -183,20 +184,31 @@ let currentScene = null;
 /********* HINTERGRUNDMUSIK *********/
 const music = document.getElementById('bgMusic');
 music.volume = 0.2;
+const typeSound = document.getElementById('typeSound');
+typeSound.volume = 0.15; // sehr leise!
 
 /********* TIPANIMATION *********/
-function typeText(element, text, speed=40, callback=null){
+function typeText(element, text, speed = 40, callback = null) {
   element.innerText = '';
-  let i=0;
-  function typing(){
-    if(i < text.length){
+  let i = 0;
+
+  function typing() {
+    if (i < text.length) {
       element.innerText += text[i];
+
+      // 🔊 Sound nur gelegentlich abspielen
+      if (text[i] !== ' ' && Math.random() < 0.35) {
+        typeSound.currentTime = 0;
+        typeSound.play().catch(() => {});
+      }
+
       i++;
       setTimeout(typing, speed);
-    } else if(callback) {
+    } else if (callback) {
       callback();
     }
   }
+
   typing();
 }
 
