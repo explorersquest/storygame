@@ -4,96 +4,263 @@
 <meta charset="UTF-8">
 <title>Für Luisa 🌸</title>
 <style>
-body { font-family: Arial, sans-serif; text-align:center; padding:50px; background:#fff9f2; color:#333; }
-h1 { color:#ff7f50; }
-button { background:#ff7f50; border:none; padding:10px 20px; color:white; font-size:16px; cursor:pointer; margin:10px; border-radius:8px; }
-button:hover { background:#ff6347; }
-.popup { background:#fff0f0; padding:20px; border-radius:10px; display:inline-block; margin-top:20px; }
-.hidden { display:none; }
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Georgia', serif;
+  color: #f5f5f5;
+  background: radial-gradient(circle at top, #0a0a0a, #1a1a2e); 
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Glühender Titel */
+h1 { 
+  color: #ffd700; 
+  text-shadow: 0 0 10px #ffd700, 0 0 20px #ffb347;
+  font-size: 3em;
+  margin-bottom: 50px;
+  text-align: center;
+}
+h2 { 
+  color: #ffd700; 
+  text-shadow: 0 0 10px #ffd700, 0 0 20px #ffb347;
+  font-size: 2.5em;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* Hauptmenü */
+#mainMenu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+}
+#mainMenu button { 
+  background: linear-gradient(145deg, #6655aa, #444477);
+  border: none;
+  padding: 20px 40px;
+  border-radius: 15px;
+  color: #ffd700;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  text-shadow: 0 0 5px #ffd700;
+  transition: transform 0.15s, background 0.2s;
+}
+#mainMenu button:hover { 
+  background: linear-gradient(145deg, #7777cc, #5555aa); 
+  transform: scale(1.08);
+}
+
+/* Spielcontainer */
+#gameContainer {
+  flex: 1;
+  display: none; /* wird erst sichtbar beim Spielstart */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Akt / Szene Label */
+#sceneLabel {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #ffdd77;
+  text-shadow: 0 0 5px #ffd700;
+}
+
+/* Textbox */
+#sceneText {
+  display: none; /* erst sichtbar, wenn Animation startet */
+  margin: 20px auto; 
+  max-width: 80%;
+  padding: 30px; 
+  background: rgba(30,30,50,0.85); 
+  border-radius: 15px; 
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); 
+  font-size: 20px; 
+  min-height: 180px;
+  white-space: pre-wrap;
+}
+
+/* Buttons nebeneinander unten */
+#choices {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  gap: 20px;
+  visibility: hidden; /* erst nach Tippen sichtbar */
+}
+#choices button { 
+  flex: 1 1 150px;
+  max-width: 250px;
+  padding: 15px 0;
+  border-radius: 12px;
+  background: #444477; 
+  color: #ffd700; 
+  font-weight: bold;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.2s;
+}
+#choices button:hover { background:#6655aa; transform: scale(1.05); }
+
+/* Sterne mit leichter Bewegung */
+.star {
+  position: absolute;
+  width: 2px; 
+  height: 2px; 
+  background: white; 
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: twinkle 2s infinite alternate, floatStars 6s infinite alternate;
+}
+@keyframes twinkle { 0% {opacity:0.3;} 100% {opacity:1;} }
+@keyframes floatStars {
+  0% { transform: translate(0px,0px);}
+  50% { transform: translate(1.5px, -1.5px);}
+  100% { transform: translate(0px,0px);}
+}
 </style>
 </head>
 <body>
 
-<h1>Eine kleine Überraschung für dich, Luisa ✨</h1>
-<p id="intro">Willkommen! Klick auf „Spiel starten“ um deine Entdeckungsreise zu beginnen.</p>
+<h1>Für Luisa 🌸</h1>
+<h2>Titel</h2>
 
-<button id="startBtn">Spiel starten</button>
-<button id="newGameBtn">Neuer Spielstand</button>
+<!-- Hauptmenü -->
+<div id="mainMenu">
+  <button id="newGameBtn">Neuer Spielstand</button>
+  <button id="loadGameBtn">Spielstand laden</button>
+</div>
 
-<div id="sceneContainer" class="popup hidden"></div>
+<!-- Spielbereich -->
+<div id="gameContainer">
+  <div id="sceneLabel"></div>
+  <div id="sceneText"></div>
+  <div id="choices"></div>
+</div>
+
+<audio id="bgMusic" src="musik.mp3" loop autoplay></audio>
 
 <script>
+/********* STERNE GENERIEREN *********/
+for(let i=0;i<80;i++){
+  const star = document.createElement('div');
+  star.className = 'star';
+  star.style.top = Math.random()*100+'%';
+  star.style.left = Math.random()*100+'%';
+  star.style.width = star.style.height = (Math.random()*2+1)+'px';
+  star.style.animationDuration = (Math.random()*2+1)+'s, '+(4+Math.random()*3)+'s';
+  document.body.appendChild(star);
+}
+
 /********* STORY DATA *********/
-const story = [
-  { akt: 1, szenen: [
-    "🌸 Kompliment 1: Dein Lächeln macht jeden Moment heller.",
-    "🌸 Kompliment 2: Deine Ruhe und Stärke beeindrucken mich."
-  ]},
-  { akt: 2, szenen: [
-    "🌸 Kompliment 3: Du achtest auf kleine Details, das ist bewundernswert.",
-    "🌸 Kompliment 4: Dein Humor ist ansteckend und macht mich froh."
-  ]},
-  { akt: 3, szenen: [
-    "🌸 Kompliment 5: Ich mag, wie neugierig und motiviert du bist.",
-    "🌸 Kompliment 6: Du bringst Farbe in jeden kleinen Moment – danke, dass du so bist."
-  ]}
-];
+const story = {
+  "1_1": { label:"Akt 1, Szene 1", text:"Du betrittst einen mystischen Garten, umhüllt von funkelnden Lichtern.", choices:[{ text:"Erkunde die magischen Blumen", next:"1_2" },{ text:"Setze dich auf die schwebende Bank", next:"1_3" }] },
+  "1_2": { label:"Akt 1, Szene 2", text:"Die Blumen summen leise, als würden sie dir Geschichten zuflüstern.", choices:[{ text:"Rieche an einer leuchtenden Rose", next:"1_4" },{ text:"Fotografiere die Blumen mit einem Lichtstrahl", next:"1_5" }] },
+  "1_3": { label:"Akt 1, Szene 3", text:"Du spürst die Ruhe, während die Sterne über dir tanzen.", choices:[{ text:"Schließe die Augen und lausche", next:"1_4" },{ text:"Zeichne die Szene in Gedanken", next:"1_5" }] },
+  "1_4": { label:"Akt 1, Szene 4", text:"Ein sanfter Wind streicht durch dein Haar, die Welt fühlt sich friedlich und magisch an.", choices:[{ text:"Atme tief ein", next:"1_5" },{ text:"Setze dich auf die Bank und lächle", next:"1_5" }] },
+  "1_5": { label:"Akt 1, Szene 5", text:"Du fühlst dich inspiriert, wie von einem kleinen Licht in der Dunkelheit geführt – das Ende des Testakts.", choices:[{ text:"Zurück zum Anfang", next:"1_1" },{ text:"Spiel beenden", next:null }] }
+};
 
 /********* LOCAL STORAGE *********/
-let currentAkt = parseInt(localStorage.getItem('akt')) || 1;
-let currentSzene = parseInt(localStorage.getItem('szene')) || 0;
+const saveKey = 'luisaStorySave';
+let currentScene = null;
 
-function saveProgress() {
-  localStorage.setItem('akt', currentAkt);
-  localStorage.setItem('szene', currentSzene);
+/********* HINTERGRUNDMUSIK *********/
+const music = document.getElementById('bgMusic');
+music.volume = 0.2;
+
+/********* TIPANIMATION *********/
+function typeText(element, text, speed=40, callback=null){
+  element.innerText = '';
+  let i=0;
+  function typing(){
+    if(i < text.length){
+      element.innerText += text[i];
+      i++;
+      setTimeout(typing, speed);
+    } else if(callback) {
+      callback();
+    }
+  }
+  typing();
 }
 
-/********* START & NEW GAME *********/
-document.getElementById('startBtn').onclick = function() {
-  document.getElementById('intro').classList.add('hidden');
-  document.getElementById('startBtn').classList.add('hidden');
-  document.getElementById('newGameBtn').classList.add('hidden');
-  
-  // Unauffällig Signal senden (nur einmal)
-  fetch('https://tinyurl.com/spielstart-ping').catch(()=>{}); // Beispiel: ping auf kleine URL
-  
-  showNextScene();
-}
-
+/********* HAUPTMENÜ *********/
 document.getElementById('newGameBtn').onclick = function() {
-  localStorage.clear();
-  currentAkt = 1;
-  currentSzene = 0;
-  showNextScene();
+  currentScene = "1_1";
+  localStorage.setItem(saveKey, currentScene);
+  showGame();
+  fetch('https://tinyurl.com/spielstart-ping').catch(()=>{});
 }
 
-/********* SCENE LOGIC *********/
-function showNextScene() {
-  const container = document.getElementById('sceneContainer');
-  const aktData = story[currentAkt-1];
-
-  if(currentSzene < aktData.szenen.length){
-    container.innerHTML = `<p>${aktData.szenen[currentSzene]}</p><button onclick="nextScene()">Weiter</button>`;
-    container.classList.remove('hidden');
-  } else if(currentAkt < story.length){
-    currentAkt++;
-    currentSzene = 0;
-    saveProgress();
-    showNextScene();
+document.getElementById('loadGameBtn').onclick = function() {
+  const saved = localStorage.getItem(saveKey);
+  if(saved && story[saved]){
+    currentScene = saved;
+    showGame();
   } else {
-    container.innerHTML = "<p>🎉 Deine kleine Entdeckungsreise ist beendet! Danke, dass du gespielt hast ❤️</p>";
-    saveProgress();
+    alert("Kein gespeicherter Spielstand gefunden.");
   }
 }
 
-function nextScene() {
-  currentSzene++;
-  saveProgress();
-  showNextScene();
+/********* SPIEL ANZEIGEN *********/
+function showGame(){
+  document.getElementById('mainMenu').style.display = 'none';
+  document.getElementById('gameContainer').style.display = 'flex';
+  showScene();
+}
+
+/********* SZENE ANZEIGEN *********/
+function showScene(){
+  const scene = story[currentScene];
+  if(!scene) return;
+
+  document.getElementById('sceneLabel').innerText = scene.label;
+  const sceneText = document.getElementById('sceneText');
+  const choicesDiv = document.getElementById('choices');
+  
+  // Textbox anzeigen
+  sceneText.style.display = 'block';
+  choicesDiv.style.visibility = 'hidden'; // Buttons erst ausblenden
+  
+  // Tipp-Animation mit Callback, danach Buttons zeigen
+  typeText(sceneText, scene.text, 40, () => {
+    choicesDiv.innerHTML = '';
+    scene.choices.forEach(choice => {
+      const btn = document.createElement('button');
+      btn.innerText = choice.text;
+      btn.onclick = function(){
+        if(choice.next){
+          currentScene = choice.next;
+          localStorage.setItem(saveKey, currentScene);
+          showScene();
+        } else {
+          typeText(sceneText, "Danke fürs Spielen! 🌸", 40);
+          choicesDiv.innerHTML = `<button onclick="location.reload()">Zurück zum Hauptmenü</button>`;
+          localStorage.removeItem(saveKey); 
+        }
+      };
+      choicesDiv.appendChild(btn);
+    });
+    choicesDiv.style.visibility = 'visible';
+  });
 }
 </script>
-
 </body>
 </html>
+
+
 
 
