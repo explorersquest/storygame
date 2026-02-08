@@ -213,6 +213,7 @@ h2 {
   <button id="newGameBtn">Neuer Spielstand</button>
   <button id="loadGameBtn">Spielstand laden</button>
   <button id="openChatBtn">Deine Gedanken</button>
+  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 1.0.3</div>
 </div>
 
 <!-- Spielbereich -->
@@ -220,7 +221,9 @@ h2 {
   <div id="sceneLabel"></div>
   <div id="sceneText"></div>
   <div id="choices"></div>
+  <button id="backFromGameBtn" style="margin-top:20px; padding:10px 20px; border:none; border-radius:8px; background:#6655aa; color:#ffd700; cursor:pointer;">Zurück zum Menü</button>
 </div>
+
 
 <!-- Chatbereich -->
 <div id="chatContainer">
@@ -369,6 +372,13 @@ function showScene(){
   });
 }
 
+document.getElementById('backFromGameBtn').onclick = function() {
+  document.getElementById('gameContainer').style.display = 'none';
+  document.getElementById('mainMenu').style.display = 'flex';
+  music.pause();  // optional: Musik stoppen
+  music.currentTime = 0;
+};
+
 /********* FIREBASE CONFIG *********/
 const firebaseConfig = {
   apiKey: "AIzaSyD_cDHNMZZiLuGLfAntYAc8ONtKgwYlp9Y",
@@ -448,6 +458,7 @@ function addMessage(msgData) {
 </script>
 </body>
 </html>
+
 
 
 
