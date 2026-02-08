@@ -248,60 +248,6 @@ for(let i=0;i<80;i++){
   document.body.appendChild(star);
 }
 
-/********* WIDDER-STERNBILD KORREKT *********/
-// Zufällige Startposition des Sternbildes
-const offsetX = Math.random() * 60 + 10; // % von links
-const offsetY = Math.random() * 50 + 10; // % von oben
-
-// Normalisierte Koordinaten für die 4 Hauptsterne (α, β, γ, δ)
-// α links oben, β rechts oben, γ links unten, δ rechts unten
-const widderStars = [
-    {x: 0, y: 0},    // α
-    {x: 0.35, y: 0.1}, // β
-    {x: 0.48, y: 0.25}, // γ
-    {x: 0.5, y: 0.4}   // δ
-];
-
-const vw = window.innerWidth;
-const vh = window.innerHeight;
-const scale = 0.1; // etwas kleiner als vorher
-
-widderStars.forEach((star, i) => {
-    const s = document.createElement('div');
-    s.className = 'star';
-    const px = (offsetX/100*vw) + star.x * scale * vw;
-    const py = (offsetY/100*vh) + star.y * scale * vh;
-    s.style.left = px + 'px';
-    s.style.top = py + 'px';
-    s.style.width = s.style.height = '2px';
-    s.style.background = '#ffdd77';
-    document.body.appendChild(s);
-
-    // Linie zum nächsten Stern
-    if(i < widderStars.length - 1){
-        const next = widderStars[i+1];
-        const nextPx = (offsetX/100*vw) + next.x * scale * vw;
-        const nextPy = (offsetY/100*vh) + next.y * scale * vh;
-
-        const line = document.createElement('div');
-        line.style.position = 'absolute';
-        line.style.background = 'rgba(255, 221, 119, 0.3)';
-        line.style.height = '1px';
-
-        const dx = nextPx - px;
-        const dy = nextPy - py;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        line.style.width = dist + 'px';
-
-        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-        line.style.transform = `rotate(${angle}deg)`;
-        line.style.top = py + 'px';
-        line.style.left = px + 'px';
-        line.style.transformOrigin = '0 0';
-        document.body.appendChild(line);
-    }
-});
-
 /********* STORY DATA *********/
 const story = {
     "0_0": { label:"Akt 0, Szene 0", text:"Du hälst inne. Vielleicht ist es besser so, du lässt den Behälter hier stehen. Vielleicht ist heute nicht der Tag für Geheimnisse. Der Fahrradkeller ist leer, es riecht nach Beton und kalter Luft. Du schließt deine Jacke. Bis auf den Behälter wirkt alles normal. Du schiebst dein Fahrrad hinaus. Die Tür fällt hinter dir zu.  Der Abend empfängt dich als wäre nichts gewesen. Die Straßen sind still. Und du fährst nach Hause...", choices:[{ text:"Zurück zum Anfang", next:"1_1" },{ text:"Spiel beenden", next:null}] },
@@ -533,6 +479,7 @@ function addMessage(msgData) {
 </script>
 </body>
 </html>
+
 
 
 
