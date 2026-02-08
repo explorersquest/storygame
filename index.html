@@ -249,43 +249,56 @@ for(let i=0;i<80;i++){
 }
 
 /********* WIDDER-STERNBILD (4 Sterne, zufällig auf dem Bildschirm) *********/
-// zufällige Offset Position für das ganze Sternbild
-const offsetX = Math.random() * 70 + 5; // % von links, damit es nicht am Rand klebt
-const offsetY = Math.random() * 60 + 10; // % von oben
+// zufällige Offset Position für das ganze Sternbild (in % vom Viewport)
+const offsetX = Math.random() * 60 + 10; // % von links
+const offsetY = Math.random() * 50 + 10; // % von oben
 
+// Sterne in % relativ zum Offset
 const widderStars = [
     {x: 0, y: 0},
-    {x: 15, y: 20},
-    {x: 30, y: 5},
-    {x: 45, y: 20}
+    {x: 10, y: 20},
+    {x: 25, y: 5},
+    {x: 40, y: 20}
 ];
 
+const vw = window.innerWidth;
+const vh = window.innerHeight;
+
+// Sterne erzeugen
 widderStars.forEach((star, i) => {
     const s = document.createElement('div');
     s.className = 'star';
-    s.style.top = (offsetY + star.y) + '%';
-    s.style.left = (offsetX + star.x) + '%';
+    
+    // Prozent in Pixel umrechnen
+    const px = (offsetX + star.x) / 100 * vw;
+    const py = (offsetY + star.y) / 100 * vh;
+    
+    s.style.left = px + 'px';
+    s.style.top = py + 'px';
     s.style.width = s.style.height = '3px';
-    s.style.background = '#ffdd77'; // etwas goldener, damit es auffällt
+    s.style.background = '#ffdd77';
     document.body.appendChild(s);
 
     // Linie zum nächsten Stern
     if(i < widderStars.length - 1){
         const next = widderStars[i+1];
+        const nextPx = (offsetX + next.x) / 100 * vw;
+        const nextPy = (offsetY + next.y) / 100 * vh;
+        
         const line = document.createElement('div');
         line.style.position = 'absolute';
         line.style.background = 'rgba(255, 221, 119, 0.3)';
         line.style.height = '1px';
         
         // Länge & Winkel berechnen
-        const dx = next.x - star.x;
-        const dy = next.y - star.y;
+        const dx = nextPx - px;
+        const dy = nextPy - py;
         const dist = Math.sqrt(dx*dx + dy*dy);
-        line.style.width = (dist*1.2) + 'vw'; // skaliert proportional
+        line.style.width = dist + 'px';
         const angle = Math.atan2(dy, dx) * 180 / Math.PI;
         line.style.transform = `rotate(${angle}deg)`;
-        line.style.top = (offsetY + star.y) + '%';
-        line.style.left = (offsetX + star.x) + '%';
+        line.style.top = py + 'px';
+        line.style.left = px + 'px';
         line.style.transformOrigin = '0 0';
         document.body.appendChild(line);
     }
@@ -522,6 +535,7 @@ function addMessage(msgData) {
 </script>
 </body>
 </html>
+
 
 
 
