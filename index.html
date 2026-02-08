@@ -381,6 +381,12 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const chatCollection = db.collection('chatMessages');
+// Jedes Gerät bekommt eine eigene ID
+let deviceId = localStorage.getItem('luisaDeviceId');
+if (!deviceId) {
+    deviceId = 'device_' + Math.random().toString(36).substr(2,9);
+    localStorage.setItem('luisaDeviceId', deviceId);
+}
 
 /********* CHAT FUNKTIONEN *********/
 // Chat öffnen
@@ -399,16 +405,16 @@ document.getElementById('backFromChatBtn').onclick = function() {
 
 // Nachricht abschicken
 document.getElementById('sendChatBtn').onclick = function() {
-  const msg = document.getElementById('chatInput').value.trim();
-  if(msg === '') return;
+    const msg = document.getElementById('chatInput').value.trim();
+    if(msg === '') return;
 
-  chatCollection.add({
-    text: msg,
-    sender: 'me',  // markiert als eigene Nachricht
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  });
+    chatCollection.add({
+        text: msg,
+        sender: deviceId,  // Alles vom aktuellen Gerät ist "blau"
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
-  document.getElementById('chatInput').value = '';
+    document.getElementById('chatInput').value = '';
 };
 
 // Nachrichten live laden
@@ -424,24 +430,25 @@ function loadChat() {
   });
 }
 function addMessage(msgData) {
-  const chatMessages = document.getElementById('chatMessages');
-  const div = document.createElement('div');
+    const chatMessages = document.getElementById('chatMessages');
+    const div = document.createElement('div');
 
-  // Unterscheide eigene vs. andere Nachrichten
-  if(msgData.sender === 'me') {
-    div.className = 'myMessage';
-  } else {
-    div.className = 'theirMessage';
-  }
+    // Alles vom aktuellen Gerät = blau, alles andere = pink
+    if(msgData.sender === deviceId){
+        div.className = 'myMessage';
+    } else {
+        div.className = 'theirMessage';
+    }
 
-  div.innerText = msgData.text;
-  chatMessages.appendChild(div);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
+    div.innerText = msgData.text;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 </script>
 </body>
 </html>
+
 
 
 
