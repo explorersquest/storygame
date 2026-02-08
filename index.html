@@ -213,7 +213,7 @@ h2 {
   <button id="newGameBtn">Neuer Spielstand</button>
   <button id="loadGameBtn">Spielstand laden</button>
   <button id="openChatBtn">Deine Gedanken</button>
-  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 1.1.8</div>
+  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 1.2.8</div>
 </div>
 
 <!-- Spielbereich -->
@@ -237,7 +237,7 @@ h2 {
 <audio id="typeSound" src="game-text.mp3" preload="auto"></audio>
 
 <script>
-/********* STERNE GENERIEREN *********/
+/********* NORMALE STERNE *********/
 for(let i=0;i<80;i++){
   const star = document.createElement('div');
   star.className = 'star';
@@ -247,6 +247,49 @@ for(let i=0;i<80;i++){
   star.style.animationDuration = (Math.random()*2+1)+'s, '+(4+Math.random()*3)+'s';
   document.body.appendChild(star);
 }
+
+/********* WIDDER-STERNBILD (4 Sterne, zufällig auf dem Bildschirm) *********/
+// zufällige Offset Position für das ganze Sternbild
+const offsetX = Math.random() * 70 + 5; // % von links, damit es nicht am Rand klebt
+const offsetY = Math.random() * 60 + 10; // % von oben
+
+const widderStars = [
+    {x: 0, y: 0},
+    {x: 15, y: 20},
+    {x: 30, y: 5},
+    {x: 45, y: 20}
+];
+
+widderStars.forEach((star, i) => {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.top = (offsetY + star.y) + '%';
+    s.style.left = (offsetX + star.x) + '%';
+    s.style.width = s.style.height = '3px';
+    s.style.background = '#ffdd77'; // etwas goldener, damit es auffällt
+    document.body.appendChild(s);
+
+    // Linie zum nächsten Stern
+    if(i < widderStars.length - 1){
+        const next = widderStars[i+1];
+        const line = document.createElement('div');
+        line.style.position = 'absolute';
+        line.style.background = 'rgba(255, 221, 119, 0.3)';
+        line.style.height = '1px';
+        
+        // Länge & Winkel berechnen
+        const dx = next.x - star.x;
+        const dy = next.y - star.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        line.style.width = (dist*1.2) + 'vw'; // skaliert proportional
+        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+        line.style.transform = `rotate(${angle}deg)`;
+        line.style.top = (offsetY + star.y) + '%';
+        line.style.left = (offsetX + star.x) + '%';
+        line.style.transformOrigin = '0 0';
+        document.body.appendChild(line);
+    }
+});
 
 /********* STORY DATA *********/
 const story = {
@@ -377,6 +420,15 @@ function showScene(){
       };
       choicesDiv.appendChild(btn);
     });
+    // Dritter Button: Zurück zum Hauptmenü
+    const menuBtn = document.createElement('button');
+    menuBtn.innerText = "Hauptmenü";
+    menuBtn.onclick = function(){
+        document.getElementById('gameContainer').style.display = 'none';
+        document.getElementById('mainMenu').style.display = 'flex';
+        localStorage.removeItem(saveKey);
+    };
+    choicesDiv.appendChild(menuBtn);
     choicesDiv.style.visibility = 'visible';
   });
 }
@@ -470,6 +522,7 @@ function addMessage(msgData) {
 </script>
 </body>
 </html>
+
 
 
 
