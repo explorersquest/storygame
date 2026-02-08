@@ -206,7 +206,7 @@ h2 {
 <body>
 
 <h1>Für Luisa 🌸</h1>
-<h2>Titel</h2>
+<h2>Fr4gm3nt3</h2>
 
 <!-- Hauptmenü -->
 <div id="mainMenu">
@@ -257,6 +257,7 @@ const story = {
     "1_4": { label:"Akt 1, Szene 4", text:"DER ÜBERGANG. Du hälst den Behälter in der Hand. Das Licht darin pulsiert. Du atmest ein. Du greifst nach dem Licht. Für einen Augenblick spürst du nichts. Nur Wärme. Nur Stille. Dann passiert alles gleichzeitig. Das Licht schießt nach oben, umhüllt deine Hand, zieht sich an dir fest wie ein Faden aus Energie - und die Welt unter deinen Füßen bricht weg. Der Fahrradkeller löst sich auf. Die Kälte verschwindet. Die Geräusche verschwinden. Du wirst nicht gestoßen, nicht gezogen - du wirst übergeben. Du schwebst. Um dich herum öffnet sich ein Raum aus Sternen. Langsam, weit, still. Als würdest du durch ein Universum gleiten, das gerade erst beschlossen hat, zu existieren. Vor dir entsteht ein Lichtpunkt. Er wächst. Er wird zu einer Form. Zu einem Hügel. Gras, so grün, dass es fast leuchtet. Ein Wind, den du nicht spürst, bewegt die Halme. Auf dem Hügel steht ein Tisch. Zwei Stühle. Auf einem der Stühle sitzt jemand. Du kannst die Person sehen. Die Umrisse. Die Haltung. Die Präsenz. Aber jedes Mal, wenn du versuchst, das Gesicht zu erkennen, verwischt es. Etwas in dir sagt dir, dass du diese Person kennen solltest. Dass du sie vielleicht sogar kennst. Aber die Welt lässt es nicht zu. Noch nicht. Die Figur sitzt ruhig da. Wartend. Nicht bedrohlich. Nicht einladend. Einfach... da. Was tust du, Luisa?", choices:[{ text:"Ich gehe zu der Person.", next:"1_5" },{ text:"Ich laufe von der Person weg.", next:"1_6" }] },
     "1_6": { label:"Akt 1, Szene 6", text:"DER RAND. Etwas in dir zieht sich zusammen. Kein klarer Gedanke, eher ein Instinkt. Ein Gefühl. Zu viel. Zu fremd. Dein Körper entscheidet schneller als dein Kopf. Du rennst. Der Hügel bleibt hinter dir zurück, der Tisch, die zwei Stühle, die verschwommene Gestalt, deren Gesicht du nicht erkennen kannst. Das Gras unter deinen Füßen gibt leicht nach, als würde es dich nicht wirklich berühren. Die Welt um dich herum bleibt still, zu still, während du weiterläufst. Und weiter. Und weiter. Bis die Welt plötzlich endet. Vor dir fällt der Boden einfach ab. Kein Abhang. Kein Übergang. Nur ein scharfer Schnitt als hätte jemand die Welt ausgeschnitten und in den Weltraum gelegt. Unter dir breitet sich ein Meer aus Sternen aus. Lebendig. Bewegend. Unendlich. Hinter dir der Hügel. Vor die liegt das Nichts. Was tust du, Luisa?", choices:[{ text:"Ich springe.", next:"0_0" },{ text:"Ich kehre um.", next:"1_5" }] },
     "1_5": { label:"Akt 1, Szene 5", text:"DER TISCH. Du gehst den Hügel hinauf. Der Tisch steht dort, schlicht, aus hellem Holz. Zwei Stühle. Einer davon ist besetzt. Die Gestalt sitzt ruhig da. Du kannst die Umrisse klar erkennen - Schultern, Hände, Haltung. Aber jedes Mal, wenn dein Blick das Gesicht erreichen will, verwischt es, als würde die Welt selbst eine Grenze ziehen. Du setzt dich. Der Stuhl ist warm, obwohl hier keine Sonne scheint. Du beginnst das Gespräch. Es fühlt sich richtig an, als hättest du schon mit dieser Person gesprochen. Die Gestalt neigt leicht den Kopf. Dann antwortet sie. Nicht laut, nicht mit klaren Worten, eher wie ein Gedanke, der sich in dir formt. Du nimmst wahr, dass sie sich Creator nennt. Dass sie dich erwartet hat. Während sie weiter spricht, spürst du etwas, das du nicht einordnen kannst. Ein Eindruck, dass der Creator etwas in dir fühlt, etwas, das ihn irritiert, fasziniert, anzieht - ohne dass er es benennt. Dann verändert sich die Stimmung. Nicht bedrohlich, eher wie ein leiser Übergang. Der Creator spricht von einer Aufgabe. Nicht als Befehl, nicht als Prüfung, sondern als Möglichkeit. Etwas, das du tun könntest, wenn du willst. Du spürst, dass die Entscheidung bei dir liegt. Der Tisch wirkt plötzlich wie eine Schwelle. Ein Anfang. Die Frage steht im Raum, klar, ruhig, unausgesprochen: Bist du bereit, diese Mission anzunehmen, Luisa?", choices:[{ text:"Ich lehne ab.", next:"0_0" },{ text:"Ich akzeptiere die Mission.", next:"1_7" }] },
+    "1_7": { label:"Akt 1, Szene 1", text:"DIE MISSION. Als du deine Entscheidung getroffen hast, verändert sich die Welt kaum sichtbar. Nicht wie ein", choices:[{ text:"Ich lege ihn zurück.", next:"0_0" },{ text:"Ich öffne ihn.", next:"1_3" , save:""}] },
     "1_9": { label:"Akt 1, Szene 1", text:"", choices:[{ text:"Ich lege ihn zurück.", next:"0_0" },{ text:"Ich öffne ihn.", next:"1_3" , save:""}] },
 };
 
@@ -345,6 +346,9 @@ function showGame(){
 function showScene(){
   const scene = story[currentScene];
   if(!scene) return;
+
+    // ---- AUTOMATISCHER LOCAL SAVE ----
+  localStorage.setItem(saveKey, currentScene);
 
   const sceneText = document.getElementById('sceneText');
   const choicesDiv = document.getElementById('choices');
@@ -479,18 +483,3 @@ function addMessage(msgData) {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
