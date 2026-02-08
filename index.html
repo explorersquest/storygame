@@ -150,7 +150,7 @@ h2 {
   <div id="choices"></div>
 </div>
 
-<audio id="bgMusic" src="momedeiros88-mystical.mp3" loop></audio>
+<audio id="bgMusic" src="momedeiros88-mystical.mp3" type="audio/mpeg" loop></audio>
 
 <script>
 /********* STERNE GENERIEREN *********/
@@ -203,8 +203,6 @@ document.getElementById('newGameBtn').onclick = function() {
   localStorage.setItem(saveKey, currentScene);
   showGame();
   // Musik starten, falls noch nicht gestartet
-  const music = document.getElementById('bgMusic');
-  music.volume = 0.2;
   music.play().catch(e => console.log("Musik konnte nicht starten:", e));
   fetch('https://tinyurl.com/spielstart-ping').catch(()=>{});
 }
@@ -215,8 +213,6 @@ document.getElementById('loadGameBtn').onclick = function() {
     currentScene = saved;
     showGame();
     // Musik starten
-    const music = document.getElementById('bgMusic');
-    music.volume = 0.2;
     music.play().catch(e => console.log("Musik konnte nicht starten:", e));
   } else {
     alert("Kein gespeicherter Spielstand gefunden.");
@@ -268,6 +264,7 @@ function showScene(){
 </script>
 </body>
 </html>
+
 
 
 
