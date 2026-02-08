@@ -150,7 +150,27 @@ h2 {
   overflow-y:auto;
   width:100%;
   margin-bottom:10px;
-  color:#ffd700;
+  color:#ff77cc;
+}
+.myMessage {
+  background-color: #0099ff;  /* blau für dich */
+  color: white;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin: 5px 0;
+  align-self: flex-end;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+.theirMessage {
+  background-color: #ff77cc;  /* pink für sie */
+  color: white;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin: 5px 0;
+  align-self: flex-start;
+  max-width: 80%;
+  word-wrap: break-word;
 }
 #chatInput {
   width:100%;
@@ -377,6 +397,7 @@ document.getElementById('sendChatBtn').onclick = function() {
   if(msg === '') return;
   chatCollection.add({
     text: msg,
+    sender: 'me',   // 🔹 markiert als eigene Nachricht
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
   document.getElementById('chatInput').value = '';
@@ -389,15 +410,29 @@ function loadChat() {
   chatCollection.orderBy('timestamp', 'asc').onSnapshot(snapshot => {
     chatMessages.innerHTML = '';
     snapshot.forEach(doc => {
-      const div = document.createElement('div');
-      div.innerText = doc.data().text;
-      chatMessages.appendChild(div);
+      addMessage(doc.data()); // 🔹 hier wird jetzt die Farbe automatisch gesetzt
     });
-    chatMessages.scrollTop = chatMessages.scrollHeight;
   });
+}
+
+function addMessage(msgData) {
+  const chatWindow = document.getElementById('chatMessages');
+  const msgDiv = document.createElement('div');
+
+  // Prüfen, ob die Nachricht von dir kommt oder nicht
+  if(msgData.sender === 'me') {
+    msgDiv.className = 'myMessage';
+  } else {
+    msgDiv.className = 'theirMessage';
+  }
+
+  msgDiv.innerText = msgData.text;
+  chatWindow.appendChild(msgDiv);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 </script>
 </body>
 </html>
+
 
 
