@@ -130,7 +130,52 @@ h2 {
   50% { transform: translate(1.5px, -1.5px);}
   100% { transform: translate(0px,0px);}
 }
+
+/* Chat-UI */
+#chatContainer {
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  width:80%;
+  max-width:600px;
+  margin:0 auto;
+  background: rgba(30,30,50,0.85);
+  border-radius:15px;
+  padding:20px;
+  min-height:400px;
+}
+#chatMessages {
+  flex:1;
+  overflow-y:auto;
+  width:100%;
+  margin-bottom:10px;
+  color:#ffd700;
+}
+#chatInput {
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  font-size:16px;
+}
+#chatContainer button {
+  margin-top:10px;
+  padding:10px 20px;
+  border-radius:8px;
+  border:none;
+  background:#444477;
+  color:#ffd700;
+  font-weight:bold;
+  cursor:pointer;
+}
+#chatContainer button#backFromChatBtn { background:#6655aa; }
 </style>
+
+<!-- Firebase Scripts -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 </head>
 <body>
 
@@ -141,6 +186,7 @@ h2 {
 <div id="mainMenu">
   <button id="newGameBtn">Neuer Spielstand</button>
   <button id="loadGameBtn">Spielstand laden</button>
+  <button id="openChatBtn">Deine Gedanken</button>
 </div>
 
 <!-- Spielbereich -->
@@ -148,6 +194,15 @@ h2 {
   <div id="sceneLabel"></div>
   <div id="sceneText"></div>
   <div id="choices"></div>
+</div>
+
+<!-- Chatbereich -->
+<div id="chatContainer">
+  <h2>Deine Gedanken 🌸</h2>
+  <div id="chatMessages"></div>
+  <input id="chatInput" type="text" placeholder="Schreibe etwas..." />
+  <button id="sendChatBtn">Abschicken</button>
+  <button id="backFromChatBtn">Zurück</button>
 </div>
 
 <audio id="bgMusic" src="momedeiros88-mystical.mp3" type="audio/mpeg" loop></audio>
@@ -167,36 +222,50 @@ for(let i=0;i<80;i++){
 
 /********* STORY DATA *********/
 const story = {
-  "0_0": { label:"Akt 0, Szene 0", text:"Du hälst inne. Vielleicht ist es besser so, du lässt den Behälter hier stehen. Vielleicht ist heute nicht der Tag für Geheimnisse. Der Fahrradkeller ist leer, es riecht nach Beton und kalter Luft. Du schließt deine Jacke. Bis auf den Behälter wirkt alles normal. Du schiebst dein Fahrrad hinaus. Die Tür fällt hinter dir zu.  Der Abend empfängt dich als wäre nichts gewesen. Die Straßen sind still. Und du fährst nach Hause...", choices:[{ text:"Zurück zum Anfang", next:"1_1" },{ text:"Spiel beenden", next:null}] },
-  "1_1": { label:"Akt 1, Szene 1", text:"DER KELLER. Der letzte Schultag vor den Ferien hätte leicht sein sollen. Aber irgendetwas hat den Tag in die Länge gezogen. Stunden, die sich gezogen haben wie Kaugummi. Als du endlich aus dem Klassenzimmer trittst, ist es schon Abend. Du gehst die Treppen hinunter in den Fahrradkeller. Deine Schritte hallen. Du bist allein. Du willst einfach nur nach Hause. Doch dann hälst du inne. In deinem Flaschenhalter steckt etwas, das dort nicht hingehört. Ein kleiner Behälter aus durchsichtigem Material. Du bist dir sicher: Der war heute Morgen nicht da. Du gehst einen Schritt näher. Dann noch einen. Der Behälter leuchtet schwach, ein warmes, pulsierendes Schimmern, das sich gegen die kalte Kellerluft stemmt. Für einen Moment hörst du nur deinen eigenen Atem. Was tust du, Luisa?", choices:[{ text:"Ich lasse ihn in Ruhe.", next:"0_0" },{ text:"Ich schaue ihn mir genauer an.", next:"1_2" }] },
-  "1_2": { label:"Akt 1, Szene 2", text:"DER BEHÄLTER. Du gehst näher an dein Fahrrad heran. Der Behälter sitzt fest im Flaschenhalter, als hätte ihn jemand mit Absicht dort platziert. Aus der Nähe wirkt er noch ungewöhnlicher: glatt, schwerer als Glas, aber ohne Kratzer, ohne Etikett, ohne jede Spur von Herkunft. Das Licht im Inneren pulsiert langsam. Warm. Ruhig. Fast wie ein Herzschlag. Du legst die Fingerspitzen an die Oberfläche. Der Behälter reagiert. Ein leiser Schimmer wandert unter deiner Berührung entlang, als würde er dich erkennen. Für einen Moment wird der Keller heller. Dann wird es wieder still. Der Behälter liegt schwer in deiner Hand. Und das Licht darin wartet. Was tust du, Luisa?", choices:[{ text:"Ich lege ihn zurück.", next:"0_0" },{ text:"Ich öffne ihn.", next:"1_3" }] },
-  "1_3": { label:"Akt 1, Szene 3", text:"DAS LICHT. Du öffnest den Behälter. Ein warmer Hauch entweicht. Du siehst hinein. Im Inneren des Behälters liegt kein Gegenstand im klassischen Sinn. Es ist eher... ein Zustand. Ein Fragment aus Licht, das sich nicht an die Regeln der Welt hält. Es hat keine feste Form. Manchmal wirkt es wie ein kleiner Splitter, manchmal wie ein Tropfen, manchmal wie ein winziger Nebelwirbel aus Helligkeit. Es leuchtet nicht stark. Es glimmt. Warm. Ruhig. In einem Rhythmus. Wenn man genauer hinsieht, erkennt man feine Linien im Licht. Wie winzige Sternbahnen, die sich umeinander drehen. Nicht chaotisch, sondern harmonisch, wie ein kleines Universum im Glas. Das Licht ist nicht heiß. Es ist nicht kalt. Und manchmal, wenn man es aus dem Augenwinkel betrachtet, scheint es sich zu bewegen, als würde es auf etwas reagieren. Oder auf jemanden. Was tust du, Luisa?", choices:[{ text:"Ich schließe den Behälter wieder.", next:"0_0" },{ text:"Ich greife nach dem Licht.", next:"1_4" }] },
-  "1_4": { label:"Akt 1, Szene 4", text:"DER ÜBERGANG. Du hälst den Behälter in der Hand. Das Licht darin pulsiert. Du atmest ein. Du greifst nach dem Licht. Für einen Augenblick spürst du nichts. Nur Wärme. Nur Stille. Dann passiert alles gleichzeitig. Das Licht schießt nach oben, umhüllt deine Hand, zieht sich an dir fest wie ein Faden aus Energie - und die Welt unter deinen Füßen bricht weg. Der Fahrradkeller löst sich auf. Die Kälte verschwindet. Die Geräusche verschwinden. Du wirst nicht gestoßen, nicht gezogen - du wirst übergeben. Du schwebst. Um dich herum öffnet sich ein Raum aus Sternen. Langsam, weit, still. Als würdest du durch ein Universum gleiten, das gerade erst beschlossen hat, zu existieren. Vor dir entsteht ein Lichtpunkt. Er wächst. Er wird zu einer Form. Zu einem Hügel. Gras, so grün, dass es fast leuchtet. Ein Wind, den du nicht spürst, bewegt die Halme. Auf dem Hügel steht ein Tisch. Zwei Stühle. Auf einem der Stühle sitzt jemand. Du kannst die Person sehen. Die Umrisse. Die Haltung. Die Präsenz. Aber jedes Mal, wenn du versuchst, das Gesicht zu erkennen, verwischt es. Etwas in dir sagt dir, dass du diese Person kennen solltest. Dass du sie vielleicht sogar kennst. Aber die Welt lässt es nicht zu. Noch nicht. Die Figur sitzt ruhig da. Wartend. Nicht bedrohlich. Nicht einladend. Einfach... da. Was tust du, Luisa?", choices:[{ text:"Ich gehe zu der Person.", next:"1_5" },{ text:"Ich laufe von der Person weg.", next:"1_6" }] },
-  "1_6": { label:"Akt 1, Szene 6", text:"DER RAND. Etwas in dir zieht sich zusammen. Kein klarer Gedanke, eher ein Instinkt. Ein Gefühl. Zu viel. Zu fremd. Dein Körper entscheidet schneller als dein Kopf. Du rennst. Der Hügel bleibt hinter dir zurück, der Tisch, die zwei Stühle, die verschwommene Gestalt, deren Gesicht du nicht erkennen kannst. Das Gras unter deinen Füßen gibt leicht nach, als würde es dich nicht wirklich berühren. Die Welt um dich herum bleibt still, zu still, während du weiterläufst. Und weiter. Und weiter. Bis die Welt plötzlich endet. Vor dir fällt der Boden einfach ab. Kein Abhang. Kein Übergang. Nur ein scharfer Schnitt als hätte jemand die Welt ausgeschnitten und in den Weltraum gelegt. Unter dir breitet sich ein Meer aus Sternen aus. Lebendig. Bewegend. Unendlich. Hinter dir der Hügel. Vor die liegt das Nichts. Was tust du, Luisa?", choices:[{ text:"Ich springe.", next:"0_0" },{ text:"Ich kehre um.", next:"1_5" }] },
-  "1_5": { label:"Akt 1, Szene 5", text:"DER TISCH. Du gehst den Hügel hinauf. Der Tisch steht dort, schlicht, aus hellem Holz. Zwei Stühle. Einer davon ist besetzt. Die Gestalt sitzt ruhig da. Du kannst die Umrisse klar erkennen - Schultern, Hände, Haltung. Aber jedes Mal, wenn dein Blick das Gesicht erreichen will, verwischt es, als würde die Welt selbst eine Grenze ziehen. Du setzt dich. Der Stuhl ist warm, obwohl hier keine Sonne scheint. Du beginnst das Gespräch. Es fühlt sich richtig an, als hättest du schon mit dieser Person gesprochen. Die Gestalt neigt leicht den Kopf. Dann antwortet sie. Nicht laut, nicht mit klaren Worten, eher wie ein Gedanke, der sich in dir formt. Du nimmst wahr, dass sie sich Creator nennt. Dass sie dich erwartet hat. Während sie weiter spricht, spürst du etwas, das du nicht einordnen kannst. Ein Eindruck, dass der Creator etwas in dir fühlt, etwas, das ihn irritiert, fasziniert, anzieht - ohne dass er es benennt. Dann verändert sich die Stimmung. Nicht bedrohlich, eher wie ein leiser Übergang. Der Creator spricht von einer Aufgabe. Nicht als Befehl, nicht als Prüfung, sondern als Möglichkeit. Etwas, das du tun könntest, wenn du willst. Du spürst, dass die Entscheidung bei dir liegt. Der Tisch wirkt plötzlich wie eine Schwelle. Ein Anfang. Die Frage steht im Raum, klar, ruhig, unausgesprochen: Bist du bereit, diese Mission anzunehmen, Luisa?", choices:[{ text:"Ich lehne ab.", next:"0_0" },{ text:"Ich akzeptiere die Mission.", next:"1_7" }] },
-  "1_9": { label:"Akt 1, Szene 1", text:"", choices:[{ text:"Ich lege ihn zurück.", next:"0_0" },{ text:"Ich öffne ihn.", next:"1_3" }] },
+    "0_0": { label:"Akt 0, Szene 0", text:"Du hälst inne. Vielleicht ist es besser so, du lässt den Behälter hier stehen. Vielleicht ist heute nicht der Tag für Geheimnisse. Der Fahrradkeller ist leer, es riecht nach Beton und kalter Luft. Du schließt deine Jacke. Bis auf den Behälter wirkt alles normal. Du schiebst dein Fahrrad hinaus. Die Tür fällt hinter dir zu.  Der Abend empfängt dich als wäre nichts gewesen. Die Straßen sind still. Und du fährst nach Hause...", choices:[{ text:"Zurück zum Anfang", next:"1_1" },{ text:"Spiel beenden", next:null}] },
+    "1_1": { label:"Akt 1, Szene 1", text:"DER KELLER. Der letzte Schultag vor den Ferien hätte leicht sein sollen. Aber irgendetwas hat den Tag in die Länge gezogen. Stunden, die sich gezogen haben wie Kaugummi. Als du endlich aus dem Klassenzimmer trittst, ist es schon Abend. Du gehst die Treppen hinunter in den Fahrradkeller. Deine Schritte hallen. Du bist allein. Du willst einfach nur nach Hause. Doch dann hälst du inne. In deinem Flaschenhalter steckt etwas, das dort nicht hingehört. Ein kleiner Behälter aus durchsichtigem Material. Du bist dir sicher: Der war heute Morgen nicht da. Du gehst einen Schritt näher. Dann noch einen. Der Behälter leuchtet schwach, ein warmes, pulsierendes Schimmern, das sich gegen die kalte Kellerluft stemmt. Für einen Moment hörst du nur deinen eigenen Atem. Was tust du, Luisa?", choices:[{ text:"Ich lasse ihn in Ruhe.", next:"0_0" },{ text:"Ich schaue ihn mir genauer an.", next:"1_2" }] },
+    "1_2": { label:"Akt 1, Szene 2", text:"DER BEHÄLTER. Du gehst näher an dein Fahrrad heran. Der Behälter sitzt fest im Flaschenhalter, als hätte ihn jemand mit Absicht dort platziert. Aus der Nähe wirkt er noch ungewöhnlicher: glatt, schwerer als Glas, aber ohne Kratzer, ohne Etikett, ohne jede Spur von Herkunft. Das Licht im Inneren pulsiert langsam. Warm. Ruhig. Fast wie ein Herzschlag. Du legst die Fingerspitzen an die Oberfläche. Der Behälter reagiert. Ein leiser Schimmer wandert unter deiner Berührung entlang, als würde er dich erkennen. Für einen Moment wird der Keller heller. Dann wird es wieder still. Der Behälter liegt schwer in deiner Hand. Und das Licht darin wartet. Was tust du, Luisa?", choices:[{ text:"Ich lege ihn zurück.", next:"0_0" },{ text:"Ich öffne ihn.", next:"1_3" }] },
+    "1_3": { label:"Akt 1, Szene 3", text:"DAS LICHT. Du öffnest den Behälter. Ein warmer Hauch entweicht. Du siehst hinein. Im Inneren des Behälters liegt kein Gegenstand im klassischen Sinn. Es ist eher... ein Zustand. Ein Fragment aus Licht, das sich nicht an die Regeln der Welt hält. Es hat keine feste Form. Manchmal wirkt es wie ein kleiner Splitter, manchmal wie ein Tropfen, manchmal wie ein winziger Nebelwirbel aus Helligkeit. Es leuchtet nicht stark. Es glimmt. Warm. Ruhig. In einem Rhythmus. Wenn man genauer hinsieht, erkennt man feine Linien im Licht. Wie winzige Sternbahnen, die sich umeinander drehen. Nicht chaotisch, sondern harmonisch, wie ein kleines Universum im Glas. Das Licht ist nicht heiß. Es ist nicht kalt. Und manchmal, wenn man es aus dem Augenwinkel betrachtet, scheint es sich zu bewegen, als würde es auf etwas reagieren. Oder auf jemanden. Was tust du, Luisa?", choices:[{ text:"Ich schließe den Behälter wieder.", next:"0_0" },{ text:"Ich greife nach dem Licht.", next:"1_4" }] },
+    "1_4": { label:"Akt 1, Szene 4", text:"DER ÜBERGANG. Du hälst den Behälter in der Hand. Das Licht darin pulsiert. Du atmest ein. Du greifst nach dem Licht. Für einen Augenblick spürst du nichts. Nur Wärme. Nur Stille. Dann passiert alles gleichzeitig. Das Licht schießt nach oben, umhüllt deine Hand, zieht sich an dir fest wie ein Faden aus Energie - und die Welt unter deinen Füßen bricht weg. Der Fahrradkeller löst sich auf. Die Kälte verschwindet. Die Geräusche verschwinden. Du wirst nicht gestoßen, nicht gezogen - du wirst übergeben. Du schwebst. Um dich herum öffnet sich ein Raum aus Sternen. Langsam, weit, still. Als würdest du durch ein Universum gleiten, das gerade erst beschlossen hat, zu existieren. Vor dir entsteht ein Lichtpunkt. Er wächst. Er wird zu einer Form. Zu einem Hügel. Gras, so grün, dass es fast leuchtet. Ein Wind, den du nicht spürst, bewegt die Halme. Auf dem Hügel steht ein Tisch. Zwei Stühle. Auf einem der Stühle sitzt jemand. Du kannst die Person sehen. Die Umrisse. Die Haltung. Die Präsenz. Aber jedes Mal, wenn du versuchst, das Gesicht zu erkennen, verwischt es. Etwas in dir sagt dir, dass du diese Person kennen solltest. Dass du sie vielleicht sogar kennst. Aber die Welt lässt es nicht zu. Noch nicht. Die Figur sitzt ruhig da. Wartend. Nicht bedrohlich. Nicht einladend. Einfach... da. Was tust du, Luisa?", choices:[{ text:"Ich gehe zu der Person.", next:"1_5" },{ text:"Ich laufe von der Person weg.", next:"1_6" }] },
+    "1_6": { label:"Akt 1, Szene 6", text:"DER RAND. Etwas in dir zieht sich zusammen. Kein klarer Gedanke, eher ein Instinkt. Ein Gefühl. Zu viel. Zu fremd. Dein Körper entscheidet schneller als dein Kopf. Du rennst. Der Hügel bleibt hinter dir zurück, der Tisch, die zwei Stühle, die verschwommene Gestalt, deren Gesicht du nicht erkennen kannst. Das Gras unter deinen Füßen gibt leicht nach, als würde es dich nicht wirklich berühren. Die Welt um dich herum bleibt still, zu still, während du weiterläufst. Und weiter. Und weiter. Bis die Welt plötzlich endet. Vor dir fällt der Boden einfach ab. Kein Abhang. Kein Übergang. Nur ein scharfer Schnitt als hätte jemand die Welt ausgeschnitten und in den Weltraum gelegt. Unter dir breitet sich ein Meer aus Sternen aus. Lebendig. Bewegend. Unendlich. Hinter dir der Hügel. Vor die liegt das Nichts. Was tust du, Luisa?", choices:[{ text:"Ich springe.", next:"0_0" },{ text:"Ich kehre um.", next:"1_5" }] },
+    "1_5": { label:"Akt 1, Szene 5", text:"DER TISCH. Du gehst den Hügel hinauf. Der Tisch steht dort, schlicht, aus hellem Holz. Zwei Stühle. Einer davon ist besetzt. Die Gestalt sitzt ruhig da. Du kannst die Umrisse klar erkennen - Schultern, Hände, Haltung. Aber jedes Mal, wenn dein Blick das Gesicht erreichen will, verwischt es, als würde die Welt selbst eine Grenze ziehen. Du setzt dich. Der Stuhl ist warm, obwohl hier keine Sonne scheint. Du beginnst das Gespräch. Es fühlt sich richtig an, als hättest du schon mit dieser Person gesprochen. Die Gestalt neigt leicht den Kopf. Dann antwortet sie. Nicht laut, nicht mit klaren Worten, eher wie ein Gedanke, der sich in dir formt. Du nimmst wahr, dass sie sich Creator nennt. Dass sie dich erwartet hat. Während sie weiter spricht, spürst du etwas, das du nicht einordnen kannst. Ein Eindruck, dass der Creator etwas in dir fühlt, etwas, das ihn irritiert, fasziniert, anzieht - ohne dass er es benennt. Dann verändert sich die Stimmung. Nicht bedrohlich, eher wie ein leiser Übergang. Der Creator spricht von einer Aufgabe. Nicht als Befehl, nicht als Prüfung, sondern als Möglichkeit. Etwas, das du tun könntest, wenn du willst. Du spürst, dass die Entscheidung bei dir liegt. Der Tisch wirkt plötzlich wie eine Schwelle. Ein Anfang. Die Frage steht im Raum, klar, ruhig, unausgesprochen: Bist du bereit, diese Mission anzunehmen, Luisa?", choices:[{ text:"Ich lehne ab.", next:"0_0" },{ text:"Ich akzeptiere die Mission.", next:"1_7" }] },
+    "1_9": { label:"Akt 1, Szene 1", text:"", choices:[{ text:"Ich lege ihn zurück.", next:"0_0" },{ text:"Ich öffne ihn.", next:"1_3" }] },
 };
 
 /********* LOCAL STORAGE *********/
 const saveKey = 'luisaStorySave';
 let currentScene = null;
 
-/********* HINTERGRUNDMUSIK *********/
+/********* HINTERGRUNDMUSIK UND TIPPSOUND *********/
 const music = document.getElementById('bgMusic');
-music.volume = 0.2;
+music.volume = 0.4;
 const typeSound = document.getElementById('typeSound');
-typeSound.volume = 0.15; // sehr leise!
+typeSound.volume = 0.15;
 
-/********* TIPANIMATION *********/
+function stopTypeSound() {
+  const fade = setInterval(() => {
+    if (typeSound.volume > 0.02) {
+      typeSound.volume -= 0.02;
+    } else {
+      clearInterval(fade);
+      typeSound.pause();
+      typeSound.currentTime = 0;
+      typeSound.volume = 0.15;
+    }
+  }, 20);
+}
+
 function typeText(element, text, speed = 40, callback = null) {
   element.innerText = '';
   let i = 0;
+  let typingActive = true;
 
   function typing() {
+    if (!typingActive) { stopTypeSound(); return; }
+
     if (i < text.length) {
       element.innerText += text[i];
 
-      // 🔊 Sound nur gelegentlich abspielen
       if (text[i] !== ' ' && Math.random() < 0.35) {
         typeSound.currentTime = 0;
         typeSound.play().catch(() => {});
@@ -204,22 +273,23 @@ function typeText(element, text, speed = 40, callback = null) {
 
       i++;
       setTimeout(typing, speed);
-    } else if (callback) {
-      callback();
+    } else {
+      stopTypeSound();
+      typingActive = false;
+      if (callback) callback();
     }
   }
-
   typing();
+
+  return () => { typingActive = false; stopTypeSound(); };
 }
 
-/********* HAUPTMENÜ *********/
+/********* HAUPTMENÜ BUTTONS *********/
 document.getElementById('newGameBtn').onclick = function() {
   currentScene = "1_1";
   localStorage.setItem(saveKey, currentScene);
   showGame();
-  // Musik starten, falls noch nicht gestartet
-  music.play().catch(e => console.log("Musik konnte nicht starten:", e));
-  fetch('https://tinyurl.com/spielstart-ping').catch(()=>{});
+  music.play().catch(e => console.log(e));
 }
 
 document.getElementById('loadGameBtn').onclick = function() {
@@ -227,16 +297,14 @@ document.getElementById('loadGameBtn').onclick = function() {
   if(saved && story[saved]){
     currentScene = saved;
     showGame();
-    // Musik starten
-    music.play().catch(e => console.log("Musik konnte nicht starten:", e));
-  } else {
-    alert("Kein gespeicherter Spielstand gefunden.");
-  }
+    music.play().catch(e => console.log(e));
+  } else { alert("Kein gespeicherter Spielstand gefunden."); }
 }
 
 /********* SPIEL ANZEIGEN *********/
 function showGame(){
   document.getElementById('mainMenu').style.display = 'none';
+  document.getElementById('chatContainer').style.display = 'none';
   document.getElementById('gameContainer').style.display = 'flex';
   showScene();
 }
@@ -246,15 +314,13 @@ function showScene(){
   const scene = story[currentScene];
   if(!scene) return;
 
-  document.getElementById('sceneLabel').innerText = scene.label;
   const sceneText = document.getElementById('sceneText');
   const choicesDiv = document.getElementById('choices');
-  
-  // Textbox anzeigen
+  document.getElementById('sceneLabel').innerText = scene.label;
+
   sceneText.style.display = 'block';
-  choicesDiv.style.visibility = 'hidden'; // Buttons erst ausblenden
-  
-  // Tipp-Animation mit Callback, danach Buttons zeigen
+  choicesDiv.style.visibility = 'hidden';
+
   typeText(sceneText, scene.text, 40, () => {
     choicesDiv.innerHTML = '';
     scene.choices.forEach(choice => {
@@ -276,8 +342,61 @@ function showScene(){
     choicesDiv.style.visibility = 'visible';
   });
 }
+
+/********* FIREBASE CONFIG *********/
+const firebaseConfig = {
+  apiKey: "AIzaSyD_cDHNMZZiLuGLfAntYAc8ONtKgwYlp9Y",
+  authDomain: "luisaglobalchat.firebaseapp.com",
+  projectId: "luisaglobalchat",
+  storageBucket: "luisaglobalchat.appspot.com",
+  messagingSenderId: "1029281753779",
+  appId: "1:1029281753779:web:c266b6b0ef66a977999ec6"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const chatCollection = db.collection('chatMessages');
+
+/********* CHAT FUNKTIONEN *********/
+// Chat öffnen
+document.getElementById('openChatBtn').onclick = function() {
+  document.getElementById('mainMenu').style.display = 'none';
+  document.getElementById('gameContainer').style.display = 'none';
+  document.getElementById('chatContainer').style.display = 'flex';
+  loadChat();
+};
+
+// Chat schließen
+document.getElementById('backFromChatBtn').onclick = function() {
+  document.getElementById('chatContainer').style.display = 'none';
+  document.getElementById('mainMenu').style.display = 'flex';
+};
+
+// Nachricht abschicken
+document.getElementById('sendChatBtn').onclick = function() {
+  const msg = document.getElementById('chatInput').value.trim();
+  if(msg === '') return;
+  chatCollection.add({
+    text: msg,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  });
+  document.getElementById('chatInput').value = '';
+};
+
+// Nachrichten live laden
+function loadChat() {
+  const chatMessages = document.getElementById('chatMessages');
+  chatMessages.innerHTML = '';
+  chatCollection.orderBy('timestamp', 'asc').onSnapshot(snapshot => {
+    chatMessages.innerHTML = '';
+    snapshot.forEach(doc => {
+      const div = document.createElement('div');
+      div.innerText = doc.data().text;
+      chatMessages.appendChild(div);
+    });
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  });
+}
 </script>
 </body>
 </html>
-
 
