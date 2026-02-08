@@ -213,7 +213,7 @@ h2 {
   <button id="newGameBtn">Neuer Spielstand</button>
   <button id="loadGameBtn">Spielstand laden</button>
   <button id="openChatBtn">Deine Gedanken</button>
-  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 1.0.8</div>
+  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 1.1.8</div>
 </div>
 
 <!-- Spielbereich -->
@@ -348,14 +348,9 @@ function showScene(){
 
   sceneText.style.display = 'block';
   choicesDiv.style.visibility = 'hidden';
-  choicesDiv.innerHTML = ''; // reset
 
-  // Stop vorheriger Typing
-  if(stopTyping) stopTyping();
-
-  // Typen starten
-  stopTyping = typeText(sceneText, scene.text, 40, () => {
-    // Choices Buttons
+  typeText(sceneText, scene.text, 40, () => {
+    choicesDiv.innerHTML = '';
     scene.choices.forEach(choice => {
       const btn = document.createElement('button');
       btn.innerText = choice.text;
@@ -372,23 +367,6 @@ function showScene(){
       };
       choicesDiv.appendChild(btn);
     });
-
-    // 🎯 Zurück-Button hinzufügen (wie beim Chat)
-    const backBtn = document.createElement('button');
-    backBtn.innerText = 'Zurück';
-    backBtn.style.background = '#6655aa'; // wie chatBack
-    backBtn.onclick = function(){
-      // stoppe alles
-      if(stopTyping) stopTyping();
-      music.pause();
-      music.currentTime = 0;
-
-      // Szene zurücksetzen & Menü zeigen
-      document.getElementById('gameContainer').style.display = 'none';
-      document.getElementById('mainMenu').style.display = 'flex';
-    };
-    choicesDiv.appendChild(backBtn);
-
     choicesDiv.style.visibility = 'visible';
   });
 }
@@ -472,6 +450,7 @@ function addMessage(msgData) {
 </script>
 </body>
 </html>
+
 
 
 
