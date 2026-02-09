@@ -285,7 +285,7 @@ h2 {
   <button id="newGameBtn">Neuer Spielstand</button>
   <button id="loadGameBtn">Spielstand laden</button>
   <button id="openChatBtn">Deine Gedanken</button>
-  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.9.2.4</div>
+  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.9.2.5</div>
 </div>
 
 <!-- Spielbereich -->
@@ -533,6 +533,9 @@ function saveDecision(decisionKey){
     }, { merge: true });
 }
 
+const startCollection = db.collection('appStarts');
+const startDoc = startCollection.doc(deviceId);
+
 /********* CHAT FUNKTIONEN *********/
 // Chat öffnen
 document.getElementById('openChatBtn').onclick = function() {
@@ -592,11 +595,18 @@ function addMessage(msgData) {
 
 /********* START INTRO *********/
 document.getElementById('startBtn').onclick = () => {
-  // Musik starten (autoplay-safe)
+  // 🎵 Musik starten (autoplay-safe)
   music.play().catch(() => {});
   music.volume = 0.6;
 
-  // Overlay sanft ausblenden
+  // 📊 Start in Firebase zählen
+  startDoc.set({
+    deviceId: deviceId,
+    startCount: firebase.firestore.FieldValue.increment(1),
+    lastStart: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+
+  // 🌫️ Overlay ausblenden
   const overlay = document.getElementById('startOverlay');
   overlay.style.opacity = '0';
 
