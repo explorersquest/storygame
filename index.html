@@ -488,7 +488,7 @@ function showScene(){
     
         // 2. Szene wechseln
         if(choice.next){
-            currentScene = choice.next;
+            currentScene = typeof choice.next === 'function' ? choice.next() : choice.next;
             localStorage.setItem(saveKey, currentScene);
             showScene();
         } else {
