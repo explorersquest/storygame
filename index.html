@@ -287,8 +287,8 @@ function spawnShootingStar(){
   star.className = 'shooting-star';
 
   // Startposition (oben rechts Bereich)
-  const startX = Math.random() * window.innerWidth * 0.5 + window.innerWidth * 0.5;
-  const startY = Math.random() * window.innerHeight * 0.3;
+  const startX = window.innerWidth + Math.random() * 200;
+  const startY = -Math.random() * window.innerHeight * 0.3;
 
   star.style.left = startX + 'px';
   star.style.top = startY + 'px';
