@@ -458,15 +458,16 @@ function showGame(){
 /********* SZENE ANZEIGEN *********/
 function showScene(){
   const scene = story[currentScene];
-  // Verlauf speichern
-  if(sceneHistory[sceneHistory.length-1] !== currentScene){
-      sceneHistory.push(currentScene);
-  }
-
   if(!scene) return;
 
-    // ---- AUTOMATISCHER LOCAL SAVE ----
+  // ---- AUTOMATISCHER LOCAL SAVE ----
   localStorage.setItem(saveKey, currentScene);
+
+  // --- Szene nur in History speichern, wenn Akt > 0 ---
+  const actNum = parseInt(currentScene.split('_')[0]);
+  if(actNum > 0){
+      sceneHistory.push(currentScene);
+  }
 
   const sceneText = document.getElementById('sceneText');
   const choicesDiv = document.getElementById('choices');
