@@ -285,7 +285,7 @@ h2 {
   <button id="newGameBtn">Neuer Spielstand</button>
   <button id="loadGameBtn">Spielstand laden</button>
   <button id="openChatBtn">Deine Gedanken</button>
-  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.9.2.3</div>
+  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.9.2.4</div>
 </div>
 
 <!-- Spielbereich -->
@@ -307,6 +307,7 @@ h2 {
 
 <audio id="bgMusic" src="momedeiros88-mystical.mp3" type="audio/mpeg" loop></audio>
 <audio id="typeSound" src="game-text.mp3" preload="auto"></audio>
+<audio id="clickSound" src="magic-button-click.mp3" preload="auto"></audio>
 
 <script>
 /********* NORMALE STERNE *********/
@@ -378,6 +379,8 @@ const music = document.getElementById('bgMusic');
 music.volume = 0.6;
 const typeSound = document.getElementById('typeSound');
 typeSound.volume = 0.15;
+const clickSound = document.getElementById('clickSound');
+clickSound.volume = 0.24;
 
 function stopTypeSound() {
   const fade = setInterval(() => {
@@ -601,6 +604,15 @@ document.getElementById('startBtn').onclick = () => {
     overlay.remove();
   }, 800);
 };
+
+/********* GLOBAL BUTTON CLICK SOUND *********/
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+
+  clickSound.currentTime = 0;
+  clickSound.play().catch(() => {});
+});
 
 </script>
 </body>
