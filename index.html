@@ -429,9 +429,9 @@ function typeText(element, text, speed = 40, callback = null) {
 /********* HAUPTMENÜ BUTTONS *********/
 document.getElementById('newGameBtn').onclick = function() {
   currentScene = "1_1";
+  sceneHistory = [];
 
-  // ---- INVENTAR CLEAR ----
-  inventoryDoc.delete().catch(() => {}); // löscht alte Entscheidungen beim Neustart
+  inventoryDoc.delete().catch(() => {});
   localStorage.setItem(saveKey, currentScene);
 
   showGame();
@@ -463,11 +463,12 @@ function showScene(){
   // ---- AUTOMATISCHER LOCAL SAVE ----
   localStorage.setItem(saveKey, currentScene);
 
-  // Szene nur speichern, wenn Akt > 0 UND noch nicht zuletzt gespeichert
-  const actNum = parseInt(currentScene.split('_')[0]);
+  const [actNum, sceneNum] = currentScene.split('_').map(Number);
+
   if (
     actNum > 0 &&
-    sceneHistory[sceneHistory.length - 1] !== currentScene
+    sceneNum === 1 && // ⭐ nur Einstiegsszene eines Akts
+    !sceneHistory.includes(currentScene)
   ) {
     sceneHistory.push(currentScene);
   }
@@ -516,17 +517,9 @@ function showScene(){
 }
 
 function getLastActScene() {
-  for (let i = sceneHistory.length - 1; i >= 0; i--) {
-    const sceneId = sceneHistory[i];
-    const act = parseInt(sceneId.split('_')[0]);
-
-    if (act > 0) {
-      return sceneId;
-    }
-  }
-  return null;
+  if (sceneHistory.length === 0) return null;
+  return sceneHistory[sceneHistory.length - 1];
 }
-
 
 /********* FIREBASE CONFIG *********/
 const firebaseConfig = {
