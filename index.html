@@ -351,7 +351,7 @@ setInterval(() => {
 
 /********* STORY DATA *********/
 const story = {
-    "0_0": { label:"Akt 0, Szene 0", text:"... Du hälst inne. Vielleicht ist es besser so, du lässt den Behälter hier stehen. Vielleicht ist heute nicht der Tag für Geheimnisse. Der Fahrradkeller ist leer, es riecht nach Beton und kalter Luft. Du schließt deine Jacke. Bis auf den Behälter wirkt alles normal. Du schiebst dein Fahrrad hinaus. Die Tür fällt hinter dir zu.  Der Abend empfängt dich als wäre nichts gewesen. Die Straßen sind still. Und du fährst nach Hause...", choices:[{ text:"Zurück zum letzten Akt", next: () => getLastActScene()  },{ text:"Spiel beenden", next:null}] },
+    "0_0": { label:"Akt 0, Szene 0", text:"... Du hälst inne. Vielleicht ist es besser so, du lässt den Behälter hier stehen. Vielleicht ist heute nicht der Tag für Geheimnisse. Der Fahrradkeller ist leer, es riecht nach Beton und kalter Luft. Du schließt deine Jacke. Bis auf den Behälter wirkt alles normal. Du schiebst dein Fahrrad hinaus. Die Tür fällt hinter dir zu.  Der Abend empfängt dich als wäre nichts gewesen. Die Straßen sind still. Und du fährst nach Hause...", choices:[{ text:"Zurück zum letzten Akt", next: () => {const last = getLastActScene(); return last ? last : "0_0";}},{ text:"Spiel beenden", next:null}] },
     "1_1": { label:"Akt 1, Szene 1", text:"DER KELLER. Der letzte Schultag vor den Ferien hätte leicht sein sollen. Aber irgendetwas hat den Tag in die Länge gezogen. Stunden, die sich gezogen haben wie Kaugummi. Als du endlich aus dem Klassenzimmer trittst, ist es schon Abend. Du gehst die Treppen hinunter in den Fahrradkeller. Deine Schritte hallen. Du bist allein. Du willst einfach nur nach Hause. Doch dann hälst du inne. In deinem Flaschenhalter steckt etwas, das dort nicht hingehört. Ein kleiner Behälter aus durchsichtigem Material. Du bist dir sicher: Der war heute Morgen nicht da. Du gehst einen Schritt näher. Dann noch einen. Der Behälter leuchtet schwach, ein warmes, pulsierendes Schimmern, das sich gegen die kalte Kellerluft stemmt. Für einen Moment hörst du nur deinen eigenen Atem. Was tust du, Luisa?", choices:[{ text:"Ich lasse ihn in Ruhe.", next:"0_0", save:"Spiel gestartet" },{ text:"Ich schaue ihn mir genauer an.", next:"1_2", save:"Spiel gestartet" }] },
     "1_2": { label:"Akt 1, Szene 2", text:"DER BEHÄLTER. Du gehst näher an dein Fahrrad heran. Der Behälter sitzt fest im Flaschenhalter, als hätte ihn jemand mit Absicht dort platziert. Aus der Nähe wirkt er noch ungewöhnlicher: glatt, schwerer als Glas, aber ohne Kratzer, ohne Etikett, ohne jede Spur von Herkunft. Das Licht im Inneren pulsiert langsam. Warm. Ruhig. Fast wie ein Herzschlag. Du legst die Fingerspitzen an die Oberfläche. Der Behälter reagiert. Ein leiser Schimmer wandert unter deiner Berührung entlang, als würde er dich erkennen. Für einen Moment wird der Keller heller. Dann wird es wieder still. Der Behälter liegt schwer in deiner Hand. Und das Licht darin wartet. Was tust du, Luisa?", choices:[{ text:"Ich lege ihn zurück.", next:"0_0" },{ text:"Ich öffne ihn.", next:"1_3" }] },
     "1_3": { label:"Akt 1, Szene 3", text:"DAS LICHT. Du öffnest den Behälter. Ein warmer Hauch entweicht. Du siehst hinein. Im Inneren des Behälters liegt kein Gegenstand im klassischen Sinn. Es ist eher... ein Zustand. Ein Fragment aus Licht, das sich nicht an die Regeln der Welt hält. Es hat keine feste Form. Manchmal wirkt es wie ein kleiner Splitter, manchmal wie ein Tropfen, manchmal wie ein winziger Nebelwirbel aus Helligkeit. Es leuchtet nicht stark. Es glimmt. Warm. Ruhig. In einem Rhythmus. Wenn man genauer hinsieht, erkennt man feine Linien im Licht. Wie winzige Sternbahnen, die sich umeinander drehen. Nicht chaotisch, sondern harmonisch, wie ein kleines Universum im Glas. Das Licht ist nicht heiß. Es ist nicht kalt. Und manchmal, wenn man es aus dem Augenwinkel betrachtet, scheint es sich zu bewegen, als würde es auf etwas reagieren. Oder auf jemanden. Was tust du, Luisa?", choices:[{ text:"Ich schließe den Behälter wieder.", next:"0_0" },{ text:"Ich greife nach dem Licht.", next:"1_4" }] },
@@ -463,10 +463,13 @@ function showScene(){
   // ---- AUTOMATISCHER LOCAL SAVE ----
   localStorage.setItem(saveKey, currentScene);
 
-  // Szene nur speichern, wenn Akt > 0
+  // Szene nur speichern, wenn Akt > 0 UND noch nicht zuletzt gespeichert
   const actNum = parseInt(currentScene.split('_')[0]);
-  if(actNum > 0){
-      sceneHistory.push(currentScene);
+  if (
+    actNum > 0 &&
+    sceneHistory[sceneHistory.length - 1] !== currentScene
+  ) {
+    sceneHistory.push(currentScene);
   }
 
   const sceneText = document.getElementById('sceneText');
@@ -513,20 +516,17 @@ function showScene(){
 }
 
 function getLastActScene() {
-  // aktuelle Akt-Nummer
-  const currentAct = parseInt(currentScene.split('_')[0]);
+  for (let i = sceneHistory.length - 1; i >= 0; i--) {
+    const sceneId = sceneHistory[i];
+    const act = parseInt(sceneId.split('_')[0]);
 
-  // Suche in der History von hinten, nur Szenen mit Akt > 0 und kleiner als currentAct
-  for(let i = sceneHistory.length - 1; i >= 0; i--){
-    const histAct = parseInt(sceneHistory[i].split('_')[0]);
-    if(histAct > 0 && histAct < currentAct){
-      return sceneHistory[i];
+    if (act > 0) {
+      return sceneId;
     }
   }
-
-  // Keine passende Szene gefunden
   return null;
 }
+
 
 /********* FIREBASE CONFIG *********/
 const firebaseConfig = {
