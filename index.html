@@ -285,7 +285,8 @@ h2 {
   <button id="newGameBtn">Neuer Spielstand</button>
   <button id="loadGameBtn">Spielstand laden</button>
   <button id="openChatBtn">Deine Gedanken</button>
-  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.9.3.5</div>
+  <button id="miniGameBtn">Golden Glimmern</button>
+  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.10.1.1</div>
 </div>
 
 <!-- Spielbereich -->
@@ -308,6 +309,26 @@ h2 {
 <audio id="bgMusic" src="momedeiros88-mystical.mp3" type="audio/mpeg" loop></audio>
 <audio id="typeSound" src="game-text.mp3" preload="auto"></audio>
 <audio id="clickSound" src="magic-button-click.mp3" preload="auto"></audio>
+
+<!-- Mini-Game Container -->
+<div id="miniGameContainer" style="display:none; flex-direction:column; align-items:center; justify-content:center; height:100%; width:100%;">
+  <h2>Golden Glimmern ✨</h2>
+
+  <!-- Grid für das Spiel -->
+  <div id="grid" style="display:grid; grid-template-columns:repeat(3,100px); grid-gap:15px; margin:20px;"></div>
+
+  <!-- Score während des Spiels -->
+  <div id="miniGameScore" style="color:#ffd700; margin:10px; font-size:20px;">Score: 0</div>
+
+  <!-- Buttons nach Game Over -->
+  <div id="miniGameButtons" style="display:none; gap:15px;">
+    <button id="miniGameRetry">Nochmal spielen</button>
+    <button id="miniGameMenu">Zurück zum Menü</button>
+  </div>
+
+  <!-- Leaderboard -->
+  <div id="leaderboard" style="margin-top:20px; text-align:center;"></div>
+</div>
 
 <script>
 /********* NORMALE STERNE *********/
@@ -357,15 +378,15 @@ const story = {
     "1_3": { label:"Akt 1, Szene 3", text:"DAS LICHT. Du öffnest den Behälter. Ein warmer Hauch entweicht. Du siehst hinein. Im Inneren des Behälters liegt kein Gegenstand im klassischen Sinn. Es ist eher... ein Zustand. Ein Fragment aus Licht, das sich nicht an die Regeln der Welt hält. Es hat keine feste Form. Manchmal wirkt es wie ein kleiner Splitter, manchmal wie ein Tropfen, manchmal wie ein winziger Nebelwirbel aus Helligkeit. Es leuchtet nicht stark. Es glimmt. Warm. Ruhig. In einem Rhythmus. Wenn man genauer hinsieht, erkennt man feine Linien im Licht. Wie winzige Sternbahnen, die sich umeinander drehen. Nicht chaotisch, sondern harmonisch, wie ein kleines Universum im Glas. Das Licht ist nicht heiß. Es ist nicht kalt. Und manchmal, wenn man es aus dem Augenwinkel betrachtet, scheint es sich zu bewegen, als würde es auf etwas reagieren. Oder auf jemanden. Was tust du, Luisa?", choices:[{ text:"Ich schließe den Behälter wieder.", next:"0_0" },{ text:"Ich greife nach dem Licht.", next:"1_4" }] },
     "1_4": { label:"Akt 1, Szene 4", text:"DER ÜBERGANG. Du hälst den Behälter in der Hand. Das Licht darin pulsiert. Du atmest ein. Du greifst nach dem Licht. Für einen Augenblick spürst du nichts. Nur Wärme. Nur Stille. Dann passiert alles gleichzeitig. Das Licht schießt nach oben, umhüllt deine Hand, zieht sich an dir fest wie ein Faden aus Energie - und die Welt unter deinen Füßen bricht weg. Der Fahrradkeller löst sich auf. Die Kälte verschwindet. Die Geräusche verschwinden. Du wirst nicht gestoßen, nicht gezogen - du wirst übergeben. Du schwebst. Um dich herum öffnet sich ein Raum aus Sternen. Langsam, weit, still. Als würdest du durch ein Universum gleiten, das gerade erst beschlossen hat, zu existieren. Vor dir entsteht ein Lichtpunkt. Er wächst. Er wird zu einer Form. Zu einem Hügel. Gras, so grün, dass es fast leuchtet. Ein Wind, den du nicht spürst, bewegt die Halme. Auf dem Hügel steht ein Tisch. Zwei Stühle. Auf einem der Stühle sitzt jemand. Du kannst die Person sehen. Die Umrisse. Die Haltung. Die Präsenz. Aber jedes Mal, wenn du versuchst, das Gesicht zu erkennen, verwischt es. Etwas in dir sagt dir, dass du diese Person kennen solltest. Dass du sie vielleicht sogar kennst. Aber die Welt lässt es nicht zu. Noch nicht. Die Figur sitzt ruhig da. Wartend. Nicht bedrohlich. Nicht einladend. Einfach... da. Was tust du, Luisa?", choices:[{ text:"Ich gehe zu der Person.", next:"1_5" },{ text:"Ich laufe von der Person weg.", next:"1_6" }] },
     "1_6": { label:"Akt 1, Szene 6", text:"DER RAND. Etwas in dir zieht sich zusammen. Kein klarer Gedanke, eher ein Instinkt. Ein Gefühl. Zu viel. Zu fremd. Dein Körper entscheidet schneller als dein Kopf. Du rennst. Der Hügel bleibt hinter dir zurück, der Tisch, die zwei Stühle, die verschwommene Gestalt, deren Gesicht du nicht erkennen kannst. Das Gras unter deinen Füßen gibt leicht nach, als würde es dich nicht wirklich berühren. Die Welt um dich herum bleibt still, zu still, während du weiterläufst. Und weiter. Und weiter. Bis die Welt plötzlich endet. Vor dir fällt der Boden einfach ab. Kein Abhang. Kein Übergang. Nur ein scharfer Schnitt als hätte jemand die Welt ausgeschnitten und in den Weltraum gelegt. Unter dir breitet sich ein Meer aus Sternen aus. Lebendig. Bewegend. Unendlich. Hinter dir der Hügel. Vor die liegt das Nichts. Was tust du, Luisa?", choices:[{ text:"Ich springe.", next:"0_0" },{ text:"Ich kehre um.", next:"1_5" }] },
-    "1_5": { label:"Akt 1, Szene 5", text:"DER TISCH. Du gehst den Hügel hinauf. Der Tisch steht dort, schlicht, aus hellem Holz. Zwei Stühle. Einer davon ist besetzt. Die Gestalt sitzt ruhig da. Du kannst die Umrisse klar erkennen - Schultern, Hände, Haltung. Aber jedes Mal, wenn dein Blick das Gesicht erreichen will, verwischt es, als würde die Welt selbst eine Grenze ziehen. Du setzt dich. Der Stuhl ist warm, obwohl hier keine Sonne scheint. Du beginnst das Gespräch. Es fühlt sich richtig an, als hättest du schon mit dieser Person gesprochen. Die Gestalt neigt leicht den Kopf. Dann antwortet sie. Nicht laut, nicht mit klaren Worten, eher wie ein Gedanke, der sich in dir formt. Du nimmst wahr, dass sie sich Creator nennt. Dass sie dich erwartet hat. Während sie weiter spricht, spürst du etwas, das du nicht einordnen kannst. Ein Eindruck, dass der Creator etwas in dir fühlt, etwas, das ihn irritiert, fasziniert, anzieht - ohne dass er es benennt. Dann verändert sich die Stimmung. Nicht bedrohlich, eher wie ein leiser Übergang. Der Creator spricht von einer Aufgabe. Nicht als Befehl, nicht als Prüfung, sondern als Möglichkeit. Etwas, das du tun könntest, wenn du willst. Du spürst, dass die Entscheidung bei dir liegt. Der Tisch wirkt plötzlich wie eine Schwelle. Ein Anfang. Die Frage steht im Raum, klar, ruhig, unausgesprochen: Bist du bereit, diese Mission anzunehmen, Luisa?", choices:[{ text:"Ich lehne ab.", next:"0_0" },{ text:"Ich akzeptiere die Mission.", next:"1_7" }] },
-    "1_7": { label:"Akt 1, Szene 7", text:"DIE MISSION. Als du deine Entscheidung getroffen hast, verändert sich die Welt kaum sichtbar. Der Hügel bleibt, der Tisch bleibt, aber die Luft wirkt anders. Klarer, dichter, als hätte jemand die Schärfe leicht erhöht. Die Gestalt vor dir versucht für einen Moment, Form zu halten. Du spürst, wie sie sich sammelt, wie sie sich konzentriert, als wolle sie dir etwas zeigen, das schwer zu zeigen ist. Doch das Gesicht bleibt verschwommen, als würde die Welt selbst verhindern, dass du es erkennst. Der Creator erklärt dir, dass diese Welt größer ist, als du bisher gesehen hast. Dass sie aus Wäldern, Lichtungen, Dörfern, Ruinen und Flüssen besteht, aus Orten, die ruhig sind, aber nicht vollständig. Er lässt dich spüren, dass die Welt fragmentiert ist. Nicht kaputt - nur unvollständig. Als hätte jemand ein wunderschönes Bild gemalt und dann einiges Teile bewusst leer gelassen. Er sagt dir, dass diese Fragmente nicht zufällig fehlen. Dass sie etwas mit ihm zu tun haben. Mit seiner Unsicherheit. Mit etwas, das er fühlt, aber nicht versteht. Er erklärt dir, dass du die Welt nicht retten musst. Dass du nichts beweisen musst. Dass du nur entscheiden musst, wie viel du sehen willst und wie viel zu zeigen willst. Denn jedes Fragment, das du findest, macht die Welt klarer. Und ihn auch. In der Ferne öffnet sich ein Weg. Ein schmaler Pfad, der in einen Wald führt, dessen Bäume noch keine Schatten werfen, weil sie erst betreten werden müssen. Du willst gerade aufstehen, als sich die Gestalt vor dir noch einmal regt. Eine Frage legt sich in dich. Eine Frage, die die Welt speichern will, weil sie bestimmt, wie sie dir begegnen soll. Luisa, willst du, dass diese Welt dir nahe kommt - oder soll sie dir Raum lassen?", choices:[{ text:"Nähe.", next:"2_1", save:"Sie will Nähe" },{ text:"Raum.", next:"2_1" , save:"Sie will Raum"}] },
+    "1_5": { label:"Akt 1, Szene 5", text:"DER TISCH. Du gehst den Hügel hinauf. Der Tisch steht dort, schlicht, aus hellem Holz. Zwei Stühle. Einer davon ist besetzt. Die Gestalt sitzt ruhig da. Du kannst die Umrisse klar erkennen - Schultern, Hände, Haltung. Aber jedes Mal, wenn dein Blick das Gesicht erreichen will, verwischt es, als würde die Welt selbst eine Grenze ziehen. Du setzt dich. Der Stuhl ist warm, obwohl hier keine Sonne scheint. Du beginnst das Gespräch. Es fühlt sich richtig an, als hättest du schon mit dieser Person gesprochen. Die Gestalt neigt leicht den Kopf. Dann antwortet sie. Nicht laut, nicht mit klaren Worten, eher wie ein Gedanke, der sich in dir formt. Du nimmst wahr, dass sie sich Creator nennt. Dass sie dich erwartet hat. Während sie weiter spricht, spürst du etwas, das du nicht einordnen kannst. ein Eindruck, dass der Creator dich aufmerksam beobachtet. Nicht wertend. Nicht erwartungsvoll. Eher so, als würde er etwas verstehen wollen, das ihm selbst noch nicht ganz klar ist. Dann verändert sich die Stimmung. Nicht bedrohlich, eher wie ein leiser Übergang. Der Creator spricht von einer Aufgabe. Nicht als Befehl, nicht als Prüfung, sondern als Möglichkeit. Etwas, das du tun könntest, wenn du willst. Du spürst, dass die Entscheidung bei dir liegt. Der Tisch wirkt plötzlich wie eine Schwelle. Ein Anfang. Die Frage steht im Raum, klar, ruhig, unausgesprochen: Bist du bereit, diese Mission anzunehmen, Luisa?", choices:[{ text:"Ich lehne ab.", next:"0_0" },{ text:"Ich akzeptiere die Mission.", next:"1_7" }] },
+    "1_7": { label:"Akt 1, Szene 7", text:"DIE MISSION. Als du deine Entscheidung getroffen hast, verändert sich die Welt kaum sichtbar. Der Hügel bleibt, der Tisch bleibt, aber die Luft wirkt anders. Klarer, dichter, als hätte jemand die Schärfe leicht erhöht. Die Gestalt vor dir versucht für einen Moment, Form zu halten. Du spürst, wie sie sich sammelt, wie sie sich konzentriert, als wolle sie dir etwas zeigen, das schwer zu zeigen ist. Doch das Gesicht bleibt verschwommen, als würde die Welt selbst verhindern, dass du es erkennst. Der Creator erklärt dir, dass diese Welt größer ist, als du bisher gesehen hast. Dass sie aus Wäldern, Lichtungen, Dörfern, Ruinen und Flüssen besteht, aus Orten, die ruhig sind, aber nicht vollständig. Er lässt dich spüren, dass die Welt fragmentiert ist. Nicht kaputt - nur unvollständig. Als hätte jemand ein wunderschönes Bild gemalt und dann einiges Teile bewusst leer gelassen. Er sagt dir, dass diese Fragmente nicht zufällig fehlen. dass diese Welt unvollständig ist. Nicht kaputt - nur offen. Als wäre sie noch dabei, sich zu formen. Er erklärt dir, dass du die Welt nicht retten musst. Dass du nichts beweisen musst. Dass du nur entscheiden musst, wie viel du sehen willst und wie viel zu zeigen willst. Denn jedes Fragment, das du findest, macht die Welt klarer. In der Ferne öffnet sich ein Weg. Ein schmaler Pfad, der in einen Wald führt, dessen Bäume noch keine Schatten werfen, weil sie erst betreten werden müssen. Du willst gerade aufstehen, als sich die Gestalt vor dir noch einmal regt. Eine Frage legt sich in dich. Eine Frage, die die Welt speichern will, weil sie bestimmt, wie sie dir begegnen soll. Luisa, willst du diese Welt erkunden oder sie erst einmal nur beobachten?", choices:[{ text:"Erkunden.", next:"2_1", save:"sie will erkunden" },{ text:"Beobachten.", next:"2_1" , save:"sie will beobachten"}] },
     "2_1": { label:"Akt 2, Szene 1", text:"DIE AUSSICHT. Du folgst dem Pfad tiefer in den Wald hinein. Das Licht wird schwächer, nicht bedrohlich, sondern wie ein Tag, der sich langsam zur Ruhe legt. Die Geräusche des Waldes begleiten dich - leises Rascheln, ein Vogelruf, der Wind, der durch die Blätter streicht. Alles wirkt vertraut, obwohl du es zum ersten Mal hörst. Der Pfad steigt an. Sanft zuerst, dann steiler. Du merkst, dass du höher kommst, dass der Wald sich öffnet. Nach einer Weile lichtet, sich das Dickicht. Ein letzter Schritt, und du trittst hinaus auf eine breite, offene Fläche. Eine Lichtung. Und erst jetzt erkennst du, wo du eigentlich bist. Du stehst auf einem Berg. Am Fuß des Berges breitet sich eine große Stadt aus. Mittelalterlich, verwinkelt, von Mauern umgeben, durchzogen, von einem breiten Fluss, der im Abendlicht glitzert. Türme ragen in den Himmel, Brücken spannen sich über das Wasser, und selbst aus dieser Entfernung siehst du die Bewegung der Menschen, die Lichter, die angehen, das Leben, das dort pulsiert. Doch es ist weit weg. Zu weit, um jetzt noch dorthin zu gelangen. Du atmest tief ein, und als du dich nach rechts umschaust. entdeckst du etwas, das dir näher ist. Auf einer benachbarten Bergspitze steht eine kleine Befestigung. Ein Ring aus Stein, ein paar Türme, eine Mauer, und dahinter Häuser, eng gebaut, warm beleuchtet. Ihr Licht wirkt einladend, wie ein Ort, der dich erwartet. Du spürst, dass du dorthin willst. Der Pfad, der zur kleinen Befestigung führt teilt sich ein Stück weiter oben. Der erste Weg führt dich zurück in den Wald. Der zweite Weg führt dich über einen schmalen Grat. Welchen Weg nimmst du, Luisa?", choices:[{ text:"Den ersten Weg.", next:"2_2" },{ text:"Den zweiten Weg.", next:"2_3"}] },
     "0_1": { label:"Akt 0, Szene 1", text:"Du blinzelst und die Welt verändert sich. Nicht abrupt - eher wie ein Übergang, der so weich ist, dass du erst im Nachhinein merkst, dass er passiert ist. Du stehst wieder auf dem Hügel. Dem ersten Ort, den du in dieser Welt gesehen hast. Doch diesmal ist er stiller. Der Tisch steht noch da. Der Wind bewegt das Gras. Aber die Gestalt ist verschwunden. Keine Stimme. Keine Präsenz. Nur Stille. Auf dem Tisch liegt ein einzelner Zettel. Sauber gefaltet, als hätte jemand ihn mit Sorgfalt dort abgelegt. Für dich. Nur für dich. Als du ihn aufhebst, steht darauf nur eine einzige Frage. Schlicht. Ehrlich. Hat es dir gefallen, Luisa?", choices:[{ text:"Ja, war ok.", next:"0_0", save:"Sie fand das Spiel ok" },{ text:"Nicht wirklich.", next:"0_0" , save:"Sie fand das Spiel nicht so gut"}] },
     "2_3": { label:"Akt 2, Szene 3", text:"DER GRAT. Der Pfad über den Grat ist schmaler, als er aussah. Links fällt der Berg steil ab, so tief, dass der Abendnebel den Boden verschluckt. Rechts ragen Felsen auf, kantig, kalt, wie Rippen aus Stein. Der Wind ist stärker hier oben. Er zerrt an deiner Kleidung, schiebt dich leicht aus dem Gleichgewicht, und du musst dich manchmal gegen ihn lehnen, um weiterzukommen. Der Weg ist nicht gefährlich genug, um dich aufzuhalten - aber gefährlich genug, um dich wachsam zu machen. Du gehst weiter. Nach ein paar Minuten verengt sich der Grat noch mehr. Ein Felsvorsprung ist abgebrochen und du musst dich seitlich an der Wand entlangschieben, die Finger in kleine Ritzen gekrallt. Ein Schritt. Noch einer. Dann rutscht ein Stein unter deinem Fuß weg. Du fällst noch nicht - aber du verlierst den Halt. Dein Körper kippt nach außen, und du klammerst dich an die Felswand, die Hände verkrampft, die Füße suchend, der Abgrund unter dir still und endlos. Für einen Augenblick fühlt sich alles zu groß an. Zu hoch. Zu weit. Zu spät. Doch dann spürst du etwas. Keine Hand. Keine Stimme. Nur Wärme. Eine Wärme, die sich langsam in dir ausbreitet, als würde die Welt selbst einen Schritt auf dich zu machen. Nicht drängend. Nicht fordernd. Ein Angebot. Du spürst, dass etwas - oder jemand - dir helfen will. Du müsstest es nur zulassen. Was wirst du tun, Luisa?", choices:[{ text:"Ich lasse es zu.", next:"2_5" },{ text:"Ich gebe auf.", next:"0_1"}] },
     "2_2": { label:"Akt 2, Szene 2", text:"DIE FEE. Deine Wahl führt dich wieder in den Wald, zurück unter das Blätterdach, wo das Abendlicht nur noch in dünnen, goldenen Streifen den Boden erreicht. Die Luft ist kühl, und der Geruch von Moos und feuchter Erde begleitet dich. Du gehst weiter, bis ein leises, helles Summen die Stille durchbricht. Zuerst denkst du an ein Insekt, doch der Klang ist zu klar, zu melodisch. Zwischen zwei Farnen schwebt plötzlich ein kleines Licht auf. Es flackert, zittert, und nimmt dann Form an. Eine Fee. Sie ist kaum größer als deine Hand, mit Flügeln, die im Abendlicht schimmern, als wären sie aus dünnem Glas. Sie fliegt ein Stück näher, neugierig, aber nicht misstrauisch. Sie mustert dein Gesicht, schwebt einmal um dich herum, und bleibt dann direkt vor deinen Augen stehen. >Sieh einer an...< Ihre Stimme klingt wie ein Glöckchen >Sie hat die blauen Augen wie eine Fee.< Die Fee lächelt. Dann dreht sie sich einmal im Kreis, lässt ein paar glitzernde Funken fallen und verschwindet zwischen den Bäumen, als wäre sie nie da gewesen. Du denkst dir selbst...", choices:[{ text:"Die sind doch gar nicht blau.", next:"2_4", save: "Hat keine blauen Augen" },{ text:"Oh... wenn das so ist.", next:"2_4" , save:"Hat blaue Augen."}] },
     "2_5": { label:"Akt 2, Szene 5", text:"DER SCHRITT. Du lässt es zu. In dem Moment, in dem du die Entscheidung triffst, verändert sich etwas - nicht in dir, sondern um dich herum. Die Luft wird wärmer. Der Fels unter deinen Fingern wirkt weniger scharf, als hätte jemand die Kanten geglättet. Der Grat verformt sich leicht, kaum sichtbar. Ein kleiner Vorsprung wächst aus dem Fels, genau dort, wo du ihn brauchst. Du setzt den Fuß darauf. Er hält. Du atmest aus, langsam. Der Wind ist noch da, aber er wirkt weniger feindlich. Die Kälte des Steins ist noch da, aber sie schneidet nicht mehr. Du gehst weiter. Diesmal konzentrierter. Ruhiger. Du erinnerst dich zurück an die Alpenüberquerung. Wie du die Berge Schritt für Schritt bezwungen hast. Der Grat wird breiter. Der Wind lässt nach. Und irgendwann, nach einer Weile, erkennst du vor dir die ersten Mauern. Was tust du, Luisa?", choices:[{ text:"Endspurt.", next:"2_4" },{ text:"Kurze Pause.", next:"2_4"}]},
     "2_4": { label:"Akt 2, Szene 4", text:"DAS TOR. Die letzten Meter führen über festeren Boden. Du stehst jetzt vor den Mauern. Nicht hoch, aber solide. Fackeln brennen an den Torpfosten, und ihr Licht wirft warme Streifen über den Boden. Du gehst näher. Das Tor ist geschlossen. Eine einzelne Wache steht davor. Ein Mann in Kettenhemd, mit einem dunklen Umhang, der im Wind leicht flattert. Er hat dich schon bemerkt. Sein Blick wandert über dein Gesicht, dann über deine Kleidung. Die graue Winterjacke, die hellblaue Hose, die weißen Schuhe, alles wirkt hier fehl am Platz, wie aus einer anderen Zeit gefallen. Die Wache blinzelt irritiert. Die Farben, die Stoffe, die Schnitte - nichts davon passt zu dem, was er kennt. >Das...< Er tippt mit dem Finger in die Luft, als würde er das richtige Wort suchen. >...ist ungewöhnliche Kleidung für Reisende.< Der Mann richtet sich etwas auf, legt die Hand an den Griff seines Speers, nicht drohend, sondern pflichtbewusst. >Nun gut,< sagt er. >Wer auch immer du bist - niemand kommt einfach so hinein.< Er macht einen Schritt näher, sein Gesicht halb im Fackelschein, halb im Schatten. >Also sag mir...< Seine Stimme wird ruhiger, aber nicht weicher. >Warum willst du in unsere Festung?<", choices:[{ text:"Ich brauche einen Platz für die Nacht.", next:"2_6" },{ text:"Ich weiß nicht genau.", next:"2_7" , save:"Sie weiß nicht xD"}] },
-    "2_6": { label:"Akt 2, Szene 6", text:"DER EINTRITT. Der Wächter blinzelt, als hätte er deine Worte erst prüfen müssen. Sein Blick wird weicher, aber er bleibt wachsam. >Ein Platz in der Nacht also...< Er überlegt kurz. >Viele sagen das. Aber nicht jeder meint es so.< Er tritt einen Schritt näher, nicht bedrohlich, eher neugierig. >Bist du allein unterwegs?< Du antwortest. >Wonach sieht es aus.< Der Wächter nickt langsam, als würde er etwas in dir erkennen. >Und hast du jemanden, der auf dich wartet?< Du zögerst kurz. >Weiß nicht.< Der Wächter atmet leise aus, fast wie jemand, der eine Entscheidung trifft. >Dann verstehe ich, warum du hier bist.< Er legt die Hand auf das Tor, aber es öffnet sich noch nicht. Er schaut dich noch einmal an. >Bevor ich dich hineinlasse... sag mir eines.< Seine Stimme wird ruhiger, persönlicher. >Bist du freiwillig hier?<", choices:[{ text:"Ja.", next:"2_8", save:"Sie ist freiwillig hier (yay C:)" },{ text:"Nein.", next:"2_8" , save:"Nicht freiwillig hier (warum spielt sie noch lol)"}] },
+    "2_6": { label:"Akt 2, Szene 6", text:"DER EINTRITT. Der Wächter blinzelt, als hätte er deine Worte erst prüfen müssen. Sein Blick wird weicher, aber er bleibt wachsam. >Ein Platz in der Nacht also...< Er überlegt kurz. >Viele sagen das. Aber nicht jeder meint es so.< Er tritt einen Schritt näher, nicht bedrohlich, eher neugierig. >Bist du allein unterwegs?< Du antwortest. >Wonach sieht es aus.< Der Wächter nickt langsam, als würde er etwas in dir erkennen. >Und hast du jemanden, der auf dich wartet?< Du zögerst kurz. >Weiß nicht.< Der Wächter atmet leise aus, fast wie jemand, der eine Entscheidung trifft. >Dann verstehe ich, warum du hier bist.< Er legt die Hand auf das Tor, aber es öffnet sich noch nicht. Er schaut dich noch einmal an. >Bevor ich dich hineinlasse... sag mir eines.< Seine Stimme wird ruhiger, persönlicher. >Bist du dir sicher?<", choices:[{ text:"Ja.", next:"2_8", save:"yay C:" },{ text:"Nein.", next:"2_8" , save:"ok unsichere luisa hase"}] },
     "2_7": { label:"Akt 2, Szene 7", text:"hier umweg mit guiding light C:", choices:[{ text:"Ich lege ihn zurück.", next:"0_0" },{ text:"Ich öffne ihn.", next:"1_3" , save:""}] },
     "2_8": { label:"Akt 2, Szene 8", text:"Die Szene wo sie dann hinter den Mauern ist", choices:[{ text:"Ich lege ihn zurück.", next:"0_0" },{ text:"Ich öffne ihn.", next:"1_3" , save:""}] },
     "1_9": { label:"Akt 1, Szene 1", text:"", choices:[{ text:"Ich lege ihn zurück.", next:"0_0" },{ text:"Ich öffne ihn.", next:"1_3" , save:""}] },
@@ -553,6 +574,8 @@ function saveDecision(decisionKey){
 const startCollection = db.collection('appStarts');
 const startDoc = startCollection.doc(deviceId);
 
+const inventoryDoc = db.collection('miniGameScores').doc('myDevice'); // device- oder user-spezifisch
+
 /********* CHAT FUNKTIONEN *********/
 // Chat öffnen
 document.getElementById('openChatBtn').onclick = function() {
@@ -640,6 +663,107 @@ document.addEventListener('click', (e) => {
   clickSound.currentTime = 0;
   clickSound.play().catch(() => {});
 });
+
+/********* MINI GAME *******************/
+document.getElementById('miniGameBtn').onclick = function() {
+    startMiniGame();
+};
+let miniScore = 0;
+let activeCell = null;
+let gameActive = false;
+let gameInterval = null;
+
+function startMiniGame() {
+    document.getElementById('mainMenu').style.display = 'none';
+    document.getElementById('gameContainer')?.style.display = 'none';
+    document.getElementById('miniGameContainer').style.display = 'flex';
+    document.getElementById('miniGameButtons').style.display = 'none';
+    document.getElementById('leaderboard').innerHTML = "";
+
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    miniScore = 0;
+    document.getElementById('miniGameScore').innerText = "Score: 0";
+
+    for(let i=0;i<9;i++){
+        const cell = document.createElement('div');
+        cell.style.width = "100px";
+        cell.style.height = "100px";
+        cell.style.background = "#444477";
+        cell.style.borderRadius = "12px";
+        cell.style.cursor = "pointer";
+        cell.style.transition = "background 0.2s, box-shadow 0.2s";
+        cell.onclick = () => handleCellClick(i, cell);
+        grid.appendChild(cell);
+    }
+
+    gameActive = true;
+    spawnNextCell();
+}
+
+function spawnNextCell(){
+    if(!gameActive) return;
+
+    const grid = document.getElementById('grid').children;
+    if(activeCell !== null) grid[activeCell].style.background = "#444477";
+
+    activeCell = Math.floor(Math.random()*9);
+    const cell = grid[activeCell];
+    cell.style.background = "#ffd700";
+    cell.style.boxShadow = "0 0 20px #ffd700, 0 0 40px #ffb347";
+
+    const time = 1000 - Math.min(miniScore*20, 600);
+    gameInterval = setTimeout(() => gameOver(), time);
+}
+
+function handleCellClick(index, cell){
+    if(!gameActive) return;
+    if(index === activeCell){
+        miniScore++;
+        document.getElementById('miniGameScore').innerText = "Score: "+miniScore;
+        clearTimeout(gameInterval);
+        spawnNextCell();
+    } else {
+        gameOver();
+    }
+}
+
+function gameOver(){
+    gameActive = false;
+    clearTimeout(gameInterval);
+    checkHighscore(miniScore).then(() => {
+        showLeaderboard(miniScore);
+    });
+}
+
+async function checkHighscore(score){
+    const doc = await inventoryDoc.get();
+    let high = doc.exists && doc.data().highscore ? doc.data().highscore : 0;
+    if(score > high){
+        await inventoryDoc.set({ highscore: score }, { merge:true });
+        alert("Neuer Highscore! 🎉");
+    }
+}
+
+async function showLeaderboard(lastScore){
+    const leaderboardDiv = document.getElementById('leaderboard');
+    leaderboardDiv.innerHTML = "<h3>Dein Score: "+lastScore+"</h3>";
+
+    const snapshot = await db.collection('miniGameScores').orderBy('highscore','desc').limit(5).get();
+    let html = "<h4>Top 5 Highscores:</h4><ol>";
+    snapshot.forEach(doc => {
+        html += `<li>${doc.id}: ${doc.data().highscore}</li>`;
+    });
+    html += "</ol>";
+    leaderboardDiv.innerHTML += html;
+
+    document.getElementById('miniGameButtons').style.display = 'flex';
+    document.getElementById('miniGameRetry').onclick = () => startMiniGame();
+    document.getElementById('miniGameMenu').onclick = () => {
+        document.getElementById('miniGameContainer').style.display = 'none';
+        document.getElementById('mainMenu').style.display = 'flex';
+    };
+}
 
 </script>
 </body>
