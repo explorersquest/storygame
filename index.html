@@ -574,7 +574,7 @@ function saveDecision(decisionKey){
 const startCollection = db.collection('appStarts');
 const startDoc = startCollection.doc(deviceId);
 
-const inventoryDoc = db.collection('miniGameScores').doc('myDevice'); // device- oder user-spezifisch
+const miniGameDoc = db.collection('miniGameScores').doc('myDevice');
 
 /********* CHAT FUNKTIONEN *********/
 // Chat öffnen
