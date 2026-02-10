@@ -285,7 +285,6 @@ h2 {
   <button id="newGameBtn">Neuer Spielstand</button>
   <button id="loadGameBtn">Spielstand laden</button>
   <button id="openChatBtn">Deine Gedanken</button>
-  <button id="miniGameBtn">Golden Glimmern</button>
   <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.10.1.1</div>
 </div>
 
@@ -309,26 +308,6 @@ h2 {
 <audio id="bgMusic" src="momedeiros88-mystical.mp3" type="audio/mpeg" loop></audio>
 <audio id="typeSound" src="game-text.mp3" preload="auto"></audio>
 <audio id="clickSound" src="magic-button-click.mp3" preload="auto"></audio>
-
-<!-- Mini-Game Container -->
-<div id="miniGameContainer" style="display:none; flex-direction:column; align-items:center; justify-content:center; height:100%; width:100%;">
-  <h2>Golden Glimmern ✨</h2>
-
-  <!-- Grid für das Spiel -->
-  <div id="grid" style="display:grid; grid-template-columns:repeat(3,100px); grid-gap:15px; margin:20px;"></div>
-
-  <!-- Score während des Spiels -->
-  <div id="miniGameScore" style="color:#ffd700; margin:10px; font-size:20px;">Score: 0</div>
-
-  <!-- Buttons nach Game Over -->
-  <div id="miniGameButtons" style="display:none; gap:15px;">
-    <button id="miniGameRetry">Nochmal spielen</button>
-    <button id="miniGameMenu">Zurück zum Menü</button>
-  </div>
-
-  <!-- Leaderboard -->
-  <div id="leaderboard" style="margin-top:20px; text-align:center;"></div>
-</div>
 
 <script>
 /********* NORMALE STERNE *********/
@@ -574,8 +553,6 @@ function saveDecision(decisionKey){
 const startCollection = db.collection('appStarts');
 const startDoc = startCollection.doc(deviceId);
 
-const miniGameDoc = db.collection('miniGameScores').doc('myDevice');
-
 /********* CHAT FUNKTIONEN *********/
 // Chat öffnen
 document.getElementById('openChatBtn').onclick = function() {
@@ -663,107 +640,6 @@ document.addEventListener('click', (e) => {
   clickSound.currentTime = 0;
   clickSound.play().catch(() => {});
 });
-
-/********* MINI GAME *******************/
-document.getElementById('miniGameBtn').onclick = function() {
-    startMiniGame();
-};
-let miniScore = 0;
-let activeCell = null;
-let gameActive = false;
-let gameInterval = null;
-
-function startMiniGame() {
-    document.getElementById('mainMenu').style.display = 'none';
-    document.getElementById('gameContainer')?.style.display = 'none';
-    document.getElementById('miniGameContainer').style.display = 'flex';
-    document.getElementById('miniGameButtons').style.display = 'none';
-    document.getElementById('leaderboard').innerHTML = "";
-
-    const grid = document.getElementById('grid');
-    grid.innerHTML = '';
-    miniScore = 0;
-    document.getElementById('miniGameScore').innerText = "Score: 0";
-
-    for(let i=0;i<9;i++){
-        const cell = document.createElement('div');
-        cell.style.width = "100px";
-        cell.style.height = "100px";
-        cell.style.background = "#444477";
-        cell.style.borderRadius = "12px";
-        cell.style.cursor = "pointer";
-        cell.style.transition = "background 0.2s, box-shadow 0.2s";
-        cell.onclick = () => handleCellClick(i, cell);
-        grid.appendChild(cell);
-    }
-
-    gameActive = true;
-    spawnNextCell();
-}
-
-function spawnNextCell(){
-    if(!gameActive) return;
-
-    const grid = document.getElementById('grid').children;
-    if(activeCell !== null) grid[activeCell].style.background = "#444477";
-
-    activeCell = Math.floor(Math.random()*9);
-    const cell = grid[activeCell];
-    cell.style.background = "#ffd700";
-    cell.style.boxShadow = "0 0 20px #ffd700, 0 0 40px #ffb347";
-
-    const time = 1000 - Math.min(miniScore*20, 600);
-    gameInterval = setTimeout(() => gameOver(), time);
-}
-
-function handleCellClick(index, cell){
-    if(!gameActive) return;
-    if(index === activeCell){
-        miniScore++;
-        document.getElementById('miniGameScore').innerText = "Score: "+miniScore;
-        clearTimeout(gameInterval);
-        spawnNextCell();
-    } else {
-        gameOver();
-    }
-}
-
-function gameOver(){
-    gameActive = false;
-    clearTimeout(gameInterval);
-    checkHighscore(miniScore).then(() => {
-        showLeaderboard(miniScore);
-    });
-}
-
-async function checkHighscore(score){
-    const doc = await inventoryDoc.get();
-    let high = doc.exists && doc.data().highscore ? doc.data().highscore : 0;
-    if(score > high){
-        await inventoryDoc.set({ highscore: score }, { merge:true });
-        alert("Neuer Highscore! 🎉");
-    }
-}
-
-async function showLeaderboard(lastScore){
-    const leaderboardDiv = document.getElementById('leaderboard');
-    leaderboardDiv.innerHTML = "<h3>Dein Score: "+lastScore+"</h3>";
-
-    const snapshot = await db.collection('miniGameScores').orderBy('highscore','desc').limit(5).get();
-    let html = "<h4>Top 5 Highscores:</h4><ol>";
-    snapshot.forEach(doc => {
-        html += `<li>${doc.id}: ${doc.data().highscore}</li>`;
-    });
-    html += "</ol>";
-    leaderboardDiv.innerHTML += html;
-
-    document.getElementById('miniGameButtons').style.display = 'flex';
-    document.getElementById('miniGameRetry').onclick = () => startMiniGame();
-    document.getElementById('miniGameMenu').onclick = () => {
-        document.getElementById('miniGameContainer').style.display = 'none';
-        document.getElementById('mainMenu').style.display = 'flex';
-    };
-}
 
 </script>
 </body>
