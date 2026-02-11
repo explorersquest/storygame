@@ -5,6 +5,7 @@
 <title>Für Luisa 🌸</title>
 
 <style>
+/* ===== BESTEHENDES DESIGN BLEIBT ===== */
 html, body {
   height: 100%;
   margin: 0;
@@ -17,82 +18,84 @@ html, body {
   flex-direction: column;
 }
 
-h1, h2 {
-  color: #ffd700;
-  text-shadow: 0 0 10px #ffd700, 0 0 20px #ffb347;
-  text-align: center;
+h1,h2{
+  color:#ffd700;
+  text-shadow:0 0 10px #ffd700,0 0 20px #ffb347;
+  text-align:center;
 }
 
-h1 { font-size: 3em; margin-top: 40px; }
-h2 { font-size: 2em; }
+h1{font-size:3em;}
+h2{font-size:2.5em;}
 
-#mainMenu {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 25px;
-}
-
-#mainMenu button {
-  background: linear-gradient(145deg, #6655aa, #444477);
-  border: none;
-  padding: 20px 40px;
-  border-radius: 15px;
-  color: #ffd700;
-  font-size: 22px;
-  font-weight: bold;
-  cursor: pointer;
-  text-shadow: 0 0 5px #ffd700;
-  transition: 0.2s;
-}
-#mainMenu button:hover {
-  transform: scale(1.08);
+#mainMenu{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:25px;
 }
 
-#gameContainer {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
+#mainMenu button{
+  background:linear-gradient(145deg,#6655aa,#444477);
+  border:none;
+  padding:20px 40px;
+  border-radius:15px;
+  color:#ffd700;
+  font-size:22px;
+  font-weight:bold;
+  cursor:pointer;
 }
 
-canvas {
-  background: rgba(20,20,40,0.9);
-  border-radius: 15px;
-  box-shadow: 0 0 20px rgba(255,215,0,0.3);
+#mainMenu button:hover{
+  transform:scale(1.08);
 }
 
-#hud {
-  margin-top: 15px;
-  font-size: 22px;
-  color: #ffd700;
+/* ===== MEMORY GAME ===== */
+#memoryContainer{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  flex:1;
 }
 
-#leaderboard {
-  max-height: 400px;
-  overflow-y: auto;
-  margin-top: 20px;
+#scoreDisplay{
+  font-size:28px;
+  margin-bottom:20px;
+  color:#ffdd77;
+  text-shadow:0 0 10px gold;
 }
 
-#leaderboard div {
-  margin: 5px 0;
+#grid{
+  display:grid;
+  grid-template-columns:repeat(3,120px);
+  grid-gap:20px;
 }
 
-.star {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: white;
-  border-radius: 50%;
-  opacity: 0.8;
-  animation: twinkle 2s infinite alternate;
+.memoryBtn{
+  width:120px;
+  height:120px;
+  border-radius:15px;
+  border:none;
+  background:#444477;
+  box-shadow:0 0 15px rgba(255,215,0,0.3);
+  cursor:pointer;
+  transition:0.2s;
 }
-@keyframes twinkle {
-  from {opacity:0.3;}
-  to {opacity:1;}
+
+.memoryBtn.active{
+  background:#ffd700;
+  box-shadow:0 0 30px gold;
+}
+
+#leaderboardContainer{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  flex:1;
+  width:100%;
 }
 </style>
 
@@ -103,194 +106,163 @@ canvas {
 <body>
 
 <h1>Für Luisa 🌸</h1>
+<h2>Fr4gm3nt3</h2>
 
 <div id="mainMenu">
   <button id="playBtn">Spielen</button>
   <button id="leaderboardBtn">Leaderboard</button>
+  <button id="openChatBtn">Deine Gedanken</button>
 </div>
 
-<div id="gameContainer">
-  <canvas id="mazeCanvas" width="600" height="600"></canvas>
-  <div id="hud"></div>
+<!-- MEMORY GAME -->
+<div id="memoryContainer">
+  <div id="scoreDisplay">Score: 0</div>
+  <div id="grid"></div>
+</div>
+
+<!-- LEADERBOARD -->
+<div id="leaderboardContainer">
+  <h2>Global Leaderboard 🌍</h2>
+  <div id="leaderboardList"></div>
   <button onclick="backToMenu()">Zurück</button>
 </div>
 
-<audio id="bgMusic" src="momedeiros88-mystical.mp3" loop></audio>
+<audio id="clickSound" src="magic-button-click.mp3" preload="auto"></audio>
 
 <script>
 
-/********* STERNE *********/
-for(let i=0;i<80;i++){
-  const star = document.createElement('div');
-  star.className='star';
-  star.style.top=Math.random()*100+'%';
-  star.style.left=Math.random()*100+'%';
-  document.body.appendChild(star);
-}
-
-/********* FIREBASE *********/
+/* ===== FIREBASE ===== */
 const firebaseConfig = {
-  apiKey: "AIzaSyD_cDHNMZZiLuGLfAntYAc8ONtKgwYlp9Y",
+  apiKey: "AIzaSyD...",
   authDomain: "luisaglobalchat.firebaseapp.com",
-  projectId: "luisaglobalchat",
+  projectId: "luisaglobalchat"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const leaderboardCollection = db.collection("leaderboard");
 
-let deviceId = localStorage.getItem("mazeDeviceId");
+let deviceId = localStorage.getItem('luisaDeviceId');
 if(!deviceId){
-  deviceId = "device_" + Math.random().toString(36).substr(2,9);
-  localStorage.setItem("mazeDeviceId", deviceId);
+  deviceId = 'device_' + Math.random().toString(36).substr(2,9);
+  localStorage.setItem('luisaDeviceId',deviceId);
 }
 
-/********* GAME VARS *********/
-let maze=[], size=15;
-let player={x:0,y:0};
-let timer=164;
-let score=0;
-let interval;
+const leaderboardCollection = db.collection('memoryLeaderboard');
 
-const canvas=document.getElementById("mazeCanvas");
-const ctx=canvas.getContext("2d");
+/* ===== MEMORY GAME LOGIC ===== */
+const grid = document.getElementById("grid");
+const scoreDisplay = document.getElementById("scoreDisplay");
+let sequence = [];
+let playerIndex = 0;
+let score = 0;
+let acceptingInput = false;
 
-/********* MAZE GENERATION *********/
-function generateMaze(n){
-  maze=[];
-  for(let y=0;y<n;y++){
-    maze[y]=[];
-    for(let x=0;x<n;x++){
-      maze[y][x]={visited:false,walls:{t:1,r:1,b:1,l:1}};
-    }
-  }
-
-  function dfs(x,y){
-    maze[y][x].visited=true;
-    const dirs=shuffle([[0,-1,'t','b'],[1,0,'r','l'],[0,1,'b','t'],[-1,0,'l','r']]);
-    for(let d of dirs){
-      let nx=x+d[0], ny=y+d[1];
-      if(nx>=0&&ny>=0&&nx<n&&ny<n&&!maze[ny][nx].visited){
-        maze[y][x].walls[d[2]]=0;
-        maze[ny][nx].walls[d[3]]=0;
-        dfs(nx,ny);
-      }
-    }
-  }
-  dfs(0,0);
-}
-function shuffle(a){return a.sort(()=>Math.random()-0.5);}
-
-/********* DRAW *********/
-function draw(){
-  const cell=canvas.width/size;
-  ctx.clearRect(0,0,600,600);
-
-  ctx.strokeStyle="#ffd700";
-  ctx.lineWidth=2;
-
-  for(let y=0;y<size;y++){
-    for(let x=0;x<size;x++){
-      const c=maze[y][x];
-      const px=x*cell, py=y*cell;
-
-      if(c.walls.t) ctx.strokeRect(px,py,cell,1);
-      if(c.walls.l) ctx.strokeRect(px,py,1,cell);
-      if(c.walls.r) ctx.strokeRect(px+cell,py,1,cell);
-      if(c.walls.b) ctx.strokeRect(px,py+cell,cell,1);
-    }
-  }
-
-  ctx.fillStyle="#4db8ff";
-  ctx.fillRect(player.x*cell+4,player.y*cell+4,cell-8,cell-8);
-
-  ctx.fillStyle="#ff77cc";
-  ctx.fillRect((size-1)*cell+6,(size-1)*cell+6,cell-12,cell-12);
-
-  document.getElementById("hud").innerText=
-    `Zeit: ${timer}s   Score: ${score}`;
+for(let i=0;i<9;i++){
+  const btn = document.createElement("button");
+  btn.className="memoryBtn";
+  btn.dataset.index=i;
+  btn.onclick=()=>handlePlayerInput(i);
+  grid.appendChild(btn);
 }
 
-/********* START GAME *********/
 function startGame(){
-  document.getElementById("mainMenu").style.display="none";
-  document.getElementById("gameContainer").style.display="flex";
-
-  timer=164;
+  sequence=[];
   score=0;
-  player={x:0,y:0};
-
-  generateMaze(size);
-  draw();
-
-  clearInterval(interval);
-  interval=setInterval(()=>{
-    timer--;
-    if(timer<=0) endGame();
-    draw();
-  },1000);
+  nextRound();
 }
 
-/********* MOVE *********/
-document.addEventListener("keydown",e=>{
-  if(timer<=0) return;
-  const c=maze[player.y][player.x];
+function nextRound(){
+  acceptingInput=false;
+  playerIndex=0;
+  sequence.push(Math.floor(Math.random()*9));
+  scoreDisplay.innerText="Score: "+score;
+  playSequence();
+}
 
-  if(e.key==="ArrowUp"&&!c.walls.t) player.y--;
-  if(e.key==="ArrowDown"&&!c.walls.b) player.y++;
-  if(e.key==="ArrowLeft"&&!c.walls.l) player.x--;
-  if(e.key==="ArrowRight"&&!c.walls.r) player.x++;
-
-  if(player.x===size-1&&player.y===size-1){
-    score++;
-    timer+=12;
-    player={x:0,y:0};
-    generateMaze(size);
-  }
-  draw();
-});
-
-/********* GAME OVER *********/
-function endGame(){
-  clearInterval(interval);
-
-  leaderboardCollection.doc(deviceId).get().then(doc=>{
-    const old=doc.exists?doc.data().score:0;
-
-    if(score>old){
-      leaderboardCollection.doc(deviceId).set({score:score});
-      alert("Neuer Highscore! 🏆 "+score);
-    }else{
-      alert("Game Over! Score: "+score);
+function playSequence(){
+  let i=0;
+  const buttons=document.querySelectorAll(".memoryBtn");
+  const interval=setInterval(()=>{
+    buttons[sequence[i]].classList.add("active");
+    setTimeout(()=>{
+      buttons[sequence[i]].classList.remove("active");
+    },400);
+    i++;
+    if(i>=sequence.length){
+      clearInterval(interval);
+      setTimeout(()=>acceptingInput=true,500);
     }
-    backToMenu();
-  });
+  },600);
 }
 
-/********* LEADERBOARD *********/
-function showLeaderboard(){
-  document.getElementById("mainMenu").style.display="none";
-  document.getElementById("gameContainer").style.display="flex";
+function handlePlayerInput(index){
+  if(!acceptingInput)return;
 
-  const container=document.getElementById("gameContainer");
-  container.innerHTML="<h2>Leaderboard</h2><div id='leaderboard'></div><button onclick='location.reload()'>Zurück</button>";
+  if(index===sequence[playerIndex]){
+    playerIndex++;
+    if(playerIndex===sequence.length){
+      score++;
+      nextRound();
+    }
+  }else{
+    gameOver();
+  }
+}
 
-  leaderboardCollection.orderBy("score","desc").get().then(snapshot=>{
+function gameOver(){
+  saveHighscore(score);
+  alert("Game Over! Score: "+score);
+  backToMenu();
+}
+
+function saveHighscore(score){
+  leaderboardCollection.doc(deviceId).set({
+    deviceId:deviceId,
+    highscore:firebase.firestore.FieldValue.increment(0),
+    best:score
+  },{merge:true});
+}
+
+/* ===== LEADERBOARD ===== */
+function loadLeaderboard(){
+  document.getElementById("leaderboardList").innerHTML="";
+  leaderboardCollection.orderBy("best","desc").limit(20)
+  .get().then(snapshot=>{
     snapshot.forEach(doc=>{
+      const data=doc.data();
       const div=document.createElement("div");
-      div.innerText=doc.id+" — "+doc.data().score;
-      document.getElementById("leaderboard").appendChild(div);
+      div.innerText=data.deviceId+" — "+data.best;
+      document.getElementById("leaderboardList").appendChild(div);
     });
   });
 }
 
+/* ===== NAVIGATION ===== */
+document.getElementById("playBtn").onclick=()=>{
+  document.getElementById("mainMenu").style.display="none";
+  document.getElementById("memoryContainer").style.display="flex";
+  startGame();
+};
+
+document.getElementById("leaderboardBtn").onclick=()=>{
+  document.getElementById("mainMenu").style.display="none";
+  document.getElementById("leaderboardContainer").style.display="flex";
+  loadLeaderboard();
+};
+
 function backToMenu(){
-  document.getElementById("gameContainer").style.display="none";
+  document.getElementById("memoryContainer").style.display="none";
+  document.getElementById("leaderboardContainer").style.display="none";
   document.getElementById("mainMenu").style.display="flex";
 }
 
-/********* BUTTONS *********/
-document.getElementById("playBtn").onclick=startGame;
-document.getElementById("leaderboardBtn").onclick=showLeaderboard;
+/* GLOBAL CLICK SOUND */
+document.addEventListener('click', (e)=>{
+  const btn=e.target.closest('button');
+  if(!btn)return;
+  const clickSound=document.getElementById('clickSound');
+  clickSound.currentTime=0;
+  clickSound.play().catch(()=>{});
+});
 
 </script>
 </body>
