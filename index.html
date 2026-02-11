@@ -3,70 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <title>Für Luisa 🌸</title>
+
 <style>
-/* START OVERLAY */
-#startOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(5, 5, 15, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  transition: opacity 0.8s ease;
-}
-
-/* Start Button */
-#startBtn {
-  padding: 20px 60px;
-  font-size: 28px;
-  border-radius: 18px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  color: #ffd700;
-  background: linear-gradient(145deg, #6655aa, #444477);
-  box-shadow: 0 0 25px rgba(255,215,0,0.4);
-  text-shadow: 0 0 8px #ffd700;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-#startBtn:hover {
-  transform: scale(1.08);
-  box-shadow: 0 0 40px rgba(255,215,0,0.6);
-}
-
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
   font-family: 'Georgia', serif;
   color: #f5f5f5;
-  background: radial-gradient(circle at top, #0a0a0a, #1a1a2e); 
+  background: radial-gradient(circle at top, #0a0a0a, #1a1a2e);
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-/* Glühender Titel */
-h1 { 
-  color: #ffd700; 
+h1, h2 {
+  color: #ffd700;
   text-shadow: 0 0 10px #ffd700, 0 0 20px #ffb347;
-  font-size: 3em;
-  margin-bottom: 32px;
-  text-align: center;
-}
-h2 { 
-  color: #ffd700; 
-  text-shadow: 0 0 10px #ffd700, 0 0 20px #ffb347;
-  font-size: 2.5em;
-  margin-bottom: 16px;
   text-align: center;
 }
 
-/* Hauptmenü */
+h1 { font-size: 3em; margin-top: 40px; }
+h2 { font-size: 2em; }
+
 #mainMenu {
   flex: 1;
   display: flex;
@@ -75,7 +34,8 @@ h2 {
   justify-content: center;
   gap: 25px;
 }
-#mainMenu button { 
+
+#mainMenu button {
   background: linear-gradient(145deg, #6655aa, #444477);
   border: none;
   padding: 20px 40px;
@@ -85,551 +45,254 @@ h2 {
   font-weight: bold;
   cursor: pointer;
   text-shadow: 0 0 5px #ffd700;
-  transition: transform 0.15s, background 0.2s;
+  transition: 0.2s;
 }
-#mainMenu button:hover { 
-  background: linear-gradient(145deg, #7777cc, #5555aa); 
+#mainMenu button:hover {
   transform: scale(1.08);
 }
 
-/* Spielcontainer */
 #gameContainer {
-  flex: 1;
-  display: none; /* wird erst sichtbar beim Spielstart */
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
+  flex: 1;
 }
 
-/* Akt / Szene Label */
-#sceneLabel {
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #ffdd77;
-  text-shadow: 0 0 5px #ffd700;
+canvas {
+  background: rgba(20,20,40,0.9);
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(255,215,0,0.3);
 }
 
-/* Textbox */
-#sceneText {
-  display: none; /* erst sichtbar, wenn Animation startet */
-  margin: 20px auto; 
-  max-width: 80%;
-  padding: 30px; 
-  background: rgba(30,30,50,0.85); 
-  border-radius: 15px; 
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); 
-  font-size: 20px; 
-  min-height: 180px;
-  white-space: pre-wrap;
+#hud {
+  margin-top: 15px;
+  font-size: 22px;
+  color: #ffd700;
 }
 
-/* Buttons nebeneinander unten */
-#choices {
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
-  gap: 20px;
-  visibility: hidden; /* erst nach Tippen sichtbar */
+#leaderboard {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 20px;
 }
-#choices button { 
-  flex: 1 1 150px;
-  max-width: 250px;
-  padding: 15px 0;
-  border-radius: 12px;
-  background: #444477; 
-  color: #ffd700; 
-  font-weight: bold;
-  font-size: 18px;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.1s, background 0.2s;
-}
-#choices button:hover { background:#6655aa; transform: scale(1.05); }
 
-/* Sterne mit leichter Bewegung */
+#leaderboard div {
+  margin: 5px 0;
+}
+
 .star {
-  position: absolute;
-  width: 2px; 
-  height: 2px; 
-  background: white; 
-  border-radius: 50%;
-  opacity: 0.8;
-  animation: twinkle 2s infinite alternate, floatStars 6s infinite alternate;
-}
-@keyframes twinkle { 0% {opacity:0.3;} 100% {opacity:1;} }
-@keyframes floatStars {
-  0% { transform: translate(0px,0px);}
-  50% { transform: translate(1.5px, -1.5px);}
-  100% { transform: translate(0px,0px);}
-}
-/* Sternschnuppe */
-.shooting-star {
   position: absolute;
   width: 2px;
   height: 2px;
   background: white;
   border-radius: 50%;
-  opacity: 0.9;
-  pointer-events: none;
-  transform: rotate(-45deg); /* Flugrichtung */
+  opacity: 0.8;
+  animation: twinkle 2s infinite alternate;
 }
-
-/* Schweif – exakt in Flugrichtung */
-.shooting-star::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -60px;
-  width: 60px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8));
+@keyframes twinkle {
+  from {opacity:0.3;}
+  to {opacity:1;}
 }
-
-/* Langsame, weiche Flugbewegung */
-@keyframes shoot {
-  from {
-    transform: translate(0, 0) rotate(-45deg);
-    opacity: 1;
-  }
-  to {
-    transform: translate(-900px, 900px) rotate(-45deg);
-    opacity: 0;
-  }
-}
-
-/* Chat-UI */
-#chatContainer {
-  display:none;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  width:80%;
-  max-width:600px;
-  margin:0 auto;
-  background: rgba(30,30,50,0.85);
-  border-radius:15px;
-  padding:20px;
-  min-height:400px;
-}
-/* Eigene Nachrichten */
-.myMessage {
-  background: rgba(0, 120, 255, 0.15);
-  color: #4db8ff;
-  padding: 8px 12px;
-  margin: 5px 0;
-  border-radius: 12px;
-  box-shadow: 0 0 8px #4db8ff, 0 0 16px #00aaff80;
-  max-width: 80%;
-  align-self: flex-end;
-  word-wrap: break-word;
-}
-
-/* Luisas Nachrichten */
-.theirMessage {
-  background: rgba(255, 77, 192, 0.15);
-  color: #ff77cc;
-  padding: 8px 12px;
-  margin: 5px 0;
-  border-radius: 12px;
-  box-shadow: 0 0 8px #ff77cc, 0 0 16px #ff77cc80;
-  max-width: 80%;
-  align-self: flex-start;
-  word-wrap: break-word;
-}
-
-#chatMessages {
-  flex:1;
-  overflow-y:auto;
-  width:100%;
-  margin-bottom:10px;
-  color:#ffd700;
-}
-#chatInput {
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:none;
-  font-size:16px;
-}
-#chatContainer button {
-  margin-top:10px;
-  padding:10px 20px;
-  border-radius:8px;
-  border:none;
-  background:#444477;
-  color:#ffd700;
-  font-weight:bold;
-  cursor:pointer;
-}
-#chatContainer button#backFromChatBtn { background:#6655aa; }
 </style>
 
-<!-- Firebase Scripts -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 </head>
 <body>
 
-<div id="startOverlay">
-  <button id="startBtn">Start ✨</button>
-</div>
-
 <h1>Für Luisa 🌸</h1>
-<h2>Fr4gm3nt3</h2>
 
-<!-- Hauptmenü -->
 <div id="mainMenu">
-  <button id="newGameBtn">Neuer Spielstand</button>
-  <button id="loadGameBtn">Spielstand laden</button>
-  <button id="openChatBtn">Deine Gedanken</button>
-  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.11.1.1</div>
+  <button id="playBtn">Spielen</button>
+  <button id="leaderboardBtn">Leaderboard</button>
 </div>
 
-<!-- Spielbereich -->
 <div id="gameContainer">
-  <div id="sceneLabel"></div>
-  <div id="sceneText"></div>
-  <div id="choices"></div>
+  <canvas id="mazeCanvas" width="600" height="600"></canvas>
+  <div id="hud"></div>
+  <button onclick="backToMenu()">Zurück</button>
 </div>
 
-
-<!-- Chatbereich -->
-<div id="chatContainer">
-  <h2>Deine Gedanken 🌝</h2>
-  <div id="chatMessages"></div>
-  <input id="chatInput" type="text" placeholder="Schreibe etwas..." />
-  <button id="sendChatBtn">Abschicken</button>
-  <button id="backFromChatBtn">Zurück</button>
-</div>
-
-<audio id="bgMusic" src="momedeiros88-mystical.mp3" type="audio/mpeg" loop></audio>
-<audio id="typeSound" src="game-text.mp3" preload="auto"></audio>
-<audio id="clickSound" src="magic-button-click.mp3" preload="auto"></audio>
+<audio id="bgMusic" src="momedeiros88-mystical.mp3" loop></audio>
 
 <script>
-/********* NORMALE STERNE *********/
+
+/********* STERNE *********/
 for(let i=0;i<80;i++){
   const star = document.createElement('div');
-  star.className = 'star';
-  star.style.top = Math.random()*100+'%';
-  star.style.left = Math.random()*100+'%';
-  star.style.width = star.style.height = (Math.random()*2+1)+'px';
-  star.style.animationDuration = (Math.random()*2+1)+'s, '+(4+Math.random()*3)+'s';
+  star.className='star';
+  star.style.top=Math.random()*100+'%';
+  star.style.left=Math.random()*100+'%';
   document.body.appendChild(star);
 }
-/********* STERNSCHNUPPEN *********/
-function spawnShootingStar(){
-  const star = document.createElement('div');
-  star.className = 'shooting-star';
 
-  // Startposition: oben, leicht rechts von der Bildschirmmitte bis ganz rechts
-  const startX = window.innerWidth * 0.5 + Math.random() * (window.innerWidth * 0.5);
-  const startY = -Math.random() * 50; // leicht über dem Bildschirm
-
-  star.style.left = startX + 'px';
-  star.style.top = startY + 'px';
-
-  // Animationsdauer langsamer: 1.2s bis 2s
-  const duration = 1.2 + Math.random() * 0.8;
-  star.style.animation = `shoot ${duration}s linear forwards`;
-
-  document.body.appendChild(star);
-
-  // Nach Animation entfernen
-  setTimeout(() => {
-    star.remove();
-  }, duration * 1000);
-}
-
-// Interval: alle 6–12 Sekunden, 40% Chance
-setInterval(() => {
-  if (Math.random() < 0.4) spawnShootingStar();
-}, 6000);
-
-/********* STORY DATA *********/
-const story = {
-    "-1_-1": { label:"Akt -1, Szene -1", text:"Du hast den Baustellen-Bereich erreicht. Die Story ist hier momentan noch in Arbeit, du wirst das in ein paar Tagen betreten können, wenn du Vorschläge hast wie die Story weitergehen soll, dann einfach in deine Gedanken schreiben, danke!", choices:[{ text:"Zurück zum letzten Akt", next: () => {const last = getLastActScene(); return last ? last : "0_0";}},{ text:"Spiel beenden", next:null}] },
-    "1_1": { label:"Akt 1, Szene 1", text:"Der Tag beginnt mit einem Geräusch, das du eigentlich nicht hören wolltest: ein Wecker, der viel zu motiviert für diese Uhrzeit ist. Er klingelt nicht freundlich. Er klingelt nicht neutral. Er klingelt so, als hätte er persönlich etwas gegen dich. Du öffnest ein Auge. Nur eins. Das andere weigert sich, an diesem Tag teilzunehmen. Das Zimmer ist dunkel. Die Luft ist kalt. Und dein Gehirn versucht dich zu überzeugen, dass heute Samstag ist. Du greifst nach deinem Handy. Es zeigt eine Uhrzeit an, die eindeutig nicht Samstag ist. Dein Gehirn ist enttäuscht. Dein Körper ist beleidigt. Und du bist beides. Du setzt dich auf. Langsam. Sehr langsam. So langsam, dass selbst Schnecken sagen würden: 'Respekt'. Du schaust dich im Zimmer um. Und du legst dich wieder hin. 5min gehen noch oder?", choices:[{ text:"Neee lieber nicht.", next:"1_2", save: "erste choice" },{ text:"Ja, komm. Was soll passieren.", next:"1_3" , save:"erste choice"}] },
-    "1_2": { label:"Akt 1, Szene 2", text:"Wow! Du stehst auf. Ein mutiger Schritt. Ein sehr mutiger Schritt. Du setzt einen Fuß auf den Boden. Er fühlt sich an wie ein Eisblock. Du setzt einen zweiten Fuß auf den Boden. Er fühlt sich nach gar nichts an. Du stehst. Dein Körper ist wach. Dein Gehirn ist nicht wach. Dein Gesicht ist irgendwo dazwischen. Du gehst los. Langsam. Du willst essen. Dein Magen meldet sich mit einem Geräusch, das irgendwo zwischen 'Bitte füttern' und 'Ich kündige' liegt. Du gehst Richtung Küche. Zumindest glaubst du das. Deine Füße haben beschlossen, dass sie heute ihren eigenen Plan verfolgen. Du öffnest eine Tür. Du starrst auf einen Schrank. Dein Gehirn versucht die Lage zu analysieren. Es dauert. Sehr lange. Dann kommt ein Gedanke 'Ist das der Kühlschrank?'", choices:[{ text:"Denke schon.", next:"1_6" },{ text:"Ne, ungutes Gefühl dabei.", next:"2_1" }] },
-    "1_6": { label:"Akt 1, Szene 6", text:"Ehmm, nein Luisa! Das war tatsächlich nicht der Kühlschrank... Du bist im Badezimmer. Aber guten Hunger oder so", choices:[{ text:"Zurück zum letzten Akt", next: () => {const last = getLastActScene(); return last ? last : "0_0";}},{ text:"Spiel beenden", next:null}] },
-    "1_3": { label:"Akt 1, Szene 3", text:"5 Minuten liegen bleiben. Die 5 Minuten, die in der Theorie kurz sind... und in der Praxis ungefähr so zuverlässig wie das DG-Wlan. Du ziehst die Decke höher. Du drehst dich auf die andere Seite. Du schließt die Augen. Einmal. Nur ganz kurz. Du öffnest ein Auge. Dein Handy liegt neben dir. Du streckst die Hand aus. Du drückst den Bildschirm an. Die Uhrzeit erscheint. 'Oh perfekt. Nur 2 Minuten vergangen.' Du lächelst. Du bist stolz auf dich. Du blinzelst. Irgendwas stimmt nicht. Du schaust nochmal hin. Diesmal richtig. Mit beiden Augen. Und dann trifft es dich: Das sind nicht 2 Minuten, sondern 62 Minuten. Du frierst ein. Es ist 8.02Uhr. Was machst du jetzt? Panik schieben und zur Schule, ohne Essen, oder auf den Schock noch mal ganz kurz 10s die Augen zu?", choices:[{ text:"Naja wirds Zeit für Schule.", next:"2_1"},{ text:"10s gehen noch.", next:"1_4"}] },
-    "1_4": { label:"Akt 1, Szene 4", text:"Du hast gerade eine Entscheidung getroffen die in allen möglichen Paralleluniversen noch keine einzige Version von dir überhaupt im Kopf hatte. Respekt. Funktioniert nur eher weniger gut...", choices:[{ text:"Zurück zum letzten Akt", next: () => {const last = getLastActScene(); return last ? last : "0_0";}},{ text:"Spiel beenden", next:null}] },
-    "2_1": { label:"Akt 2, Szene 1", text:"", choices:[{ text:"Naja wirds Zeit für Schule.", next:"1_5"},{ text:"10s gehen noch.", next:"1_4"}] },
-};
-
-/********* LOCAL STORAGE *********/
-const saveKey = 'luisaStorySave';
-let currentScene = null;
-let sceneHistory = [];
-
-/********* HINTERGRUNDMUSIK UND TIPPSOUND *********/
-const music = document.getElementById('bgMusic');
-music.volume = 0.6;
-const typeSound = document.getElementById('typeSound');
-typeSound.volume = 0.15;
-const clickSound = document.getElementById('clickSound');
-clickSound.volume = 0.24;
-
-function stopTypeSound() {
-  const fade = setInterval(() => {
-    if (typeSound.volume > 0.02) {
-      typeSound.volume -= 0.02;
-    } else {
-      clearInterval(fade);
-      typeSound.pause();
-      typeSound.currentTime = 0;
-      typeSound.volume = 0.15;
-    }
-  }, 20);
-}
-
-function typeText(element, text, speed = 40, callback = null) {
-  element.innerText = '';
-  let i = 0;
-  let typingActive = true;
-
-  function typing() {
-    if (!typingActive) { stopTypeSound(); return; }
-
-    if (i < text.length) {
-      element.innerText += text[i];
-
-      if (text[i] !== ' ' && Math.random() < 0.35) {
-        typeSound.currentTime = 0;
-        typeSound.play().catch(() => {});
-      }
-
-      i++;
-      setTimeout(typing, speed);
-    } else {
-      stopTypeSound();
-      typingActive = false;
-      if (callback) callback();
-    }
-  }
-  typing();
-
-  return () => { typingActive = false; stopTypeSound(); };
-}
-
-/********* HAUPTMENÜ BUTTONS *********/
-document.getElementById('newGameBtn').onclick = function() {
-  currentScene = "1_1";
-  sceneHistory = [];
-
-  inventoryDoc.delete().catch(() => {});
-  localStorage.setItem(saveKey, currentScene);
-
-  showGame();
-  music.play().catch(e => console.log(e));
-}
-
-document.getElementById('loadGameBtn').onclick = function() {
-  const saved = localStorage.getItem(saveKey);
-  if(saved && story[saved]){
-    currentScene = saved;
-    showGame();
-    music.play().catch(e => console.log(e));
-  } else { alert("Kein gespeicherter Spielstand gefunden."); }
-}
-
-/********* SPIEL ANZEIGEN *********/
-function showGame(){
-  document.getElementById('mainMenu').style.display = 'none';
-  document.getElementById('chatContainer').style.display = 'none';
-  document.getElementById('gameContainer').style.display = 'flex';
-  showScene();
-}
-
-/********* SZENE ANZEIGEN *********/
-function showScene(){
-  const scene = story[currentScene];
-  if(!scene) return;
-
-  // ---- AUTOMATISCHER LOCAL SAVE ----
-  localStorage.setItem(saveKey, currentScene);
-
-  const [actNum, sceneNum] = currentScene.split('_').map(Number);
-
-  if (
-    actNum > 0 &&
-    sceneNum === 1 && // ⭐ nur Einstiegsszene eines Akts
-    !sceneHistory.includes(currentScene)
-  ) {
-    sceneHistory.push(currentScene);
-  }
-
-  const sceneText = document.getElementById('sceneText');
-  const choicesDiv = document.getElementById('choices');
-  document.getElementById('sceneLabel').innerText = scene.label;
-
-  sceneText.style.display = 'block';
-  choicesDiv.style.visibility = 'hidden';
-
-  typeText(sceneText, scene.text, 40, () => {
-    choicesDiv.innerHTML = '';
-    scene.choices.forEach(choice => {
-      const btn = document.createElement('button');
-      btn.innerText = choice.text;
-      btn.onclick = function(){
-        // 1. Entscheidung speichern, falls gesetzt
-        if(choice.save) {
-            saveDecision(choice.save);
-        }
-    
-        // 2. Szene wechseln
-        if(choice.next){
-            currentScene = typeof choice.next === 'function' ? choice.next() : choice.next;
-            localStorage.setItem(saveKey, currentScene);
-            showScene();
-        } else {
-            typeText(sceneText, "Danke fürs Spielen! 🌸", 40);
-            choicesDiv.innerHTML = `<button onclick="location.reload()">Zurück zum Hauptmenü</button>`;
-            localStorage.removeItem(saveKey); 
-        }
-      };
-      choicesDiv.appendChild(btn);
-    });
-    // Dritter Button: Zurück zum Hauptmenü
-    const menuBtn = document.createElement('button');
-    menuBtn.innerText = "Hauptmenü";
-    menuBtn.onclick = function(){
-        document.getElementById('gameContainer').style.display = 'none';
-        document.getElementById('mainMenu').style.display = 'flex';
-    };
-    choicesDiv.appendChild(menuBtn);
-    choicesDiv.style.visibility = 'visible';
-  });
-}
-
-function getLastActScene() {
-  if (sceneHistory.length === 0) return null;
-  return sceneHistory[sceneHistory.length - 1];
-}
-
-/********* FIREBASE CONFIG *********/
+/********* FIREBASE *********/
 const firebaseConfig = {
   apiKey: "AIzaSyD_cDHNMZZiLuGLfAntYAc8ONtKgwYlp9Y",
   authDomain: "luisaglobalchat.firebaseapp.com",
   projectId: "luisaglobalchat",
-  storageBucket: "luisaglobalchat.appspot.com",
-  messagingSenderId: "1029281753779",
-  appId: "1:1029281753779:web:c266b6b0ef66a977999ec6"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const chatCollection = db.collection('chatMessages');
-// Jedes Gerät bekommt eine eigene ID
-let deviceId = localStorage.getItem('luisaDeviceId');
-if (!deviceId) {
-    deviceId = 'device_' + Math.random().toString(36).substr(2,9);
-    localStorage.setItem('luisaDeviceId', deviceId);
-}
-// Inventar/Entscheidungen pro Device
-const inventoryCollection = db.collection('inventories');
-const inventoryDoc = inventoryCollection.doc(deviceId);
+const leaderboardCollection = db.collection("leaderboard");
 
-// Speichert eine Entscheidung ins Inventar
-function saveDecision(decisionKey){
-    inventoryDoc.set({
-        decisions: firebase.firestore.FieldValue.arrayUnion(decisionKey)
-    }, { merge: true });
+let deviceId = localStorage.getItem("mazeDeviceId");
+if(!deviceId){
+  deviceId = "device_" + Math.random().toString(36).substr(2,9);
+  localStorage.setItem("mazeDeviceId", deviceId);
 }
 
-const startCollection = db.collection('appStarts');
-const startDoc = startCollection.doc(deviceId);
+/********* GAME VARS *********/
+let maze=[], size=15;
+let player={x:0,y:0};
+let timer=164;
+let score=0;
+let interval;
 
-/********* CHAT FUNKTIONEN *********/
-// Chat öffnen
-document.getElementById('openChatBtn').onclick = function() {
-  document.getElementById('mainMenu').style.display = 'none';
-  document.getElementById('gameContainer').style.display = 'none';
-  document.getElementById('chatContainer').style.display = 'flex';
-  loadChat();
-};
+const canvas=document.getElementById("mazeCanvas");
+const ctx=canvas.getContext("2d");
 
-// Chat schließen
-document.getElementById('backFromChatBtn').onclick = function() {
-  document.getElementById('chatContainer').style.display = 'none';
-  document.getElementById('mainMenu').style.display = 'flex';
-};
+/********* MAZE GENERATION *********/
+function generateMaze(n){
+  maze=[];
+  for(let y=0;y<n;y++){
+    maze[y]=[];
+    for(let x=0;x<n;x++){
+      maze[y][x]={visited:false,walls:{t:1,r:1,b:1,l:1}};
+    }
+  }
 
-// Nachricht abschicken
-document.getElementById('sendChatBtn').onclick = function() {
-    const msg = document.getElementById('chatInput').value.trim();
-    if(msg === '') return;
+  function dfs(x,y){
+    maze[y][x].visited=true;
+    const dirs=shuffle([[0,-1,'t','b'],[1,0,'r','l'],[0,1,'b','t'],[-1,0,'l','r']]);
+    for(let d of dirs){
+      let nx=x+d[0], ny=y+d[1];
+      if(nx>=0&&ny>=0&&nx<n&&ny<n&&!maze[ny][nx].visited){
+        maze[y][x].walls[d[2]]=0;
+        maze[ny][nx].walls[d[3]]=0;
+        dfs(nx,ny);
+      }
+    }
+  }
+  dfs(0,0);
+}
+function shuffle(a){return a.sort(()=>Math.random()-0.5);}
 
-    chatCollection.add({
-        text: msg,
-        sender: deviceId,  // Alles vom aktuellen Gerät ist "blau"
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
+/********* DRAW *********/
+function draw(){
+  const cell=canvas.width/size;
+  ctx.clearRect(0,0,600,600);
 
-    document.getElementById('chatInput').value = '';
-};
+  ctx.strokeStyle="#ffd700";
+  ctx.lineWidth=2;
 
-// Nachrichten live laden
-function loadChat() {
-  const chatMessages = document.getElementById('chatMessages');
-  chatMessages.innerHTML = '';
-  chatCollection.orderBy('timestamp', 'asc').onSnapshot(snapshot => {
-    const chatMessages = document.getElementById('chatMessages');
-    chatMessages.innerHTML = ''; // clear
-    snapshot.forEach(doc => {
-      addMessage(doc.data());
+  for(let y=0;y<size;y++){
+    for(let x=0;x<size;x++){
+      const c=maze[y][x];
+      const px=x*cell, py=y*cell;
+
+      if(c.walls.t) ctx.strokeRect(px,py,cell,1);
+      if(c.walls.l) ctx.strokeRect(px,py,1,cell);
+      if(c.walls.r) ctx.strokeRect(px+cell,py,1,cell);
+      if(c.walls.b) ctx.strokeRect(px,py+cell,cell,1);
+    }
+  }
+
+  ctx.fillStyle="#4db8ff";
+  ctx.fillRect(player.x*cell+4,player.y*cell+4,cell-8,cell-8);
+
+  ctx.fillStyle="#ff77cc";
+  ctx.fillRect((size-1)*cell+6,(size-1)*cell+6,cell-12,cell-12);
+
+  document.getElementById("hud").innerText=
+    `Zeit: ${timer}s   Score: ${score}`;
+}
+
+/********* START GAME *********/
+function startGame(){
+  document.getElementById("mainMenu").style.display="none";
+  document.getElementById("gameContainer").style.display="flex";
+
+  timer=164;
+  score=0;
+  player={x:0,y:0};
+
+  generateMaze(size);
+  draw();
+
+  clearInterval(interval);
+  interval=setInterval(()=>{
+    timer--;
+    if(timer<=0) endGame();
+    draw();
+  },1000);
+}
+
+/********* MOVE *********/
+document.addEventListener("keydown",e=>{
+  if(timer<=0) return;
+  const c=maze[player.y][player.x];
+
+  if(e.key==="ArrowUp"&&!c.walls.t) player.y--;
+  if(e.key==="ArrowDown"&&!c.walls.b) player.y++;
+  if(e.key==="ArrowLeft"&&!c.walls.l) player.x--;
+  if(e.key==="ArrowRight"&&!c.walls.r) player.x++;
+
+  if(player.x===size-1&&player.y===size-1){
+    score++;
+    timer+=12;
+    player={x:0,y:0};
+    generateMaze(size);
+  }
+  draw();
+});
+
+/********* GAME OVER *********/
+function endGame(){
+  clearInterval(interval);
+
+  leaderboardCollection.doc(deviceId).get().then(doc=>{
+    const old=doc.exists?doc.data().score:0;
+
+    if(score>old){
+      leaderboardCollection.doc(deviceId).set({score:score});
+      alert("Neuer Highscore! 🏆 "+score);
+    }else{
+      alert("Game Over! Score: "+score);
+    }
+    backToMenu();
+  });
+}
+
+/********* LEADERBOARD *********/
+function showLeaderboard(){
+  document.getElementById("mainMenu").style.display="none";
+  document.getElementById("gameContainer").style.display="flex";
+
+  const container=document.getElementById("gameContainer");
+  container.innerHTML="<h2>Leaderboard</h2><div id='leaderboard'></div><button onclick='location.reload()'>Zurück</button>";
+
+  leaderboardCollection.orderBy("score","desc").get().then(snapshot=>{
+    snapshot.forEach(doc=>{
+      const div=document.createElement("div");
+      div.innerText=doc.id+" — "+doc.data().score;
+      document.getElementById("leaderboard").appendChild(div);
     });
   });
 }
-function addMessage(msgData) {
-    const chatMessages = document.getElementById('chatMessages');
-    const div = document.createElement('div');
 
-    // Alles vom aktuellen Gerät = blau, alles andere = pink
-    if(msgData.sender === deviceId){
-        div.className = 'myMessage';
-    } else {
-        div.className = 'theirMessage';
-    }
-
-    div.innerText = msgData.text;
-    chatMessages.appendChild(div);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+function backToMenu(){
+  document.getElementById("gameContainer").style.display="none";
+  document.getElementById("mainMenu").style.display="flex";
 }
 
-/********* START INTRO *********/
-document.getElementById('startBtn').onclick = () => {
-  // 🎵 Musik starten (autoplay-safe)
-  music.play().catch(() => {});
-  music.volume = 0.6;
-
-  // 📊 Start in Firebase zählen
-  startDoc.set({
-    deviceId: deviceId,
-    startCount: firebase.firestore.FieldValue.increment(1),
-    lastStart: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
-
-  // 🌫️ Overlay ausblenden
-  const overlay = document.getElementById('startOverlay');
-  overlay.style.opacity = '0';
-
-  setTimeout(() => {
-    overlay.remove();
-  }, 800);
-};
-
-/********* GLOBAL BUTTON CLICK SOUND *********/
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('button');
-  if (!btn) return;
-
-  clickSound.currentTime = 0;
-  clickSound.play().catch(() => {});
-});
+/********* BUTTONS *********/
+document.getElementById("playBtn").onclick=startGame;
+document.getElementById("leaderboardBtn").onclick=showLeaderboard;
 
 </script>
 </body>
 </html>
+
