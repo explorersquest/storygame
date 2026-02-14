@@ -148,6 +148,16 @@ h2 {
 }
 #choices button:hover { background:#6655aa; transform: scale(1.05); }
 
+#commentLabel {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #888;
+  transform: rotate(-6deg);
+  opacity: 0.75;
+  letter-spacing: 1px;
+  user-select: none;
+}
+
 /* Sterne mit leichter Bewegung */
 .star {
   position: absolute;
@@ -286,6 +296,7 @@ h2 {
   <button id="loadGameBtn">Spielstand laden</button>
   <button id="openChatBtn">Deine Gedanken</button>
   <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.14.1.2</div>
+  <div id="commentLabel">Gute Morgen</div>
 </div>
 
 <!-- Spielbereich -->
@@ -441,6 +452,8 @@ function typeText(element, text, speed = 40, callback = null) {
 
 /********* HAUPTMENÜ BUTTONS *********/
 document.getElementById('newGameBtn').onclick = function() {
+  logActivity('newGame');
+
   currentScene = "1_1";
   sceneHistory = [];
 
@@ -452,12 +465,16 @@ document.getElementById('newGameBtn').onclick = function() {
 }
 
 document.getElementById('loadGameBtn').onclick = function() {
+  logActivity('loadGame');
+
   const saved = localStorage.getItem(saveKey);
   if(saved && story[saved]){
     currentScene = saved;
     showGame();
     music.play().catch(e => console.log(e));
-  } else { alert("Kein gespeicherter Spielstand gefunden."); }
+  } else {
+    alert("Kein gespeicherter Spielstand gefunden.");
+  }
 }
 
 /********* SPIEL ANZEIGEN *********/
@@ -566,9 +583,23 @@ function saveDecision(decisionKey){
 const startCollection = db.collection('appStarts');
 const startDoc = startCollection.doc(deviceId);
 
+/********* ACTIVITY TRACKING *********/
+const activitiesCollection = db.collection('activities');
+const activitiesDoc = activitiesCollection.doc(deviceId);
+
+// Hilfsfunktion zum Zählen
+function logActivity(actionKey){
+  activitiesDoc.set({
+    [actionKey]: firebase.firestore.FieldValue.increment(1),
+    lastAction: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+}
+
 /********* CHAT FUNKTIONEN *********/
 // Chat öffnen
 document.getElementById('openChatBtn').onclick = function() {
+  logActivity('openChat');
+
   document.getElementById('mainMenu').style.display = 'none';
   document.getElementById('gameContainer').style.display = 'none';
   document.getElementById('chatContainer').style.display = 'flex';
