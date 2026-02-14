@@ -321,6 +321,19 @@ h2 {
 <audio id="clickSound" src="magic-button-click.mp3" preload="auto"></audio>
 
 <script>
+let displayName = '';
+
+async function initDisplayName() {
+  const docSnap = await inventoryDoc.get();
+  if (docSnap.exists && docSnap.data().displayName) {
+    displayName = docSnap.data().displayName;
+  } else {
+    const name = prompt("Wie möchtest du genannt werden? 🌸") || "Unbekannt";
+    displayName = name.trim();
+    await inventoryDoc.set({ displayName }, { merge: true });
+  }
+}
+
 /********* NORMALE STERNE *********/
 for(let i=0;i<80;i++){
   const star = document.createElement('div');
@@ -659,11 +672,14 @@ function addMessage(msgData) {
 
 /********* START INTRO *********/
 document.getElementById('startBtn').onclick = async () => {
-  // 🎵 Musik starten
+  // Musik starten
   music.play().catch(() => {});
   music.volume = 0.6;
 
-  // 📊 Start in Firebase zählen
+  // Display Name initialisieren
+  await initDisplayName();
+
+  // Firestore Start zählen
   await startDoc.set({
     deviceId: deviceId,
     displayName: displayName,
@@ -671,19 +687,7 @@ document.getElementById('startBtn').onclick = async () => {
     lastStart: firebase.firestore.FieldValue.serverTimestamp()
   }, { merge: true });
 
-  // 🌟 Display Name prüfen
-  const docSnap = await inventoryDoc.get();
-  if (!docSnap.exists || !docSnap.data().displayName) {
-    // Nur beim allerersten Start
-    const name = prompt("Dein Name? ");
-    if (name && name.trim()) {
-      await inventoryDoc.set({
-        displayName: name.trim()
-      }, { merge: true });
-    }
-  }
-
-  // 🌫️ Overlay ausblenden
+  // Overlay ausblenden
   const overlay = document.getElementById('startOverlay');
   overlay.style.opacity = '0';
   setTimeout(() => overlay.remove(), 800);
