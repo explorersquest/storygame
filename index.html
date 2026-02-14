@@ -680,7 +680,7 @@ document.getElementById('startBtn').onclick = async () => {
   await initDisplayName();
 
   // Nachdem displayName geladen/abgefragt wurde:
-document.getElementById('commentLabel').innerText = `Guten Morgen, ${displayName}`;
+document.getElementById('commentLabel').innerText = `Hallo, ${displayName}`;
 
   // Firestore Start zählen
   await startDoc.set({
