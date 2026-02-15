@@ -295,7 +295,7 @@ h2 {
   <button id="newGameBtn">Neuer Spielstand</button>
   <button id="loadGameBtn">Spielstand laden</button>
   <button id="openChatBtn">Deine Gedanken</button>
-  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.14.2.2</div>
+  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.15.2.1</div>
   <div id="commentLabel">Kommentar</div>
 </div>
 
@@ -332,6 +332,19 @@ async function initDisplayName() {
     displayName = name.trim();
     await inventoryDoc.set({ displayName }, { merge: true });
   }
+}
+
+function getAvailableActs() {
+  const acts = new Set();
+
+  Object.keys(story).forEach(key => {
+    const [act, scene] = key.split('_').map(Number);
+    if (scene === 1 && act > 0) {
+      acts.add(act);
+    }
+  });
+
+  return Array.from(acts).sort((a, b) => a - b);
 }
 
 /********* NORMALE STERNE *********/
@@ -465,16 +478,30 @@ function typeText(element, text, speed = 40, callback = null) {
 
 /********* HAUPTMENÜ BUTTONS *********/
 document.getElementById('newGameBtn').onclick = function() {
+  showActSelection();
+};
+
+function startNewGameAtAct(actNumber) {
   logActivity('newGame');
 
-  currentScene = "1_1";
+  const startScene = `${actNumber}_1`;
+
+  currentScene = startScene;
   sceneHistory = [];
 
+  // Inventory reset
   inventoryDoc.delete().catch(() => {});
+
+  // Start-Akt speichern
+  inventoryDoc.set({
+    displayName: displayName,
+    startedAct: actNumber
+  }, { merge: true });
+
   localStorage.setItem(saveKey, currentScene);
 
   showGame();
-  music.play().catch(e => console.log(e));
+  music.play().catch(() => {});
 }
 
 document.getElementById('loadGameBtn').onclick = function() {
@@ -496,6 +523,29 @@ function showGame(){
   document.getElementById('chatContainer').style.display = 'none';
   document.getElementById('gameContainer').style.display = 'flex';
   showScene();
+}
+
+function showActSelection() {
+  const menu = document.getElementById('mainMenu');
+  menu.innerHTML = `
+    <h2>Wähle deinen Start 🌙</h2>
+    <div id="actButtons" style="display:flex; flex-direction:column; gap:20px;"></div>
+    <button id="cancelActSelect">Zurück</button>
+  `;
+
+  const actButtons = document.getElementById('actButtons');
+  const acts = getAvailableActs();
+
+  acts.forEach(act => {
+    const btn = document.createElement('button');
+    btn.innerText = `Akt ${act}`;
+    btn.onclick = () => startNewGameAtAct(act);
+    actButtons.appendChild(btn);
+  });
+
+  document.getElementById('cancelActSelect').onclick = () => {
+    location.reload(); // simpel & stabil
+  };
 }
 
 /********* SZENE ANZEIGEN *********/
