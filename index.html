@@ -103,6 +103,12 @@ h2 {
   height: 100%;
 }
 
+<div id="galleryContainer" style="display:none; flex-direction:column; align-items:center; padding:20px; width:80%; max-width:800px; margin:0 auto; background: rgba(30,30,50,0.9); border-radius:15px; overflow-y:auto; max-height:80vh;">
+    <h2>Entdeckte Orte:</h2>
+    <div id="galleryList" style="display:flex; flex-direction:column; gap:15px; width:100%;"></div>
+    <button id="backFromGalleryBtn" style="margin-top:20px;">Zurück</button>
+</div>
+
 /* Akt / Szene Label */
 #sceneLabel {
   font-size: 24px;
@@ -294,8 +300,9 @@ h2 {
 <div id="mainMenu">
   <button id="newGameBtn">Neuer Spielstand</button>
   <button id="loadGameBtn">Spielstand laden</button>
+  <button id="openGalleryBtn">Galerie</button>
   <button id="openChatBtn">Deine Gedanken</button>
-  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.15.2.1</div>
+  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.16.2.1</div>
   <div id="commentLabel">Kommentar</div>
 </div>
 
@@ -578,6 +585,11 @@ function showScene(){
   const scene = story[currentScene];
   if(!scene) return;
 
+  // ----GALERIE ----
+  if(currentScene === '2_8'){
+    unlockGalleryImage('2_8', 'Asterheim.png');
+  }
+
   // ---- AUTOMATISCHER LOCAL SAVE ----
   localStorage.setItem(saveKey, currentScene);
 
@@ -779,6 +791,52 @@ document.addEventListener('click', (e) => {
   clickSound.currentTime = 0;
   clickSound.play().catch(() => {});
 });
+
+/********* GALERIE FUNKTIONEN *********/
+document.getElementById('openGalleryBtn').onclick = function() {
+    logActivity('openGallery');
+    showGallery();
+};
+
+// Freigeschaltete Galerie-Bilder pro Gerät
+const galleryDoc = inventoryCollection.doc(deviceId);
+
+async function unlockGalleryImage(sceneKey, imageUrl) {
+    // Bild in Firestore "freischalten"
+    await galleryDoc.set({
+        gallery: firebase.firestore.FieldValue.arrayUnion({scene: sceneKey, url: imageUrl})
+    }, {merge:true});
+}
+
+// Galerie anzeigen
+async function showGallery() {
+    document.getElementById('mainMenu').style.display = 'none';
+    document.getElementById('gameContainer').style.display = 'none';
+    document.getElementById('chatContainer').style.display = 'none';
+    const galleryContainer = document.getElementById('galleryContainer');
+    const galleryList = document.getElementById('galleryList');
+
+    galleryContainer.style.display = 'flex';
+    galleryList.innerHTML = '';
+
+    // Galerie aus Firestore laden
+    const docSnap = await galleryDoc.get();
+    const gallery = docSnap.exists && docSnap.data().gallery ? docSnap.data().gallery : [];
+
+    gallery.forEach(item => {
+        const img = document.createElement('img');
+        img.src = item.url;
+        img.style.width = '100%';
+        img.style.borderRadius = '10px';
+        galleryList.appendChild(img);
+    });
+}
+
+// Zurück Button
+document.getElementById('backFromGalleryBtn').onclick = function() {
+    document.getElementById('galleryContainer').style.display = 'none';
+    document.getElementById('mainMenu').style.display = 'flex';
+};
 
 </script>
 </body>
