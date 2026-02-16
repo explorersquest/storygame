@@ -554,21 +554,19 @@ function startNewGameAtAct(actNumber) {
   logActivity('newGame');
 
   const startScene = `${actNumber}_1`;
-
   currentScene = startScene;
   sceneHistory = [];
 
-  // Inventory reset
-  inventoryDoc.delete().catch(() => {});
-
-  // Start-Akt speichern
+  // Nur Spiel-bezogenes Inventar zurücksetzen (decisions + startedAct)
   inventoryDoc.set({
-    displayName: displayName,
-    startedAct: actNumber
-  }, { merge: true });
+      decisions: [],
+      startedAct: firebase.firestore.FieldValue.delete()
+  }, { merge: true }); // merge=true sorgt dafür, dass andere Felder wie gallery und displayName erhalten bleiben
 
+  // Display-Name bleibt unverändert, keine Änderung nötig
+
+  // Neues Spiel starten
   localStorage.setItem(saveKey, currentScene);
-
   showGame();
   music.play().catch(() => {});
 }
