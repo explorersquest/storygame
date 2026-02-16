@@ -571,8 +571,10 @@ function showActSelection() {
     <h2>Wähle deinen Start 🌙</h2>
     <div id="actButtons" style="display:flex; flex-direction:column; gap:20px;"></div>
     <button id="cancelActSelect">Zurück</button>
-    document.getElementById('cancelActSelect').className = 'backButton';
-    ;
+  `;
+
+  // Klasse auf den Cancel-Button anwenden
+  document.getElementById('cancelActSelect').className = 'backButton';
 
   const actButtons = document.getElementById('actButtons');
   const acts = getAvailableActs();
@@ -597,22 +599,22 @@ function showActSelection() {
     // Buttons wieder mit Funktionen versehen
     document.getElementById('newGameBtn').onclick = showActSelection;
     document.getElementById('loadGameBtn').onclick = function() {
-        const saved = localStorage.getItem(saveKey);
-        if(saved && story[saved]){
-            currentScene = saved;
-            showGame();
-            music.play().catch(e => console.log(e));
-        } else {
-            alert("Kein gespeicherter Spielstand gefunden.");
-        }
+      const saved = localStorage.getItem(saveKey);
+      if(saved && story[saved]){
+        currentScene = saved;
+        showGame();
+        music.play().catch(e => console.log(e));
+      } else {
+        alert("Kein gespeicherter Spielstand gefunden.");
+      }
     };
     document.getElementById('openChatBtn').onclick = function() {
-        document.getElementById('mainMenu').style.display = 'none';
-        document.getElementById('gameContainer').style.display = 'none';
-        document.getElementById('chatContainer').style.display = 'flex';
-        loadChat();
+      document.getElementById('mainMenu').style.display = 'none';
+      document.getElementById('gameContainer').style.display = 'none';
+      document.getElementById('chatContainer').style.display = 'flex';
+      loadChat();
     };
-};
+  };
 }
 
 /********* SZENE ANZEIGEN *********/
