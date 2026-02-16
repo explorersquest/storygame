@@ -175,6 +175,23 @@ h2 {
   background: #7777cc;
 }
 
+.backButton {
+  background: #6655aa;
+  color: #ffd700;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 10px;
+  transition: transform 0.1s, background 0.2s;
+}
+
+.backButton:hover {
+  transform: scale(1.05);
+  background: #7777cc;
+}
+
 /* Sterne mit leichter Bewegung */
 .star {
   position: absolute;
@@ -554,7 +571,8 @@ function showActSelection() {
     <h2>Wähle deinen Start 🌙</h2>
     <div id="actButtons" style="display:flex; flex-direction:column; gap:20px;"></div>
     <button id="cancelActSelect">Zurück</button>
-  `;
+    document.getElementById('cancelActSelect').className = 'backButton';
+    ;
 
   const actButtons = document.getElementById('actButtons');
   const acts = getAvailableActs();
