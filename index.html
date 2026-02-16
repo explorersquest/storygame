@@ -330,8 +330,8 @@ h2 {
   <button id="loadGameBtn">Spielstand laden</button>
   <button id="openChatBtn">Deine Gedanken</button>
   <button id="openGalleryBtn">Galerie öffnen</button>
-  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.16.2.1</div>
-  <div id="commentLabel">Kommentar</div>
+  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.16.2.2</div>
+  <div id="commentLabel">Gutes Update? :D</div>
 </div>
 
 <!-- Spielbereich -->
@@ -804,7 +804,7 @@ document.getElementById('startBtn').onclick = async () => {
   await initDisplayName();
 
   // Nachdem displayName geladen/abgefragt wurde:
-document.getElementById('commentLabel').innerText = `Hallo, ${displayName}`;
+document.getElementById('commentLabel').innerText = `Gutes Update? :D`;
 
   // Firestore Start zählen
   await startDoc.set({
