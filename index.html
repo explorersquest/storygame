@@ -560,7 +560,7 @@ function startNewGameAtAct(actNumber) {
   // Nur Spiel-bezogenes Inventar zurücksetzen (decisions + startedAct)
   inventoryDoc.set({
       decisions: [],
-      startedAct: firebase.firestore.FieldValue.delete()
+      startedAct: actNumber
   }, { merge: true }); // merge=true sorgt dafür, dass andere Felder wie gallery und displayName erhalten bleiben
 
   // Display-Name bleibt unverändert, keine Änderung nötig
