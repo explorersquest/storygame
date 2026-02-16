@@ -365,6 +365,17 @@ let displayName = '';
 
 const mainMenuOriginalHTML = document.getElementById('mainMenu').innerHTML;
 
+function renderMainMenu() {
+  const menu = document.getElementById('mainMenu');
+  menu.innerHTML = mainMenuOriginalHTML;
+
+  // **Event-Listener müssen neu gesetzt werden!**
+  document.getElementById('newGameBtn').onclick = showActSelection;
+  document.getElementById('loadGameBtn').onclick = function() { /* ... */ };
+  document.getElementById('openChatBtn').onclick = function() { /* ... */ };
+  document.getElementById('openGalleryBtn').onclick = showGallery;
+}
+
 async function initDisplayName() {
   const docSnap = await inventoryDoc.get();
   if (docSnap.exists && docSnap.data().displayName) {
@@ -589,27 +600,9 @@ function showActSelection() {
   });
 
   document.getElementById('cancelActSelect').onclick = () => {
-    // Hauptmenü wieder sichtbar machen
-    document.getElementById('mainMenu').innerHTML = mainMenuOriginalHTML;
+    renderMainMenu();
+  };
 
-    // Buttons wieder mit Funktionen versehen
-    document.getElementById('newGameBtn').onclick = showActSelection;
-    document.getElementById('loadGameBtn').onclick = function() {
-      const saved = localStorage.getItem(saveKey);
-      if(saved && story[saved]){
-        currentScene = saved;
-        showGame();
-        music.play().catch(e => console.log(e));
-      } else {
-        alert("Kein gespeicherter Spielstand gefunden.");
-      }
-    };
-    document.getElementById('openChatBtn').onclick = function() {
-      document.getElementById('mainMenu').style.display = 'none';
-      document.getElementById('gameContainer').style.display = 'none';
-      document.getElementById('chatContainer').style.display = 'flex';
-      loadChat();
-    };
   };
 }
 
