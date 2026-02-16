@@ -586,7 +586,6 @@ function showActSelection() {
     <button id="cancelActSelect">Zurück</button>
   `;
 
-  // Klasse auf den Cancel-Button anwenden
   document.getElementById('cancelActSelect').className = 'backButton';
 
   const actButtons = document.getElementById('actButtons');
@@ -601,8 +600,6 @@ function showActSelection() {
 
   document.getElementById('cancelActSelect').onclick = () => {
     renderMainMenu();
-  };
-
   };
 }
 
