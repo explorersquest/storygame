@@ -103,12 +103,6 @@ h2 {
   height: 100%;
 }
 
-<div id="galleryContainer" style="display:none; flex-direction:column; align-items:center; padding:20px; width:80%; max-width:800px; margin:0 auto; background: rgba(30,30,50,0.9); border-radius:15px; overflow-y:auto; max-height:80vh;">
-    <h2>Entdeckte Orte:</h2>
-    <div id="galleryList" style="display:flex; flex-direction:column; gap:15px; width:100%;"></div>
-    <button id="backFromGalleryBtn" style="margin-top:20px;">Zurück</button>
-</div>
-
 /* Akt / Szene Label */
 #sceneLabel {
   font-size: 24px;
@@ -300,7 +294,7 @@ h2 {
 <div id="mainMenu">
   <button id="newGameBtn">Neuer Spielstand</button>
   <button id="loadGameBtn">Spielstand laden</button>
-  <button id="openGalleryBtn">Galerie</button>
+  <button id="openGalleryBtn">Galerie öffnen</button>
   <button id="openChatBtn">Deine Gedanken</button>
   <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.16.2.1</div>
   <div id="commentLabel">Kommentar</div>
@@ -311,6 +305,12 @@ h2 {
   <div id="sceneLabel"></div>
   <div id="sceneText"></div>
   <div id="choices"></div>
+</div>
+
+<div id="galleryContainer" style="display:none; flex-direction:column; align-items:center; padding:20px; width:80%; max-width:800px; margin:0 auto; background: rgba(30,30,50,0.9); border-radius:15px; overflow-y:auto; max-height:80vh;">
+    <h2>Entdeckte Orte:</h2>
+    <div id="galleryList" style="display:flex; flex-direction:column; gap:15px; width:100%;"></div>
+    <button id="backFromGalleryBtn" style="margin-top:20px;">Zurück</button>
 </div>
 
 <!-- Chatbereich -->
