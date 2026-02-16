@@ -363,6 +363,8 @@ h2 {
 <script>
 let displayName = '';
 
+const mainMenuOriginalHTML = document.getElementById('mainMenu').innerHTML;
+
 async function initDisplayName() {
   const docSnap = await inventoryDoc.get();
   if (docSnap.exists && docSnap.data().displayName) {
@@ -588,13 +590,7 @@ function showActSelection() {
 
   document.getElementById('cancelActSelect').onclick = () => {
     // Hauptmenü wieder sichtbar machen
-    document.getElementById('mainMenu').innerHTML = `
-      <button id="newGameBtn">Neuer Spielstand</button>
-      <button id="loadGameBtn">Spielstand laden</button>
-      <button id="openChatBtn">Deine Gedanken</button>
-      <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.15.2.1</div>
-      <div id="commentLabel">Hallo, ${displayName}</div>
-    `;
+    document.getElementById('mainMenu').innerHTML = mainMenuOriginalHTML;
 
     // Buttons wieder mit Funktionen versehen
     document.getElementById('newGameBtn').onclick = showActSelection;
