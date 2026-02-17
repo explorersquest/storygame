@@ -3,14 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <title>Für Luisa 🌸</title>
+
 <style>
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Georgia, serif;
+  background: radial-gradient(circle at top, #0a0a0a, #1a1a2e);
+  color: #ffd700;
+  overflow: hidden;
+}
+
 /* START OVERLAY */
 #startOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(5, 5, 15, 0.6);
+  background: rgba(5,5,15,0.6);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,7 +27,6 @@
   transition: opacity 0.8s ease;
 }
 
-/* Start Button */
 #startBtn {
   padding: 20px 60px;
   font-size: 28px;
@@ -28,293 +36,145 @@
   font-weight: bold;
   color: #ffd700;
   background: linear-gradient(145deg, #6655aa, #444477);
-  box-shadow: 0 0 25px rgba(255,215,0,0.4);
-  text-shadow: 0 0 8px #ffd700;
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 0 30px rgba(255,215,0,0.5);
 }
 
-#startBtn:hover {
-  transform: scale(1.08);
-  box-shadow: 0 0 40px rgba(255,215,0,0.6);
-}
-
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  font-family: 'Georgia', serif;
-  color: #f5f5f5;
-  background: radial-gradient(circle at top, #0a0a0a, #1a1a2e); 
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Glühender Titel */
-h1 { 
-  color: #ffd700; 
-  text-shadow: 0 0 10px #ffd700, 0 0 20px #ffb347;
-  font-size: 3em;
-  margin-bottom: 32px;
+/* TITEL */
+h1 {
   text-align: center;
+  margin-top: 40px;
+  text-shadow: 0 0 10px #ffd700;
 }
-h2 { 
-  color: #ffd700; 
-  text-shadow: 0 0 10px #ffd700, 0 0 20px #ffb347;
-  font-size: 2.5em;
-  margin-bottom: 16px;
+h2 {
   text-align: center;
+  margin-top: 5px;
+  opacity: 0.85;
 }
 
-/* Hauptmenü */
+/* HAUPTMENÜ */
 #mainMenu {
-  flex: 1;
+  height: calc(100% - 160px);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 25px;
+  flex-direction: column;
+  gap: 20px;
 }
-#mainMenu button { 
-  background: linear-gradient(145deg, #6655aa, #444477);
-  border: none;
+
+#mainMenu button {
   padding: 20px 40px;
-  border-radius: 15px;
-  color: #ffd700;
   font-size: 22px;
   font-weight: bold;
+  border-radius: 15px;
+  border: none;
   cursor: pointer;
-  text-shadow: 0 0 5px #ffd700;
-  transition: transform 0.15s, background 0.2s;
-}
-#mainMenu button:hover { 
-  background: linear-gradient(145deg, #7777cc, #5555aa); 
-  transform: scale(1.08);
+  color: #ffd700;
+  background: linear-gradient(145deg, #6655aa, #444477);
 }
 
-/* Spielcontainer */
-#gameContainer {
-  flex: 1;
-  display: none; /* wird erst sichtbar beim Spielstart */
+/* CHAT */
+#chatContainer {
+  display: none;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+  width: 80%;
+  max-width: 600px;
+  height: 70vh;
+  margin: 0 auto;
+  background: rgba(30,30,50,0.9);
+  border-radius: 15px;
+  padding: 20px;
 }
 
-/* Akt / Szene Label */
-#sceneLabel {
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #ffdd77;
-  text-shadow: 0 0 5px #ffd700;
+#chatMessages {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
 }
 
-/* Textbox */
-#sceneText {
-  display: none; /* erst sichtbar, wenn Animation startet */
-  margin: 20px auto; 
-  max-width: 80%;
-  padding: 30px; 
-  background: rgba(30,30,50,0.85); 
-  border-radius: 15px; 
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); 
-  font-size: 20px; 
-  min-height: 180px;
-  white-space: pre-wrap;
-}
-
-/* Buttons nebeneinander unten */
-#choices {
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
-  gap: 20px;
-  visibility: hidden; /* erst nach Tippen sichtbar */
-}
-#choices button { 
-  flex: 1 1 150px;
-  max-width: 250px;
-  padding: 15px 0;
+.myMessage {
+  align-self: flex-end;
+  background: rgba(0,120,255,0.2);
+  color: #4db8ff;
+  padding: 8px 12px;
   border-radius: 12px;
-  background: #444477; 
-  color: #ffd700; 
-  font-weight: bold;
-  font-size: 18px;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.1s, background 0.2s;
-}
-#choices button:hover { background:#6655aa; transform: scale(1.05); }
-
-#commentLabel {
-  margin-top: 4px;
-  font-size: 11px;
-  color: #888;
-  transform: rotate(-6deg);
-  opacity: 0.75;
-  letter-spacing: 1px;
-  user-select: none;
+  margin: 5px 0;
 }
 
-#backFromGalleryBtn {
-  background: #6655aa;
-  color: #ffd700;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 10px 20px;
+.theirMessage {
+  align-self: flex-start;
+  background: rgba(255,77,192,0.2);
+  color: #ff77cc;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin: 5px 0;
+}
+
+#chatInput {
+  padding: 10px;
   border-radius: 8px;
   border: none;
+  font-size: 16px;
+}
+
+#chatContainer button {
   margin-top: 10px;
-  transition: transform 0.1s, background 0.2s;
-}
-
-#backFromGalleryBtn:hover {
-  transform: scale(1.05);
-  background: #7777cc;
-}
-
-.backButton {
-  background: #6655aa;
-  color: #ffd700;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 10px 20px;
+  padding: 10px;
   border-radius: 8px;
   border: none;
-  margin-top: 10px;
-  transition: transform 0.1s, background 0.2s;
+  font-weight: bold;
+  cursor: pointer;
+  background: #444477;
+  color: #ffd700;
 }
 
-.backButton:hover {
-  transform: scale(1.05);
-  background: #7777cc;
-}
-
-/* Sterne mit leichter Bewegung */
+/* STERNE */
 .star {
   position: absolute;
-  width: 2px; 
-  height: 2px; 
-  background: white; 
+  width: 2px;
+  height: 2px;
+  background: white;
   border-radius: 50%;
   opacity: 0.8;
   animation: twinkle 2s infinite alternate, floatStars 6s infinite alternate;
 }
-@keyframes twinkle { 0% {opacity:0.3;} 100% {opacity:1;} }
-@keyframes floatStars {
-  0% { transform: translate(0px,0px);}
-  50% { transform: translate(1.5px, -1.5px);}
-  100% { transform: translate(0px,0px);}
+
+@keyframes twinkle {
+  from {opacity:0.3;}
+  to {opacity:1;}
 }
-/* Sternschnuppe */
+@keyframes floatStars {
+  from {transform: translate(0,0);}
+  to {transform: translate(1.5px,-1.5px);}
+}
+
+/* STERNSCHNUPPE */
 .shooting-star {
   position: absolute;
   width: 2px;
   height: 2px;
   background: white;
   border-radius: 50%;
-  opacity: 0.9;
-  pointer-events: none;
-  transform: rotate(-45deg); /* Flugrichtung */
+  transform: rotate(-45deg);
 }
-
-/* Schweif – exakt in Flugrichtung */
 .shooting-star::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -60px;
-  width: 60px;
-  height: 2px;
+  content:'';
+  position:absolute;
+  left:-60px;
+  width:60px;
+  height:2px;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8));
 }
-
-/* Langsame, weiche Flugbewegung */
 @keyframes shoot {
-  from {
-    transform: translate(0, 0) rotate(-45deg);
-    opacity: 1;
-  }
-  to {
-    transform: translate(-900px, 900px) rotate(-45deg);
-    opacity: 0;
-  }
+  from {transform: translate(0,0) rotate(-45deg); opacity:1;}
+  to {transform: translate(-900px,900px) rotate(-45deg); opacity:0;}
 }
-
-/* Chat-UI */
-#chatContainer {
-  display:none;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  width:80%;
-  max-width:600px;
-  margin:0 auto;
-  background: rgba(30,30,50,0.85);
-  border-radius:15px;
-  padding:20px;
-  min-height:400px;
-}
-/* Eigene Nachrichten */
-.myMessage {
-  background: rgba(0, 120, 255, 0.15);
-  color: #4db8ff;
-  padding: 8px 12px;
-  margin: 5px 0;
-  border-radius: 12px;
-  box-shadow: 0 0 8px #4db8ff, 0 0 16px #00aaff80;
-  max-width: 80%;
-  align-self: flex-end;
-  word-wrap: break-word;
-}
-
-/* Luisas Nachrichten */
-.theirMessage {
-  background: rgba(255, 77, 192, 0.15);
-  color: #ff77cc;
-  padding: 8px 12px;
-  margin: 5px 0;
-  border-radius: 12px;
-  box-shadow: 0 0 8px #ff77cc, 0 0 16px #ff77cc80;
-  max-width: 80%;
-  align-self: flex-start;
-  word-wrap: break-word;
-}
-
-#chatMessages {
-  flex:1;
-  overflow-y:auto;
-  width:100%;
-  margin-bottom:10px;
-  color:#ffd700;
-}
-#chatInput {
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:none;
-  font-size:16px;
-}
-#chatContainer button {
-  margin-top:10px;
-  padding:10px 20px;
-  border-radius:8px;
-  border:none;
-  background:#444477;
-  color:#ffd700;
-  font-weight:bold;
-  cursor:pointer;
-}
-#chatContainer button#backFromChatBtn { background:#6655aa; }
 </style>
 
-<!-- Firebase Scripts -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
 </head>
+
 <body>
 
 <div id="startOverlay">
@@ -324,522 +184,111 @@ h2 {
 <h1>Für Luisa 🌸</h1>
 <h2>Fr4gm3nt3</h2>
 
-<!-- Hauptmenü -->
 <div id="mainMenu">
   <button id="openChatBtn">Deine Gedanken</button>
-  <div id="versionLabel" style="margin-top:15px; font-size:14px; color:#aaa; text-align:center;">Version 2.16.2.2</div>
-  <div id="commentLabel"></div>
+  <div style="font-size:13px;opacity:0.6;">Version 2.16.2.2</div>
 </div>
 
-<!-- Spielbereich -->
-<div id="gameContainer">
-  <div id="sceneLabel"></div>
-  <div id="sceneText"></div>
-  <div id="choices"></div>
-</div>
-
-<div id="galleryContainer" style="display:none; flex-direction:column; align-items:center; padding:20px; width:80%; max-width:800px; margin:0 auto; background: rgba(30,30,50,0.9); border-radius:15px; overflow-y:auto; max-height:80vh;">
-    <h2>Entdeckte Orte:</h2>
-    <div id="galleryList" style="display:flex; flex-direction:column; gap:15px; width:100%;"></div>
-    <button id="backFromGalleryBtn" style="margin-top:20px;">Zurück</button>
-</div>
-
-<!-- Chatbereich -->
 <div id="chatContainer">
-  <h2>Deine Gedanken 🌝</h2>
+  <h2>Deine Gedanken 🌙</h2>
   <div id="chatMessages"></div>
-  <input id="chatInput" type="text" placeholder="Schreibe etwas..." />
+  <input id="chatInput" placeholder="Schreibe etwas …">
   <button id="sendChatBtn">Abschicken</button>
   <button id="backFromChatBtn">Zurück</button>
 </div>
 
-<audio id="bgMusic" src="momedeiros88-mystical.mp3" type="audio/mpeg" loop></audio>
-<audio id="typeSound" src="game-text.mp3" preload="auto"></audio>
-<audio id="clickSound" src="magic-button-click.mp3" preload="auto"></audio>
+<audio id="bgMusic" src="momedeiros88-mystical.mp3" loop></audio>
+<audio id="clickSound" src="magic-button-click.mp3"></audio>
 
 <script>
-let displayName = '';
-
-const mainMenuOriginalHTML = document.getElementById('mainMenu').innerHTML;
-
-function renderMainMenu() {
-  const menu = document.getElementById('mainMenu');
-  menu.innerHTML = mainMenuOriginalHTML;
-
-  // Alle Event-Listener setzen
-  document.getElementById('newGameBtn').onclick = showActSelection;
-  document.getElementById('loadGameBtn').onclick = function() {
-      logActivity('loadGame');
-      const saved = localStorage.getItem(saveKey);
-      if(saved && story[saved]){
-        currentScene = saved;
-        showGame();
-        music.play().catch(e => console.log(e));
-      } else {
-        alert("Kein gespeicherter Spielstand gefunden.");
-      }
-  };
-  document.getElementById('openChatBtn').onclick = function() {
-      logActivity('openChat');
-      document.getElementById('mainMenu').style.display = 'none';
-      document.getElementById('gameContainer').style.display = 'none';
-      document.getElementById('chatContainer').style.display = 'flex';
-      loadChat();
-  };
-  document.getElementById('openGalleryBtn').onclick = showGallery;
-}
-
-async function initDisplayName() {
-  const docSnap = await inventoryDoc.get();
-  if (docSnap.exists && docSnap.data().displayName) {
-    displayName = docSnap.data().displayName;
-  } else {
-    const name = prompt("Dein Name? 🌸") || "Unbekannt";
-    displayName = name.trim();
-    await inventoryDoc.set({ displayName }, { merge: true });
-  }
-}
-
-function getAvailableActs() {
-  const acts = new Set();
-
-  Object.keys(story).forEach(key => {
-    const [act, scene] = key.split('_').map(Number);
-    if (scene === 1 && act > 0) {
-      acts.add(act);
-    }
-  });
-
-  return Array.from(acts).sort((a, b) => a - b);
-}
-
-/********* NORMALE STERNE *********/
+/******** STERNE ********/
 for(let i=0;i<80;i++){
-  const star = document.createElement('div');
-  star.className = 'star';
-  star.style.top = Math.random()*100+'%';
-  star.style.left = Math.random()*100+'%';
-  star.style.width = star.style.height = (Math.random()*2+1)+'px';
-  star.style.animationDuration = (Math.random()*2+1)+'s, '+(4+Math.random()*3)+'s';
-  document.body.appendChild(star);
+  const s=document.createElement('div');
+  s.className='star';
+  s.style.top=Math.random()*100+'%';
+  s.style.left=Math.random()*100+'%';
+  document.body.appendChild(s);
 }
-/********* STERNSCHNUPPEN *********/
-function spawnShootingStar(){
-  const star = document.createElement('div');
-  star.className = 'shooting-star';
-
-  // Startposition: oben, leicht rechts von der Bildschirmmitte bis ganz rechts
-  const startX = window.innerWidth * 0.5 + Math.random() * (window.innerWidth * 0.5);
-  const startY = -Math.random() * 50; // leicht über dem Bildschirm
-
-  star.style.left = startX + 'px';
-  star.style.top = startY + 'px';
-
-  // Animationsdauer langsamer: 1.2s bis 2s
-  const duration = 1.2 + Math.random() * 0.8;
-  star.style.animation = `shoot ${duration}s linear forwards`;
-
-  document.body.appendChild(star);
-
-  // Nach Animation entfernen
-  setTimeout(() => {
-    star.remove();
-  }, duration * 1000);
-}
-
-// Interval: alle 6–12 Sekunden, 40% Chance
-setInterval(() => {
-  if (Math.random() < 0.4) spawnShootingStar();
-}, 6000);
-
-/********* STORY DATA *********/ 
-const story = { }
-
-/********* LOCAL STORAGE *********/
-const saveKey = 'luisaStorySave';
-let currentScene = null;
-let sceneHistory = [];
-
-/********* HINTERGRUNDMUSIK UND TIPPSOUND *********/
-const music = document.getElementById('bgMusic');
-music.volume = 0.6;
-const typeSound = document.getElementById('typeSound');
-typeSound.volume = 0.15;
-const clickSound = document.getElementById('clickSound');
-clickSound.volume = 0.24;
-
-function stopTypeSound() {
-  const fade = setInterval(() => {
-    if (typeSound.volume > 0.02) {
-      typeSound.volume -= 0.02;
-    } else {
-      clearInterval(fade);
-      typeSound.pause();
-      typeSound.currentTime = 0;
-      typeSound.volume = 0.15;
-    }
-  }, 20);
-}
-
-function typeText(element, text, speed = 40, callback = null) {
-  element.innerText = '';
-  let i = 0;
-  let typingActive = true;
-
-  function typing() {
-    if (!typingActive) { stopTypeSound(); return; }
-
-    if (i < text.length) {
-      element.innerText += text[i];
-
-      if (text[i] !== ' ' && Math.random() < 0.35) {
-        typeSound.currentTime = 0;
-        typeSound.play().catch(() => {});
-      }
-
-      i++;
-      setTimeout(typing, speed);
-    } else {
-      stopTypeSound();
-      typingActive = false;
-      if (callback) callback();
-    }
+setInterval(()=>{
+  if(Math.random()<0.4){
+    const s=document.createElement('div');
+    s.className='shooting-star';
+    s.style.left=(window.innerWidth*0.5+Math.random()*window.innerWidth*0.5)+'px';
+    s.style.top='-20px';
+    s.style.animation='shoot 1.5s linear forwards';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),1500);
   }
-  typing();
+},6000);
 
-  return () => { typingActive = false; stopTypeSound(); };
-}
-
-/********* HAUPTMENÜ BUTTONS *********/
-document.getElementById('newGameBtn').onclick = function() {
-  showActSelection();
-};
-
-function startNewGameAtAct(actNumber) {
-  logActivity('newGame');
-
-  const startScene = `${actNumber}_1`;
-  currentScene = startScene;
-  sceneHistory = [];
-
-  // Nur Spiel-bezogenes Inventar zurücksetzen (decisions + startedAct)
-  inventoryDoc.set({
-      decisions: [],
-      startedAct: actNumber
-  }, { merge: true }); // merge=true sorgt dafür, dass andere Felder wie gallery und displayName erhalten bleiben
-
-  // Display-Name bleibt unverändert, keine Änderung nötig
-
-  // Neues Spiel starten
-  localStorage.setItem(saveKey, currentScene);
-  showGame();
-  music.play().catch(() => {});
-}
-
-document.getElementById('loadGameBtn').onclick = function() {
-  logActivity('loadGame');
-
-  const saved = localStorage.getItem(saveKey);
-  if(saved && story[saved]){
-    currentScene = saved;
-    showGame();
-    music.play().catch(e => console.log(e));
-  } else {
-    alert("Kein gespeicherter Spielstand gefunden.");
-  }
-}
-
-/********* SPIEL ANZEIGEN *********/
-function showGame(){
-  document.getElementById('mainMenu').style.display = 'none';
-  document.getElementById('chatContainer').style.display = 'none';
-  document.getElementById('gameContainer').style.display = 'flex';
-  showScene();
-}
-
-function showActSelection() {
-  const menu = document.getElementById('mainMenu');
-  menu.innerHTML = `
-    <h2>Wähle deinen Start 🌙</h2>
-    <div id="actButtons" style="display:flex; flex-direction:column; gap:20px;"></div>
-    <button id="cancelActSelect">Zurück</button>
-  `;
-
-  document.getElementById('cancelActSelect').className = 'backButton';
-
-  const actButtons = document.getElementById('actButtons');
-  const acts = getAvailableActs();
-
-  acts.forEach(act => {
-    const btn = document.createElement('button');
-    btn.innerText = `Akt ${act}`;
-    btn.onclick = () => startNewGameAtAct(act);
-    actButtons.appendChild(btn);
-  });
-
-  document.getElementById('cancelActSelect').onclick = () => {
-    renderMainMenu();
-  };
-}
-
-/********* SZENE ANZEIGEN *********/
-function showScene(){
-  const scene = story[currentScene];
-  if(!scene) return;
-
-  // ----GALERIE ----
-  if(currentScene === '2_8'){
-    unlockGalleryImage('2_8', 'Asterheim.png');
-  }
-
-  // ---- AUTOMATISCHER LOCAL SAVE ----
-  localStorage.setItem(saveKey, currentScene);
-
-  const [actNum, sceneNum] = currentScene.split('_').map(Number);
-
-  if (
-    actNum > 0 &&
-    sceneNum === 1 && // ⭐ nur Einstiegsszene eines Akts
-    !sceneHistory.includes(currentScene)
-  ) {
-    sceneHistory.push(currentScene);
-  }
-
-  const sceneText = document.getElementById('sceneText');
-  const choicesDiv = document.getElementById('choices');
-  document.getElementById('sceneLabel').innerText = scene.label;
-
-  sceneText.style.display = 'block';
-  choicesDiv.style.visibility = 'hidden';
-
-  typeText(sceneText, scene.text, 40, () => {
-    choicesDiv.innerHTML = '';
-    scene.choices.forEach(choice => {
-      const btn = document.createElement('button');
-      btn.innerText = choice.text;
-      btn.onclick = function(){
-        // 1. Entscheidung speichern, falls gesetzt
-        if(choice.save) {
-            saveDecision(choice.save);
-        }
-    
-        // 2. Szene wechseln
-        if(choice.next){
-            currentScene = typeof choice.next === 'function' ? choice.next() : choice.next;
-            localStorage.setItem(saveKey, currentScene);
-            showScene();
-        } else {
-            typeText(sceneText, "Danke fürs Spielen! 🌸", 40);
-            choicesDiv.innerHTML = `<button onclick="location.reload()">Zurück zum Hauptmenü</button>`;
-            localStorage.removeItem(saveKey); 
-        }
-      };
-      choicesDiv.appendChild(btn);
-    });
-    // Dritter Button: Zurück zum Hauptmenü
-    const menuBtn = document.createElement('button');
-    menuBtn.innerText = "Hauptmenü";
-    menuBtn.onclick = function(){
-        document.getElementById('gameContainer').style.display = 'none';
-        document.getElementById('mainMenu').style.display = 'flex';
-    };
-    choicesDiv.appendChild(menuBtn);
-    choicesDiv.style.visibility = 'visible';
-  });
-}
-
-function getLastActScene() {
-  if (sceneHistory.length === 0) return null;
-  return sceneHistory[sceneHistory.length - 1];
-}
-
-/********* FIREBASE CONFIG *********/
-const firebaseConfig = {
+/******** FIREBASE ********/
+firebase.initializeApp({
   apiKey: "AIzaSyD_cDHNMZZiLuGLfAntYAc8ONtKgwYlp9Y",
   authDomain: "luisaglobalchat.firebaseapp.com",
-  projectId: "luisaglobalchat",
-  storageBucket: "luisaglobalchat.appspot.com",
-  messagingSenderId: "1029281753779",
-  appId: "1:1029281753779:web:c266b6b0ef66a977999ec6"
+  projectId: "luisaglobalchat"
+});
+const db=firebase.firestore();
+const chatCollection=db.collection("chatMessages");
+
+/******** DEVICE ********/
+let deviceId=localStorage.getItem("luisaDeviceId");
+if(!deviceId){
+  deviceId="device_"+Math.random().toString(36).substr(2,9);
+  localStorage.setItem("luisaDeviceId",deviceId);
+}
+
+/******** AUDIO ********/
+const music=document.getElementById("bgMusic");
+const clickSound=document.getElementById("clickSound");
+music.volume=0.6;
+
+/******** UI ********/
+startBtn.onclick=()=>{
+  music.play().catch(()=>{});
+  startOverlay.style.opacity=0;
+  setTimeout(()=>startOverlay.remove(),800);
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const chatCollection = db.collection('chatMessages');
-// Jedes Gerät bekommt eine eigene ID
-let deviceId = localStorage.getItem('luisaDeviceId');
-if (!deviceId) {
-    deviceId = 'device_' + Math.random().toString(36).substr(2,9);
-    localStorage.setItem('luisaDeviceId', deviceId);
-}
-// Inventar/Entscheidungen pro Device
-const inventoryCollection = db.collection('inventories');
-const inventoryDoc = inventoryCollection.doc(deviceId);
-
-// Speichert eine Entscheidung ins Inventar
-function saveDecision(decisionKey){
-    inventoryDoc.set({
-        displayName: displayName,
-        decisions: firebase.firestore.FieldValue.arrayUnion(decisionKey)
-    }, { merge: true });
-}
-
-const startCollection = db.collection('appStarts');
-const startDoc = startCollection.doc(deviceId);
-
-/********* ACTIVITY TRACKING *********/
-const activitiesCollection = db.collection('activities');
-const activitiesDoc = activitiesCollection.doc(deviceId);
-
-// Hilfsfunktion zum Zählen
-function logActivity(actionKey){
-  activitiesDoc.set({
-    displayName: displayName,
-    [actionKey]: firebase.firestore.FieldValue.increment(1),
-    lastAction: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
-}
-
-/********* CHAT FUNKTIONEN *********/
-// Chat öffnen
-document.getElementById('openChatBtn').onclick = function() {
-  logActivity('openChat');
-
-  document.getElementById('mainMenu').style.display = 'none';
-  document.getElementById('gameContainer').style.display = 'none';
-  document.getElementById('chatContainer').style.display = 'flex';
+openChatBtn.onclick=()=>{
+  mainMenu.style.display="none";
+  chatContainer.style.display="flex";
   loadChat();
 };
-
-// Chat schließen
-document.getElementById('backFromChatBtn').onclick = function() {
-  document.getElementById('chatContainer').style.display = 'none';
-  document.getElementById('mainMenu').style.display = 'flex';
+backFromChatBtn.onclick=()=>{
+  chatContainer.style.display="none";
+  mainMenu.style.display="flex";
 };
-
-// Nachricht abschicken
-document.getElementById('sendChatBtn').onclick = function() {
-    const msg = document.getElementById('chatInput').value.trim();
-    if(msg === '') return;
-
-    chatCollection.add({
-        text: msg,
-        sender: deviceId,
-        displayName: displayName,  // Alles vom aktuellen Gerät ist "blau"
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    document.getElementById('chatInput').value = '';
-};
-
-// Nachrichten live laden
-function loadChat() {
-  const chatMessages = document.getElementById('chatMessages');
-  chatMessages.innerHTML = '';
-  chatCollection.orderBy('timestamp', 'asc').onSnapshot(snapshot => {
-    const chatMessages = document.getElementById('chatMessages');
-    chatMessages.innerHTML = ''; // clear
-    snapshot.forEach(doc => {
-      addMessage(doc.data());
-    });
-  });
-}
-function addMessage(msgData) {
-    const chatMessages = document.getElementById('chatMessages');
-    const div = document.createElement('div');
-
-    // Alles vom aktuellen Gerät = blau, alles andere = pink
-    if(msgData.sender === deviceId){
-        div.className = 'myMessage';
-    } else {
-        div.className = 'theirMessage';
-    }
-
-    div.innerText = msgData.text;
-    chatMessages.appendChild(div);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-/********* START INTRO *********/
-document.getElementById('startBtn').onclick = async () => {
-  // Musik starten
-  music.play().catch(() => {});
-  music.volume = 0.6;
-
-  // Display Name initialisieren
-  await initDisplayName();
-
-  // Nachdem displayName geladen/abgefragt wurde:
-document.getElementById('commentLabel').innerText = `Gutes Update? :D`;
-
-  // Firestore Start zählen
-  await startDoc.set({
-    deviceId: deviceId,
-    displayName: displayName,
-    startCount: firebase.firestore.FieldValue.increment(1),
-    lastStart: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
-
-  // Overlay ausblenden
-  const overlay = document.getElementById('startOverlay');
-  overlay.style.opacity = '0';
-  setTimeout(() => overlay.remove(), 800);
-};
-
-/********* GLOBAL BUTTON CLICK SOUND *********/
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('button');
-  if (!btn) return;
-
-  clickSound.currentTime = 0;
-  clickSound.play().catch(() => {});
+document.addEventListener("click",e=>{
+  if(e.target.closest("button")){
+    clickSound.currentTime=0;
+    clickSound.play().catch(()=>{});
+  }
 });
 
-/********* GALERIE FUNKTIONEN *********/
-document.getElementById('openGalleryBtn').onclick = function() {
-    logActivity('openGallery');
-    showGallery();
+/******** CHAT ********/
+sendChatBtn.onclick=()=>{
+  const t=chatInput.value.trim();
+  if(!t)return;
+  chatCollection.add({
+    text:t,
+    sender:deviceId,
+    timestamp:firebase.firestore.FieldValue.serverTimestamp()
+  });
+  chatInput.value="";
 };
 
-// Freigeschaltete Galerie-Bilder pro Gerät
-const galleryDoc = inventoryCollection.doc(deviceId);
-
-async function unlockGalleryImage(sceneKey, imageUrl) {
-    // Bild in Firestore "freischalten"
-    await galleryDoc.set({
-        gallery: firebase.firestore.FieldValue.arrayUnion({scene: sceneKey, url: imageUrl})
-    }, {merge:true});
-}
-
-// Galerie anzeigen
-async function showGallery() {
-    document.getElementById('mainMenu').style.display = 'none';
-    document.getElementById('gameContainer').style.display = 'none';
-    document.getElementById('chatContainer').style.display = 'none';
-    const galleryContainer = document.getElementById('galleryContainer');
-    const galleryList = document.getElementById('galleryList');
-
-    galleryContainer.style.display = 'flex';
-    galleryList.innerHTML = '';
-
-    // Galerie aus Firestore laden
-    const docSnap = await galleryDoc.get();
-    const gallery = docSnap.exists && docSnap.data().gallery ? docSnap.data().gallery : [];
-
-    gallery.forEach(item => {
-        const img = document.createElement('img');
-        img.src = item.url;
-        img.style.width = '100%';
-        img.style.borderRadius = '10px';
-        galleryList.appendChild(img);
+function loadChat(){
+  chatCollection.orderBy("timestamp").onSnapshot(s=>{
+    chatMessages.innerHTML="";
+    s.forEach(d=>{
+      const div=document.createElement("div");
+      div.className=d.data().sender===deviceId?"myMessage":"theirMessage";
+      div.innerText=d.data().text;
+      chatMessages.appendChild(div);
     });
+    chatMessages.scrollTop=chatMessages.scrollHeight;
+  });
 }
-
-// Zurück Button
-document.getElementById('backFromGalleryBtn').onclick = function() {
-    document.getElementById('galleryContainer').style.display = 'none';
-    document.getElementById('mainMenu').style.display = 'flex';
-};
-
 </script>
+
 </body>
 </html>
