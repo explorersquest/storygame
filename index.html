@@ -253,6 +253,10 @@ const bg = document.getElementById("bg");
 const type = document.getElementById("type");
 const click = document.getElementById("click");
 
+type.volume = 0.05;   // vorher höher → jetzt sehr leise
+click.volume = 0.08;  // Abschicken leiser
+bg.volume = 0.4;
+
 /* ENTER */
 
 enterBtn.onclick = ()=>{
@@ -292,19 +296,23 @@ let timeout;
 
 input.addEventListener("input", ()=>{
 
-    if(!typing){
-        type.currentTime = 0;
-        type.play().catch(()=>{});
-        typing = true;
-    }
+    // Sound nur kurz triggern
+    type.currentTime = 0;
 
+    type.play().catch(()=>{});
+
+    typing = true;
+
+    // viel schneller stoppen
     clearTimeout(timeout);
 
     timeout = setTimeout(()=>{
+
         type.pause();
         type.currentTime = 0;
         typing = false;
-    }, 400); // 👈 schneller Stop (kein "ewiges laufen")
+
+    }, 80); // 👈 WICHTIG: vorher 400 → jetzt 150–200ms
 });
 
 /* SEND */
