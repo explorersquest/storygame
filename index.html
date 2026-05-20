@@ -326,6 +326,79 @@ html, body{
 <script>
 
 /* =========================================================
+   FIREBASE
+========================================================= */
+
+firebase.initializeApp({
+
+    apiKey: "AIzaSyD_cDHNMZZiLuGLfAntYAc8ONtKgwYlp9Y",
+
+    authDomain:
+        "luisaglobalchat.firebaseapp.com",
+
+    projectId:
+        "luisaglobalchat"
+
+});
+
+const db = firebase.firestore();
+
+/* =========================================================
+   ELEMENTE
+========================================================= */
+
+const overlay =
+    document.getElementById("overlay");
+
+const enterBtn =
+    document.getElementById("enterBtn");
+
+const thoughtInput =
+    document.getElementById("thoughtInput");
+
+const sendBtn =
+    document.getElementById("sendBtn");
+
+const skyThoughts =
+    document.getElementById("skyThoughts");
+
+const bgMusic =
+    document.getElementById("bgMusic");
+
+const typeSound =
+    document.getElementById("typeSound");
+
+const sendSound =
+    document.getElementById("sendSound");
+
+/* =========================================================
+   AUDIO
+========================================================= */
+
+bgMusic.volume = 0.45;
+typeSound.volume = 0.08;
+sendSound.volume = 0.2;
+
+/* =========================================================
+   DEVICE ID
+========================================================= */
+
+let deviceId =
+    localStorage.getItem("thoughtSkyDevice");
+
+if(!deviceId){
+
+    deviceId =
+        "device_" +
+        Math.random().toString(36).substring(2,10);
+
+    localStorage.setItem(
+        "thoughtSkyDevice",
+        deviceId
+    );
+}
+
+/* =========================================================
    STERNE
 ========================================================= */
 
@@ -375,104 +448,58 @@ setInterval(()=>{
 },7000);
 
 /* =========================================================
-   FIREBASE
-========================================================= */
-
-firebase.initializeApp({
-
-    apiKey: "AIzaSyD_cDHNMZZiLuGLfAntYAc8ONtKgwYlp9Y",
-
-    authDomain:
-        "luisaglobalchat.firebaseapp.com",
-
-    projectId:
-        "luisaglobalchat"
-
-});
-
-const db = firebase.firestore();
-
-/* =========================================================
-   DEVICE ID
-========================================================= */
-
-let deviceId =
-    localStorage.getItem("thoughtSkyDevice");
-
-if(!deviceId){
-
-    deviceId =
-        "device_" +
-        Math.random().toString(36).substr(2,9);
-
-    localStorage.setItem(
-        "thoughtSkyDevice",
-        deviceId
-    );
-}
-
-/* =========================================================
-   LOGIN TRACKING
-========================================================= */
-
-db.collection("Login").add({
-
-    device: deviceId,
-
-    timestamp:
-        firebase.firestore.FieldValue.serverTimestamp()
-
-});
-
-/* =========================================================
-   AUDIO
-========================================================= */
-
-const bgMusic =
-    document.getElementById("bgMusic");
-
-const typeSound =
-    document.getElementById("typeSound");
-
-const sendSound =
-    document.getElementById("sendSound");
-
-bgMusic.volume = 0.45;
-typeSound.volume = 0.15;
-sendSound.volume = 0.25;
-
-/* =========================================================
    ENTER BUTTON
 ========================================================= */
 
-const overlay =
-    document.getElementById("overlay");
-
-document
-.getElementById("enterBtn")
-.onclick = ()=>{
+enterBtn.addEventListener("click", async ()=>{
 
     bgMusic.play().catch(()=>{});
 
-    overlay.style.opacity=0;
+    overlay.style.opacity = 0;
 
     setTimeout(()=>{
         overlay.remove();
     },1000);
-};
+
+    /* LOGIN TRACKING */
+
+    try{
+
+        await db.collection("Login").add({
+
+            device: deviceId,
+
+            timestamp:
+                firebase.firestore.FieldValue
+                .serverTimestamp()
+
+        });
+
+        console.log("Login gespeichert");
+
+    }catch(err){
+
+        console.error(
+            "Login Fehler:",
+            err
+        );
+    }
+
+});
 
 /* =========================================================
    TYPING SOUND
 ========================================================= */
 
-const thoughtInput =
-    document.getElementById("thoughtInput");
+thoughtInput.addEventListener("keydown", ()=>{
 
-thoughtInput.addEventListener("input", ()=>{
+    try{
 
-    typeSound.currentTime = 0;
+        typeSound.currentTime = 0;
 
-    typeSound.play().catch(()=>{});
+        typeSound.play();
+
+    }catch(e){}
 
 });
 
@@ -480,48 +507,67 @@ thoughtInput.addEventListener("input", ()=>{
    GEDANKEN SENDEN
 ========================================================= */
 
-document
-.getElementById("sendBtn")
-.onclick = async ()=>{
+async function sendThought(){
 
     const text =
         thoughtInput.value.trim();
 
     if(!text) return;
 
-    sendSound.currentTime = 0;
+    try{
 
-    sendSound.play().catch(()=>{});
+        sendSound.currentTime = 0;
 
-    await db.collection("Gedanken").add({
+        sendSound.play().catch(()=>{});
 
-        text: text,
+        await db.collection("Gedanken").add({
 
-        device: deviceId,
+            text: text,
 
-        timestamp:
-            firebase.firestore.FieldValue
-            .serverTimestamp()
+            device: deviceId,
 
-    });
+            timestamp:
+                firebase.firestore.FieldValue
+                .serverTimestamp()
 
-    thoughtInput.value = "";
-};
+        });
 
-/* ENTER SEND */
+        console.log("Gedanke gespeichert");
 
-thoughtInput.addEventListener("keydown",(e)=>{
+        thoughtInput.value = "";
 
-    if(e.key==="Enter"){
+        loadThoughts();
 
-        e.preventDefault();
+    }catch(err){
 
-        document
-        .getElementById("sendBtn")
-        .click();
+        console.error(
+            "Sende Fehler:",
+            err
+        );
     }
+}
 
-});
+/* BUTTON */
+
+sendBtn.addEventListener(
+    "click",
+    sendThought
+);
+
+/* ENTER */
+
+thoughtInput.addEventListener(
+    "keydown",
+    (e)=>{
+
+        if(e.key==="Enter"){
+
+            e.preventDefault();
+
+            sendThought();
+        }
+    }
+);
 
 /* =========================================================
    GEDANKEN LADEN
@@ -555,7 +601,10 @@ async function loadThoughts(){
 
     }catch(err){
 
-        console.error(err);
+        console.error(
+            "Lade Fehler:",
+            err
+        );
     }
 }
 
@@ -565,10 +614,7 @@ async function loadThoughts(){
 
 function rotateThoughts(){
 
-    const sky =
-        document.getElementById("skyThoughts");
-
-    sky.innerHTML = "";
+    skyThoughts.innerHTML = "";
 
     if(allThoughts.length===0) return;
 
@@ -580,13 +626,14 @@ function rotateThoughts(){
         const div =
             document.createElement("div");
 
-        div.className = "floatingThought";
+        div.className =
+            "floatingThought";
 
         div.innerText =
             allThoughts[
                 Math.floor(
                     Math.random()
-                    *allThoughts.length
+                    * allThoughts.length
                 )
             ];
 
@@ -596,24 +643,22 @@ function rotateThoughts(){
         div.style.left =
             5 + Math.random()*75 + "%";
 
-        div.style.animationDuration =
-            18 + Math.random()*12 + "s";
-
-        sky.appendChild(div);
+        skyThoughts.appendChild(div);
     }
 
     const nextTime =
         (4 + Math.random()*12)
         *60*1000;
 
-    setTimeout(async ()=>{
-
-        await loadThoughts();
-
-    }, nextTime);
+    setTimeout(
+        loadThoughts,
+        nextTime
+    );
 }
 
-/* START */
+/* =========================================================
+   START
+========================================================= */
 
 loadThoughts();
 
