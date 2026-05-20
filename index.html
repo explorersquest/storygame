@@ -2,292 +2,621 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Für Luisa 🌸</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gedankenhimmel</title>
 
 <style>
-html, body {
-  height: 100%;
-  margin: 0;
-  font-family: Georgia, serif;
-  background: radial-gradient(circle at top, #0a0a0a, #1a1a2e);
-  color: #ffd700;
-  overflow: hidden;
+
+html, body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+
+    font-family: "Georgia", serif;
+    background:
+        radial-gradient(circle at top,
+        #111827 0%,
+        #050816 45%,
+        #02030a 100%);
+
+    color:white;
 }
 
-/* START OVERLAY */
-#startOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(5,5,15,0.6);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  transition: opacity 0.8s ease;
+/* OVERLAY */
+
+#overlay{
+    position:fixed;
+    inset:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    backdrop-filter: blur(8px);
+    background: rgba(0,0,0,0.35);
+
+    z-index:9999;
+
+    transition: opacity 1s ease;
 }
 
-#startBtn {
-  padding: 20px 60px;
-  font-size: 28px;
-  border-radius: 18px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  color: #ffd700;
-  background: linear-gradient(145deg, #6655aa, #444477);
-  box-shadow: 0 0 30px rgba(255,215,0,0.5);
+#enterBtn{
+    padding:18px 42px;
+
+    border:none;
+    border-radius:18px;
+
+    font-size:22px;
+    letter-spacing:1px;
+
+    color:rgba(255,255,255,0.9);
+
+    background: rgba(255,255,255,0.08);
+
+    backdrop-filter: blur(10px);
+
+    cursor:pointer;
+
+    transition: 0.3s;
+
+    box-shadow:
+        0 0 20px rgba(255,255,255,0.08),
+        inset 0 0 20px rgba(255,255,255,0.04);
 }
 
-/* TITEL */
-h1 {
-  text-align: center;
-  margin-top: 40px;
-  text-shadow: 0 0 10px #ffd700;
-}
-h2 {
-  text-align: center;
-  margin-top: 5px;
-  opacity: 0.85;
-}
-
-/* HAUPTMENÜ */
-#mainMenu {
-  height: calc(100% - 160px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 20px;
-}
-
-#mainMenu button {
-  padding: 20px 40px;
-  font-size: 22px;
-  font-weight: bold;
-  border-radius: 15px;
-  border: none;
-  cursor: pointer;
-  color: #ffd700;
-  background: linear-gradient(145deg, #6655aa, #444477);
-}
-
-/* CHAT */
-#chatContainer {
-  display: none;
-  flex-direction: column;
-  width: 80%;
-  max-width: 600px;
-  height: 70vh;
-  margin: 0 auto;
-  background: rgba(30,30,50,0.9);
-  border-radius: 15px;
-  padding: 20px;
-}
-
-#chatMessages {
-  flex: 1;
-  overflow-y: auto;
-  margin-bottom: 10px;
-}
-
-.myMessage {
-  align-self: flex-end;
-  background: rgba(0,120,255,0.2);
-  color: #4db8ff;
-  padding: 8px 12px;
-  border-radius: 12px;
-  margin: 5px 0;
-}
-
-.theirMessage {
-  align-self: flex-start;
-  background: rgba(255,77,192,0.2);
-  color: #ff77cc;
-  padding: 8px 12px;
-  border-radius: 12px;
-  margin: 5px 0;
-}
-
-#chatInput {
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  font-size: 16px;
-}
-
-#chatContainer button {
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-  background: #444477;
-  color: #ffd700;
+#enterBtn:hover{
+    background: rgba(255,255,255,0.13);
+    transform: scale(1.03);
 }
 
 /* STERNE */
-.star {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: white;
-  border-radius: 50%;
-  opacity: 0.8;
-  animation: twinkle 2s infinite alternate, floatStars 6s infinite alternate;
+
+.star{
+    position:absolute;
+
+    width:2px;
+    height:2px;
+
+    background:white;
+    border-radius:50%;
+
+    opacity:0.8;
+
+    animation:
+        twinkle 3s infinite alternate,
+        driftStar 8s infinite alternate;
 }
 
-@keyframes twinkle {
-  from {opacity:0.3;}
-  to {opacity:1;}
-}
-@keyframes floatStars {
-  from {transform: translate(0,0);}
-  to {transform: translate(1.5px,-1.5px);}
+@keyframes twinkle{
+    from{opacity:0.2;}
+    to{opacity:1;}
 }
 
-/* STERNSCHNUPPE */
-.shooting-star {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: white;
-  border-radius: 50%;
-  transform: rotate(-45deg);
+@keyframes driftStar{
+    from{transform:translate(0,0);}
+    to{transform:translate(2px,-2px);}
 }
-.shooting-star::after {
-  content:'';
-  position:absolute;
-  left:-60px;
-  width:60px;
-  height:2px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8));
+
+/* STERNSCHNUPPEN */
+
+.shooting-star{
+    position:absolute;
+
+    width:2px;
+    height:2px;
+
+    background:white;
+    border-radius:50%;
+
+    transform: rotate(-45deg);
 }
-@keyframes shoot {
-  from {transform: translate(0,0) rotate(-45deg); opacity:1;}
-  to {transform: translate(-900px,900px) rotate(-45deg); opacity:0;}
+
+.shooting-star::after{
+    content:'';
+
+    position:absolute;
+    left:-80px;
+
+    width:80px;
+    height:2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,0.8)
+        );
 }
+
+@keyframes shoot{
+    from{
+        transform:translate(0,0) rotate(-45deg);
+        opacity:1;
+    }
+
+    to{
+        transform:translate(-1200px,1200px) rotate(-45deg);
+        opacity:0;
+    }
+}
+
+/* GEDANKEN */
+
+#skyThoughts{
+    position:absolute;
+    inset:0;
+
+    pointer-events:none;
+}
+
+.floatingThought{
+    position:absolute;
+
+    max-width:320px;
+
+    color:rgba(255,255,255,0.72);
+
+    font-size:18px;
+    line-height:1.5;
+
+    opacity:0;
+
+    text-shadow:
+        0 0 10px rgba(255,255,255,0.12);
+
+    animation:
+        fadeThought 20s ease forwards,
+        floatThought 30s linear infinite;
+}
+
+@keyframes fadeThought{
+    0%{
+        opacity:0;
+    }
+
+    10%{
+        opacity:1;
+    }
+
+    80%{
+        opacity:1;
+    }
+
+    100%{
+        opacity:0;
+    }
+}
+
+@keyframes floatThought{
+    from{
+        transform:translateY(0px);
+    }
+
+    to{
+        transform:translateY(-18px);
+    }
+}
+
+/* INPUT */
+
+#inputArea{
+    position:fixed;
+
+    left:50%;
+    bottom:35px;
+
+    transform:translateX(-50%);
+
+    width:min(90%, 650px);
+
+    display:flex;
+    gap:12px;
+
+    padding:14px;
+
+    border-radius:22px;
+
+    background: rgba(255,255,255,0.06);
+
+    backdrop-filter: blur(14px);
+
+    box-shadow:
+        0 0 30px rgba(0,0,0,0.3);
+}
+
+#thoughtInput{
+    flex:1;
+
+    border:none;
+    outline:none;
+
+    padding:16px 18px;
+
+    border-radius:16px;
+
+    font-size:16px;
+
+    background: rgba(255,255,255,0.06);
+
+    color:white;
+}
+
+#thoughtInput::placeholder{
+    color:rgba(255,255,255,0.45);
+}
+
+#sendBtn{
+    border:none;
+
+    padding:0 24px;
+
+    border-radius:16px;
+
+    cursor:pointer;
+
+    background: rgba(255,255,255,0.08);
+
+    color:white;
+
+    font-size:15px;
+
+    transition:0.25s;
+}
+
+#sendBtn:hover{
+    background: rgba(255,255,255,0.14);
+}
+
 </style>
 
-<!-- Firebase -->
+<!-- FIREBASE -->
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 </head>
 
 <body>
 
-<div id="startOverlay">
-  <button id="startBtn">Start ✨</button>
+<!-- OVERLAY -->
+
+<div id="overlay">
+    <button id="enterBtn">Enter</button>
 </div>
 
-<h1>Für Luisa 🌸</h1>
-<h2>Fr4gm3nt3</h2>
+<!-- GEDANKEN -->
 
-<div id="mainMenu">
-  <button id="openChatBtn">Deine Gedanken</button>
-  <div style="font-size:13px;opacity:0.6;">Version 2.16.2.2</div>
+<div id="skyThoughts"></div>
+
+<!-- INPUT -->
+
+<div id="inputArea">
+
+    <input
+        id="thoughtInput"
+        maxlength="400"
+        placeholder="Schreib einen Gedanken ..."
+    >
+
+    <button id="sendBtn">Senden</button>
+
 </div>
 
-<div id="chatContainer">
-  <h2>Deine Gedanken 🌙</h2>
-  <div id="chatMessages"></div>
-  <input id="chatInput" placeholder="Schreibe etwas …">
-  <button id="sendChatBtn">Abschicken</button>
-  <button id="backFromChatBtn">Zurück</button>
-</div>
+<!-- AUDIO -->
 
-<audio id="bgMusic" src="momedeiros88-mystical.mp3" loop></audio>
-<audio id="clickSound" src="magic-button-click.mp3"></audio>
+<audio
+    id="bgMusic"
+    src="momedeiros88-mystical.mp3"
+    loop>
+</audio>
+
+<audio
+    id="typeSound"
+    src="soft-type.mp3">
+</audio>
+
+<audio
+    id="sendSound"
+    src="soft-click.mp3">
+</audio>
 
 <script>
-/******** STERNE ********/
-for(let i=0;i<80;i++){
-  const s=document.createElement('div');
-  s.className='star';
-  s.style.top=Math.random()*100+'%';
-  s.style.left=Math.random()*100+'%';
-  document.body.appendChild(s);
+
+/* =========================================================
+   STERNE
+========================================================= */
+
+for(let i=0;i<120;i++){
+
+    const star=document.createElement("div");
+
+    star.className="star";
+
+    star.style.top=Math.random()*100+"%";
+    star.style.left=Math.random()*100+"%";
+
+    star.style.opacity=Math.random();
+
+    document.body.appendChild(star);
 }
+
+/* =========================================================
+   STERNSCHNUPPEN
+========================================================= */
+
 setInterval(()=>{
-  if(Math.random()<0.4){
-    const s=document.createElement('div');
-    s.className='shooting-star';
-    s.style.left=(window.innerWidth*0.5+Math.random()*window.innerWidth*0.5)+'px';
-    s.style.top='-20px';
-    s.style.animation='shoot 1.5s linear forwards';
-    document.body.appendChild(s);
-    setTimeout(()=>s.remove(),1500);
-  }
-},6000);
 
-/******** FIREBASE ********/
+    if(Math.random()<0.5){
+
+        const s=document.createElement("div");
+
+        s.className="shooting-star";
+
+        s.style.left=
+            (window.innerWidth*0.5
+            +Math.random()*window.innerWidth*0.5)
+            +"px";
+
+        s.style.top="-20px";
+
+        s.style.animation=
+            "shoot 1.8s linear forwards";
+
+        document.body.appendChild(s);
+
+        setTimeout(()=>{
+            s.remove();
+        },1800);
+    }
+
+},7000);
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
 firebase.initializeApp({
-  apiKey: "AIzaSyD_cDHNMZZiLuGLfAntYAc8ONtKgwYlp9Y",
-  authDomain: "luisaglobalchat.firebaseapp.com",
-  projectId: "luisaglobalchat"
-});
-const db=firebase.firestore();
-const chatCollection=db.collection("chatMessages");
 
-/******** DEVICE ********/
-let deviceId=localStorage.getItem("luisaDeviceId");
+    apiKey: "AIzaSyD_cDHNMZZiLuGLfAntYAc8ONtKgwYlp9Y",
+
+    authDomain:
+        "luisaglobalchat.firebaseapp.com",
+
+    projectId:
+        "luisaglobalchat"
+
+});
+
+const db = firebase.firestore();
+
+/* =========================================================
+   DEVICE ID
+========================================================= */
+
+let deviceId =
+    localStorage.getItem("thoughtSkyDevice");
+
 if(!deviceId){
-  deviceId="device_"+Math.random().toString(36).substr(2,9);
-  localStorage.setItem("luisaDeviceId",deviceId);
+
+    deviceId =
+        "device_" +
+        Math.random().toString(36).substr(2,9);
+
+    localStorage.setItem(
+        "thoughtSkyDevice",
+        deviceId
+    );
 }
 
-/******** AUDIO ********/
-const music=document.getElementById("bgMusic");
-const clickSound=document.getElementById("clickSound");
-music.volume=0.6;
+/* =========================================================
+   LOGIN TRACKING
+========================================================= */
 
-/******** UI ********/
-startBtn.onclick=()=>{
-  music.play().catch(()=>{});
-  startOverlay.style.opacity=0;
-  setTimeout(()=>startOverlay.remove(),800);
-};
-openChatBtn.onclick=()=>{
-  mainMenu.style.display="none";
-  chatContainer.style.display="flex";
-  loadChat();
-};
-backFromChatBtn.onclick=()=>{
-  chatContainer.style.display="none";
-  mainMenu.style.display="flex";
-};
-document.addEventListener("click",e=>{
-  if(e.target.closest("button")){
-    clickSound.currentTime=0;
-    clickSound.play().catch(()=>{});
-  }
+db.collection("Login").add({
+
+    device: deviceId,
+
+    timestamp:
+        firebase.firestore.FieldValue.serverTimestamp()
+
 });
 
-/******** CHAT ********/
-sendChatBtn.onclick=()=>{
-  const t=chatInput.value.trim();
-  if(!t)return;
-  chatCollection.add({
-    text:t,
-    sender:deviceId,
-    timestamp:firebase.firestore.FieldValue.serverTimestamp()
-  });
-  chatInput.value="";
+/* =========================================================
+   AUDIO
+========================================================= */
+
+const bgMusic =
+    document.getElementById("bgMusic");
+
+const typeSound =
+    document.getElementById("typeSound");
+
+const sendSound =
+    document.getElementById("sendSound");
+
+bgMusic.volume = 0.45;
+typeSound.volume = 0.15;
+sendSound.volume = 0.25;
+
+/* =========================================================
+   ENTER BUTTON
+========================================================= */
+
+const overlay =
+    document.getElementById("overlay");
+
+document
+.getElementById("enterBtn")
+.onclick = ()=>{
+
+    bgMusic.play().catch(()=>{});
+
+    overlay.style.opacity=0;
+
+    setTimeout(()=>{
+        overlay.remove();
+    },1000);
 };
 
-function loadChat(){
-  chatCollection.orderBy("timestamp").onSnapshot(s=>{
-    chatMessages.innerHTML="";
-    s.forEach(d=>{
-      const div=document.createElement("div");
-      div.className=d.data().sender===deviceId?"myMessage":"theirMessage";
-      div.innerText=d.data().text;
-      chatMessages.appendChild(div);
+/* =========================================================
+   TYPING SOUND
+========================================================= */
+
+const thoughtInput =
+    document.getElementById("thoughtInput");
+
+thoughtInput.addEventListener("input", ()=>{
+
+    typeSound.currentTime = 0;
+
+    typeSound.play().catch(()=>{});
+
+});
+
+/* =========================================================
+   GEDANKEN SENDEN
+========================================================= */
+
+document
+.getElementById("sendBtn")
+.onclick = async ()=>{
+
+    const text =
+        thoughtInput.value.trim();
+
+    if(!text) return;
+
+    sendSound.currentTime = 0;
+
+    sendSound.play().catch(()=>{});
+
+    await db.collection("Gedanken").add({
+
+        text: text,
+
+        device: deviceId,
+
+        timestamp:
+            firebase.firestore.FieldValue
+            .serverTimestamp()
+
     });
-    chatMessages.scrollTop=chatMessages.scrollHeight;
-  });
+
+    thoughtInput.value = "";
+};
+
+/* ENTER SEND */
+
+thoughtInput.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Enter"){
+
+        e.preventDefault();
+
+        document
+        .getElementById("sendBtn")
+        .click();
+    }
+
+});
+
+/* =========================================================
+   GEDANKEN LADEN
+========================================================= */
+
+let allThoughts = [];
+
+async function loadThoughts(){
+
+    try{
+
+        const snapshot =
+            await db
+            .collection("Gedanken")
+            .get();
+
+        allThoughts = [];
+
+        snapshot.forEach(doc=>{
+
+            const data = doc.data();
+
+            if(data.text){
+
+                allThoughts.push(data.text);
+            }
+
+        });
+
+        rotateThoughts();
+
+    }catch(err){
+
+        console.error(err);
+    }
 }
+
+/* =========================================================
+   GEDANKEN ROTIEREN
+========================================================= */
+
+function rotateThoughts(){
+
+    const sky =
+        document.getElementById("skyThoughts");
+
+    sky.innerHTML = "";
+
+    if(allThoughts.length===0) return;
+
+    const amount =
+        2 + Math.floor(Math.random()*2);
+
+    for(let i=0;i<amount;i++){
+
+        const div =
+            document.createElement("div");
+
+        div.className = "floatingThought";
+
+        div.innerText =
+            allThoughts[
+                Math.floor(
+                    Math.random()
+                    *allThoughts.length
+                )
+            ];
+
+        div.style.top =
+            10 + Math.random()*65 + "%";
+
+        div.style.left =
+            5 + Math.random()*75 + "%";
+
+        div.style.animationDuration =
+            18 + Math.random()*12 + "s";
+
+        sky.appendChild(div);
+    }
+
+    const nextTime =
+        (4 + Math.random()*12)
+        *60*1000;
+
+    setTimeout(async ()=>{
+
+        await loadThoughts();
+
+    }, nextTime);
+}
+
+/* START */
+
+loadThoughts();
+
 </script>
 
 </body>
