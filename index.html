@@ -20,7 +20,7 @@ html, body{
     background:
         radial-gradient(circle at top,
         #0b1020 0%,
-        #050816 50%,
+        #050816 55%,
         #02030a 100%);
 
     color:white;
@@ -42,7 +42,7 @@ html, body{
     z-index:9999;
 }
 
-/* ENTER BUTTON */
+/* ENTER */
 
 #enterBtn{
     padding:18px 46px;
@@ -66,32 +66,17 @@ html, body{
     transition:0.3s;
 
     box-shadow:
-        0 0 30px rgba(120,140,255,0.25),
-        0 0 80px rgba(120,140,255,0.08),
+        0 0 35px rgba(120,140,255,0.25),
         inset 0 0 18px rgba(255,255,255,0.06);
-
-    text-shadow:0 0 8px rgba(255,255,255,0.2);
 }
 
 #enterBtn:hover{
     transform:scale(1.05);
     box-shadow:
-        0 0 40px rgba(140,160,255,0.4),
-        0 0 100px rgba(140,160,255,0.15);
+        0 0 60px rgba(140,160,255,0.35);
 }
 
-/* STERNE */
-
-.star{
-    position:absolute;
-    width:2px;
-    height:2px;
-    background:white;
-    border-radius:50%;
-    opacity:0.8;
-}
-
-/* GEDANKEN */
+/* SKY */
 
 #sky{
     position:absolute;
@@ -99,13 +84,28 @@ html, body{
     pointer-events:none;
 }
 
+/* THOUGHTS */
+
 .thought{
     position:absolute;
-    max-width:320px;
-    font-size:18px;
+
     color:rgba(255,255,255,0.75);
+
     text-shadow:0 0 10px rgba(255,255,255,0.12);
-    animation: fade 18s ease forwards;
+
+    animation:fade 18s ease forwards;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,0.04);
+
+    backdrop-filter: blur(10px);
+
+    padding:10px 14px;
+
+    max-width:360px;
+
+    overflow-wrap:break-word;
 }
 
 @keyframes fade{
@@ -115,9 +115,9 @@ html, body{
     100%{opacity:0;}
 }
 
-/* INPUT */
+/* INPUT BAR */
 
-#inputBar{
+#bar{
     position:fixed;
     bottom:30px;
     left:50%;
@@ -130,33 +130,61 @@ html, body{
 
     padding:14px;
 
-    background:rgba(255,255,255,0.06);
-    backdrop-filter: blur(14px);
-
     border-radius:20px;
+
+    background:rgba(255,255,255,0.06);
+
+    backdrop-filter: blur(14px);
 }
+
+/* INPUT */
 
 #input{
     flex:1;
+
     border:none;
     outline:none;
 
-    padding:14px;
+    padding:14px 16px;
 
     border-radius:14px;
 
-    background:rgba(255,255,255,0.06);
     color:white;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,0.08),
+            rgba(120,140,255,0.08),
+            rgba(255,255,255,0.04)
+        );
+
+    backdrop-filter: blur(14px);
+
+    box-shadow:
+        inset 0 0 20px rgba(255,255,255,0.05),
+        0 0 25px rgba(120,140,255,0.08);
 }
+
+#input:focus{
+    box-shadow:
+        0 0 35px rgba(120,140,255,0.2),
+        inset 0 0 25px rgba(255,255,255,0.08);
+}
+
+/* BUTTON */
 
 #send{
     border:none;
-    border-radius:14px;
+
     padding:0 22px;
+
+    border-radius:14px;
 
     cursor:pointer;
 
     background:rgba(255,255,255,0.1);
+
     color:white;
 }
 
@@ -179,14 +207,14 @@ html, body{
 
 <div id="sky"></div>
 
-<div id="inputBar">
+<div id="bar">
     <input id="input" maxlength="400" placeholder="Schreib einen Gedanken...">
     <button id="send">Senden</button>
 </div>
 
 <audio id="bg" src="momedeiros88-mystical.mp3" loop></audio>
 <audio id="type" src="game-text.mp3" loop></audio>
-<audio id="sendSound" src="soft-click.mp3"></audio>
+<audio id="click" src="magic-button-click.mp3"></audio>
 
 <script>
 
@@ -219,8 +247,8 @@ db.collection("Login").add({
 
 /* ELEMENTE */
 
-const enterBtn = document.getElementById("enterBtn");
 const overlay = document.getElementById("overlay");
+const enterBtn = document.getElementById("enterBtn");
 const input = document.getElementById("input");
 const send = document.getElementById("send");
 const sky = document.getElementById("sky");
@@ -229,10 +257,10 @@ const sky = document.getElementById("sky");
 
 const bg = document.getElementById("bg");
 const type = document.getElementById("type");
-const sendSound = document.getElementById("sendSound");
+const click = document.getElementById("click");
 
 bg.volume = 0.4;
-type.volume = 0.15;
+type.volume = 0.12;
 
 /* ENTER */
 
@@ -242,10 +270,10 @@ enterBtn.onclick = ()=>{
     setTimeout(()=>overlay.remove(),1000);
 };
 
-/* TYPING SOUND */
+/* TYPING */
 
 let typing = false;
-let typingTimeout;
+let timeout;
 
 input.addEventListener("input", ()=>{
 
@@ -254,12 +282,13 @@ input.addEventListener("input", ()=>{
         typing = true;
     }
 
-    clearTimeout(typingTimeout);
+    clearTimeout(timeout);
 
-    typingTimeout = setTimeout(()=>{
+    timeout = setTimeout(()=>{
         type.pause();
+        type.currentTime = 0;
         typing = false;
-    },600);
+    }, 1200);
 });
 
 /* SEND */
@@ -269,8 +298,8 @@ async function sendThought(){
     const text = input.value.trim();
     if(!text) return;
 
-    sendSound.currentTime = 0;
-    sendSound.play().catch(()=>{});
+    click.currentTime = 0;
+    click.play().catch(()=>{});
 
     await db.collection("Gedanken").add({
         text,
@@ -279,7 +308,6 @@ async function sendThought(){
     });
 
     input.value = "";
-
     load();
 }
 
@@ -292,7 +320,7 @@ input.addEventListener("keydown",(e)=>{
     }
 });
 
-/* LOAD + ROTATE */
+/* LOAD */
 
 let thoughts = [];
 
@@ -307,8 +335,7 @@ async function load(){
         if(t) list.push(t);
     });
 
-    thoughts = [...new Set(list)]; // keine doppelten global
-
+    thoughts = [...new Set(list)];
     render();
 }
 
@@ -320,24 +347,33 @@ function render(){
 
     if(thoughts.length === 0) return;
 
-    const count = Math.min(3, thoughts.length);
+    const count = Math.min(4, thoughts.length);
 
     const shuffled = [...thoughts].sort(()=>Math.random()-0.5);
+
+    const padding = 120;
 
     for(let i=0;i<count;i++){
 
         const div = document.createElement("div");
         div.className = "thought";
+
         div.innerText = shuffled[i];
 
-        div.style.top = (10 + Math.random()*70) + "%";
-        div.style.left = (5 + Math.random()*70) + "%";
+        const x = padding + Math.random()*(window.innerWidth - padding*2);
+        const y = padding + Math.random()*(window.innerHeight - padding*2);
+
+        div.style.left = x + "px";
+        div.style.top = y + "px";
+
+        div.style.fontSize =
+            Math.max(14, Math.min(20, window.innerWidth/60)) + "px";
 
         sky.appendChild(div);
     }
 }
 
-/* REFRESH LOOP 2–4 min */
+/* LOOP 2–4 min */
 
 function loop(){
 
@@ -350,16 +386,6 @@ function loop(){
 
 load();
 loop();
-
-/* STARS */
-
-for(let i=0;i<120;i++){
-    const s=document.createElement("div");
-    s.className="star";
-    s.style.top=Math.random()*100+"%";
-    s.style.left=Math.random()*100+"%";
-    document.body.appendChild(s);
-}
 
 </script>
 
