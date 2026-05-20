@@ -101,11 +101,11 @@ html, body{
 /* THOUGHTS */
 
 @keyframes heartbeat {
-    0%   { transform: scale(1);   opacity: 0.75; }
-    20%  { transform: scale(1.02); opacity: 0.9; }
-    40%  { transform: scale(1);   opacity: 0.78; }
-    60%  { transform: scale(1.03); opacity: 0.92; }
-    100% { transform: scale(1);   opacity: 0.75; }
+    0%   { transform: scale(1);   opacity: 0.72; }
+    25%  { transform: scale(1.01); opacity: 0.78; }
+    50%  { transform: scale(1);   opacity: 0.74; }
+    75%  { transform: scale(1.01); opacity: 0.8; }
+    100% { transform: scale(1);   opacity: 0.72; }
 }
 
 .thought{
@@ -134,7 +134,7 @@ html, body{
 
     border-radius:0;
 
-    animation: heartbeat 6s ease-in-out infinite;
+    animation: heartbeat 10s ease-in-out infinite;
 }
 
 /* INPUT */
@@ -415,24 +415,41 @@ function render(){
 
     sky.querySelectorAll(".thought").forEach(e=>e.remove());
 
-    if(thoughts.length===0) return;
+    if(thoughts.length === 0) return;
 
-    const count=Math.min(4,thoughts.length);
+    const count = Math.min(4, thoughts.length);
 
-    const newestFirst=thoughts.slice(0,count);
+    const shuffled = [...thoughts].sort(()=>Math.random()-0.5);
+
+    /* 🎯 4 feste "Zonen" im Bildschirm */
+    const zones = [
+        {x:0.25, y:0.25},
+        {x:0.75, y:0.25},
+        {x:0.25, y:0.75},
+        {x:0.75, y:0.75}
+    ];
 
     for(let i=0;i<count;i++){
 
-        const div=document.createElement("div");
-        div.className="thought";
+        const div = document.createElement("div");
+        div.className = "thought";
 
-        div.innerText=newestFirst[i];
+        div.innerText = shuffled[i];
 
-        div.style.left=(80+Math.random()*(window.innerWidth-160))+"px";
-        div.style.top=(80+Math.random()*(window.innerHeight-160))+"px";
+        const zone = zones[i];
 
-        div.style.fontSize=
-            Math.max(14,Math.min(20,window.innerWidth/60))+"px";
+        /* kleine Zufallsabweichung innerhalb der Zone */
+        const offsetX = (Math.random() - 0.5) * 120;
+        const offsetY = (Math.random() - 0.5) * 120;
+
+        const x = window.innerWidth * zone.x + offsetX;
+        const y = window.innerHeight * zone.y + offsetY;
+
+        div.style.left = x + "px";
+        div.style.top = y + "px";
+
+        div.style.fontSize =
+            Math.max(14, Math.min(20, window.innerWidth/60)) + "px";
 
         sky.appendChild(div);
     }
