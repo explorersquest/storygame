@@ -15,11 +15,12 @@ html, body{
     height:100%;
     overflow:hidden;
 
-    font-family: "Georgia", serif;
+    font-family: Georgia, serif;
+
     background:
         radial-gradient(circle at top,
-        #111827 0%,
-        #050816 45%,
+        #0b1020 0%,
+        #050816 50%,
         #02030a 100%);
 
     color:white;
@@ -35,244 +36,135 @@ html, body{
     align-items:center;
     justify-content:center;
 
-    backdrop-filter: blur(8px);
     background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(10px);
 
     z-index:9999;
-
-    transition: opacity 1s ease;
 }
 
+/* ENTER BUTTON */
+
 #enterBtn{
-    padding:18px 42px;
+    padding:18px 46px;
 
     border:none;
-    border-radius:18px;
+    border-radius:20px;
 
     font-size:22px;
-    letter-spacing:1px;
 
-    color:rgba(255,255,255,0.9);
+    color:rgba(255,255,255,0.95);
 
-    background: rgba(255,255,255,0.08);
+    background:
+        linear-gradient(135deg,
+        rgba(120,140,255,0.25),
+        rgba(255,255,255,0.06));
 
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
 
     cursor:pointer;
 
-    transition: 0.3s;
+    transition:0.3s;
 
     box-shadow:
-        0 0 20px rgba(255,255,255,0.08),
-        inset 0 0 20px rgba(255,255,255,0.04);
+        0 0 30px rgba(120,140,255,0.25),
+        0 0 80px rgba(120,140,255,0.08),
+        inset 0 0 18px rgba(255,255,255,0.06);
+
+    text-shadow:0 0 8px rgba(255,255,255,0.2);
 }
 
 #enterBtn:hover{
-    background: rgba(255,255,255,0.13);
-    transform: scale(1.03);
+    transform:scale(1.05);
+    box-shadow:
+        0 0 40px rgba(140,160,255,0.4),
+        0 0 100px rgba(140,160,255,0.15);
 }
 
 /* STERNE */
 
 .star{
     position:absolute;
-
     width:2px;
     height:2px;
-
     background:white;
     border-radius:50%;
-
     opacity:0.8;
-
-    animation:
-        twinkle 3s infinite alternate,
-        driftStar 8s infinite alternate;
-}
-
-@keyframes twinkle{
-    from{opacity:0.2;}
-    to{opacity:1;}
-}
-
-@keyframes driftStar{
-    from{transform:translate(0,0);}
-    to{transform:translate(2px,-2px);}
-}
-
-/* STERNSCHNUPPEN */
-
-.shooting-star{
-    position:absolute;
-
-    width:2px;
-    height:2px;
-
-    background:white;
-    border-radius:50%;
-
-    transform: rotate(-45deg);
-}
-
-.shooting-star::after{
-    content:'';
-
-    position:absolute;
-    left:-80px;
-
-    width:80px;
-    height:2px;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,0.8)
-        );
-}
-
-@keyframes shoot{
-    from{
-        transform:translate(0,0) rotate(-45deg);
-        opacity:1;
-    }
-
-    to{
-        transform:translate(-1200px,1200px) rotate(-45deg);
-        opacity:0;
-    }
 }
 
 /* GEDANKEN */
 
-#skyThoughts{
+#sky{
     position:absolute;
     inset:0;
-
     pointer-events:none;
 }
 
-.floatingThought{
+.thought{
     position:absolute;
-
     max-width:320px;
-
-    color:rgba(255,255,255,0.72);
-
     font-size:18px;
-    line-height:1.5;
-
-    opacity:0;
-
-    text-shadow:
-        0 0 10px rgba(255,255,255,0.12);
-
-    animation:
-        fadeThought 20s ease forwards,
-        floatThought 30s linear infinite;
+    color:rgba(255,255,255,0.75);
+    text-shadow:0 0 10px rgba(255,255,255,0.12);
+    animation: fade 18s ease forwards;
 }
 
-@keyframes fadeThought{
-    0%{
-        opacity:0;
-    }
-
-    10%{
-        opacity:1;
-    }
-
-    80%{
-        opacity:1;
-    }
-
-    100%{
-        opacity:0;
-    }
-}
-
-@keyframes floatThought{
-    from{
-        transform:translateY(0px);
-    }
-
-    to{
-        transform:translateY(-18px);
-    }
+@keyframes fade{
+    0%{opacity:0;}
+    10%{opacity:1;}
+    85%{opacity:1;}
+    100%{opacity:0;}
 }
 
 /* INPUT */
 
-#inputArea{
+#inputBar{
     position:fixed;
-
+    bottom:30px;
     left:50%;
-    bottom:35px;
-
     transform:translateX(-50%);
 
-    width:min(90%, 650px);
+    width:min(90%,650px);
 
     display:flex;
     gap:12px;
 
     padding:14px;
 
-    border-radius:22px;
-
-    background: rgba(255,255,255,0.06);
-
+    background:rgba(255,255,255,0.06);
     backdrop-filter: blur(14px);
 
-    box-shadow:
-        0 0 30px rgba(0,0,0,0.3);
+    border-radius:20px;
 }
 
-#thoughtInput{
+#input{
     flex:1;
-
     border:none;
     outline:none;
 
-    padding:16px 18px;
+    padding:14px;
 
-    border-radius:16px;
+    border-radius:14px;
 
-    font-size:16px;
-
-    background: rgba(255,255,255,0.06);
-
+    background:rgba(255,255,255,0.06);
     color:white;
 }
 
-#thoughtInput::placeholder{
-    color:rgba(255,255,255,0.45);
-}
-
-#sendBtn{
+#send{
     border:none;
-
-    padding:0 24px;
-
-    border-radius:16px;
+    border-radius:14px;
+    padding:0 22px;
 
     cursor:pointer;
 
-    background: rgba(255,255,255,0.08);
-
+    background:rgba(255,255,255,0.1);
     color:white;
-
-    font-size:15px;
-
-    transition:0.25s;
 }
 
-#sendBtn:hover{
-    background: rgba(255,255,255,0.14);
+#send:hover{
+    background:rgba(255,255,255,0.18);
 }
 
 </style>
-
-<!-- FIREBASE -->
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -281,386 +173,193 @@ html, body{
 
 <body>
 
-<!-- OVERLAY -->
-
 <div id="overlay">
     <button id="enterBtn">Enter</button>
 </div>
 
-<!-- GEDANKEN -->
+<div id="sky"></div>
 
-<div id="skyThoughts"></div>
-
-<!-- INPUT -->
-
-<div id="inputArea">
-
-    <input
-        id="thoughtInput"
-        maxlength="400"
-        placeholder="Schreib einen Gedanken ..."
-    >
-
-    <button id="sendBtn">Senden</button>
-
+<div id="inputBar">
+    <input id="input" maxlength="400" placeholder="Schreib einen Gedanken...">
+    <button id="send">Senden</button>
 </div>
 
-<!-- AUDIO -->
-
-<audio
-    id="bgMusic"
-    src="momedeiros88-mystical.mp3"
-    loop>
-</audio>
-
-<audio
-    id="typeSound"
-    src="soft-type.mp3">
-</audio>
-
-<audio
-    id="sendSound"
-    src="soft-click.mp3">
-</audio>
+<audio id="bg" src="momedeiros88-mystical.mp3" loop></audio>
+<audio id="type" src="game-text.mp3" loop></audio>
+<audio id="sendSound" src="soft-click.mp3"></audio>
 
 <script>
 
-/* =========================================================
-   FIREBASE
-========================================================= */
+/* FIREBASE */
 
 firebase.initializeApp({
-
     apiKey: "AIzaSyD_cDHNMZZiLuGLfAntYAc8ONtKgwYlp9Y",
-
-    authDomain:
-        "luisaglobalchat.firebaseapp.com",
-
-    projectId:
-        "luisaglobalchat"
-
+    authDomain: "luisaglobalchat.firebaseapp.com",
+    projectId: "luisaglobalchat"
 });
 
 const db = firebase.firestore();
 
-/* =========================================================
-   ELEMENTE
-========================================================= */
+/* DEVICE */
 
-const overlay =
-    document.getElementById("overlay");
+let device =
+    localStorage.getItem("device");
 
-const enterBtn =
-    document.getElementById("enterBtn");
-
-const thoughtInput =
-    document.getElementById("thoughtInput");
-
-const sendBtn =
-    document.getElementById("sendBtn");
-
-const skyThoughts =
-    document.getElementById("skyThoughts");
-
-const bgMusic =
-    document.getElementById("bgMusic");
-
-const typeSound =
-    document.getElementById("typeSound");
-
-const sendSound =
-    document.getElementById("sendSound");
-
-/* =========================================================
-   AUDIO
-========================================================= */
-
-bgMusic.volume = 0.45;
-typeSound.volume = 0.08;
-sendSound.volume = 0.2;
-
-/* =========================================================
-   DEVICE ID
-========================================================= */
-
-let deviceId =
-    localStorage.getItem("thoughtSkyDevice");
-
-if(!deviceId){
-
-    deviceId =
-        "device_" +
-        Math.random().toString(36).substring(2,10);
-
-    localStorage.setItem(
-        "thoughtSkyDevice",
-        deviceId
-    );
+if(!device){
+    device = "d_" + Math.random().toString(36).slice(2,10);
+    localStorage.setItem("device", device);
 }
 
-/* =========================================================
-   STERNE
-========================================================= */
+/* LOGIN */
 
-for(let i=0;i<120;i++){
-
-    const star=document.createElement("div");
-
-    star.className="star";
-
-    star.style.top=Math.random()*100+"%";
-    star.style.left=Math.random()*100+"%";
-
-    star.style.opacity=Math.random();
-
-    document.body.appendChild(star);
-}
-
-/* =========================================================
-   STERNSCHNUPPEN
-========================================================= */
-
-setInterval(()=>{
-
-    if(Math.random()<0.5){
-
-        const s=document.createElement("div");
-
-        s.className="shooting-star";
-
-        s.style.left=
-            (window.innerWidth*0.5
-            +Math.random()*window.innerWidth*0.5)
-            +"px";
-
-        s.style.top="-20px";
-
-        s.style.animation=
-            "shoot 1.8s linear forwards";
-
-        document.body.appendChild(s);
-
-        setTimeout(()=>{
-            s.remove();
-        },1800);
-    }
-
-},7000);
-
-/* =========================================================
-   ENTER BUTTON
-========================================================= */
-
-enterBtn.addEventListener("click", async ()=>{
-
-    bgMusic.play().catch(()=>{});
-
-    overlay.style.opacity = 0;
-
-    setTimeout(()=>{
-        overlay.remove();
-    },1000);
-
-    /* LOGIN TRACKING */
-
-    try{
-
-        await db.collection("Login").add({
-
-            device: deviceId,
-
-            timestamp:
-                firebase.firestore.FieldValue
-                .serverTimestamp()
-
-        });
-
-        console.log("Login gespeichert");
-
-    }catch(err){
-
-        console.error(
-            "Login Fehler:",
-            err
-        );
-    }
-
+db.collection("Login").add({
+    device,
+    time: firebase.firestore.FieldValue.serverTimestamp()
 });
 
-/* =========================================================
-   TYPING SOUND
-========================================================= */
+/* ELEMENTE */
 
-thoughtInput.addEventListener("keydown", ()=>{
+const enterBtn = document.getElementById("enterBtn");
+const overlay = document.getElementById("overlay");
+const input = document.getElementById("input");
+const send = document.getElementById("send");
+const sky = document.getElementById("sky");
 
-    try{
+/* AUDIO */
 
-        typeSound.currentTime = 0;
+const bg = document.getElementById("bg");
+const type = document.getElementById("type");
+const sendSound = document.getElementById("sendSound");
 
-        typeSound.play();
-
-    }catch(e){}
-
-});
-
-/* =========================================================
-   GEDANKEN SENDEN
-========================================================= */
-
-async function sendThought(){
-
-    const text =
-        thoughtInput.value.trim();
-
-    if(!text) return;
-
-    try{
-
-        sendSound.currentTime = 0;
-
-        sendSound.play().catch(()=>{});
-
-        await db.collection("Gedanken").add({
-
-            text: text,
-
-            device: deviceId,
-
-            timestamp:
-                firebase.firestore.FieldValue
-                .serverTimestamp()
-
-        });
-
-        console.log("Gedanke gespeichert");
-
-        thoughtInput.value = "";
-
-        loadThoughts();
-
-    }catch(err){
-
-        console.error(
-            "Sende Fehler:",
-            err
-        );
-    }
-}
-
-/* BUTTON */
-
-sendBtn.addEventListener(
-    "click",
-    sendThought
-);
+bg.volume = 0.4;
+type.volume = 0.15;
 
 /* ENTER */
 
-thoughtInput.addEventListener(
-    "keydown",
-    (e)=>{
+enterBtn.onclick = ()=>{
+    bg.play().catch(()=>{});
+    overlay.style.opacity = 0;
+    setTimeout(()=>overlay.remove(),1000);
+};
 
-        if(e.key==="Enter"){
+/* TYPING SOUND */
 
-            e.preventDefault();
+let typing = false;
+let typingTimeout;
 
-            sendThought();
-        }
+input.addEventListener("input", ()=>{
+
+    if(!typing){
+        type.play().catch(()=>{});
+        typing = true;
     }
-);
 
-/* =========================================================
-   GEDANKEN LADEN
-========================================================= */
+    clearTimeout(typingTimeout);
 
-let allThoughts = [];
+    typingTimeout = setTimeout(()=>{
+        type.pause();
+        typing = false;
+    },600);
+});
 
-async function loadThoughts(){
+/* SEND */
 
-    try{
+async function sendThought(){
 
-        const snapshot =
-            await db
-            .collection("Gedanken")
-            .get();
+    const text = input.value.trim();
+    if(!text) return;
 
-        allThoughts = [];
+    sendSound.currentTime = 0;
+    sendSound.play().catch(()=>{});
 
-        snapshot.forEach(doc=>{
+    await db.collection("Gedanken").add({
+        text,
+        device,
+        time: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
-            const data = doc.data();
+    input.value = "";
 
-            if(data.text){
+    load();
+}
 
-                allThoughts.push(data.text);
-            }
+send.onclick = sendThought;
 
-        });
+input.addEventListener("keydown",(e)=>{
+    if(e.key==="Enter"){
+        e.preventDefault();
+        sendThought();
+    }
+});
 
-        rotateThoughts();
+/* LOAD + ROTATE */
 
-    }catch(err){
+let thoughts = [];
 
-        console.error(
-            "Lade Fehler:",
-            err
-        );
+async function load(){
+
+    const snap = await db.collection("Gedanken").get();
+
+    const list = [];
+
+    snap.forEach(d=>{
+        const t = d.data().text;
+        if(t) list.push(t);
+    });
+
+    thoughts = [...new Set(list)]; // keine doppelten global
+
+    render();
+}
+
+/* RENDER */
+
+function render(){
+
+    sky.innerHTML = "";
+
+    if(thoughts.length === 0) return;
+
+    const count = Math.min(3, thoughts.length);
+
+    const shuffled = [...thoughts].sort(()=>Math.random()-0.5);
+
+    for(let i=0;i<count;i++){
+
+        const div = document.createElement("div");
+        div.className = "thought";
+        div.innerText = shuffled[i];
+
+        div.style.top = (10 + Math.random()*70) + "%";
+        div.style.left = (5 + Math.random()*70) + "%";
+
+        sky.appendChild(div);
     }
 }
 
-/* =========================================================
-   GEDANKEN ROTIEREN
-========================================================= */
+/* REFRESH LOOP 2–4 min */
 
-function rotateThoughts(){
+function loop(){
 
-    skyThoughts.innerHTML = "";
+    load();
 
-    if(allThoughts.length===0) return;
+    const t = (2 + Math.random()*2) * 60000;
 
-    const amount =
-        2 + Math.floor(Math.random()*2);
-
-    for(let i=0;i<amount;i++){
-
-        const div =
-            document.createElement("div");
-
-        div.className =
-            "floatingThought";
-
-        div.innerText =
-            allThoughts[
-                Math.floor(
-                    Math.random()
-                    * allThoughts.length
-                )
-            ];
-
-        div.style.top =
-            10 + Math.random()*65 + "%";
-
-        div.style.left =
-            5 + Math.random()*75 + "%";
-
-        skyThoughts.appendChild(div);
-    }
-
-    const nextTime =
-        (4 + Math.random()*12)
-        *60*1000;
-
-    setTimeout(
-        loadThoughts,
-        nextTime
-    );
+    setTimeout(loop, t);
 }
 
-/* =========================================================
-   START
-========================================================= */
+load();
+loop();
 
-loadThoughts();
+/* STARS */
+
+for(let i=0;i<120;i++){
+    const s=document.createElement("div");
+    s.className="star";
+    s.style.top=Math.random()*100+"%";
+    s.style.left=Math.random()*100+"%";
+    document.body.appendChild(s);
+}
 
 </script>
 
