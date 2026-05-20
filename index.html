@@ -26,21 +26,45 @@ html, body{
     color:white;
 }
 
-/* ENTER */
+/* TITLE */
+
+#title{
+    position:fixed;
+    top:18px;
+    left:50%;
+    transform:translateX(-50%);
+
+    font-size:14px;
+    letter-spacing:1px;
+
+    color:rgba(255,255,255,0.5);
+
+    text-shadow:0 0 10px rgba(255,255,255,0.08);
+
+    pointer-events:none;
+}
+
+/* OVERLAY */
 
 #overlay{
     position:fixed;
     inset:0;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     background:rgba(0,0,0,0.4);
     backdrop-filter:blur(10px);
+
     z-index:9999;
 }
 
+/* ENTER */
+
 #enterBtn{
-    padding:18px 44px;
+    padding:18px 46px;
+
     border:none;
     border-radius:20px;
 
@@ -74,31 +98,27 @@ html, body{
     pointer-events:none;
 }
 
-/* THOUGHTS (unsichtbare Layout-Box + Text scaling) */
+/* THOUGHTS */
 
 .thought{
     position:absolute;
 
-    max-width:320px;
-    min-width:120px;
+    max-width:360px;
 
     padding:10px 14px;
 
+    background:rgba(255,255,255,0.04);
+    backdrop-filter:blur(10px);
+
+    border-radius:14px;
+
     color:rgba(255,255,255,0.75);
 
+    text-shadow:0 0 10px rgba(255,255,255,0.12);
+
     font-size:18px;
-    line-height:1.4;
 
-    text-shadow:0 0 10px rgba(255,255,255,0.15);
-
-    animation:fade 18s ease forwards;
-}
-
-@keyframes fade{
-    0%{opacity:0;}
-    10%{opacity:1;}
-    85%{opacity:1;}
-    100%{opacity:0;}
+    overflow-wrap:break-word;
 }
 
 /* INPUT */
@@ -125,6 +145,7 @@ html, body{
 
 #input{
     flex:1;
+
     border:none;
     outline:none;
 
@@ -132,11 +153,16 @@ html, body{
 
     border-radius:14px;
 
-    background:rgba(255,255,255,0.06);
     color:white;
-}
 
-/* BUTTON */
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,0.08),
+            rgba(120,140,255,0.08),
+            rgba(255,255,255,0.04)
+        );
+}
 
 #send{
     border:none;
@@ -158,12 +184,6 @@ html, body{
     background:white;
     border-radius:50%;
     opacity:0.8;
-    animation:twinkle 3s infinite alternate;
-}
-
-@keyframes twinkle{
-    from{opacity:0.2;}
-    to{opacity:1;}
 }
 
 /* SHOOTING STAR */
@@ -199,6 +219,8 @@ html, body{
 
 <body>
 
+<div id="title">falls du was loswerden willst</div>
+
 <div id="overlay">
     <button id="enterBtn">Enter</button>
 </div>
@@ -229,6 +251,7 @@ const db = firebase.firestore();
 /* DEVICE */
 
 let device = localStorage.getItem("device");
+
 if(!device){
     device = "d_" + Math.random().toString(36).slice(2,10);
     localStorage.setItem("device", device);
@@ -249,12 +272,14 @@ const input = document.getElementById("input");
 const send = document.getElementById("send");
 const sky = document.getElementById("sky");
 
+/* AUDIO */
+
 const bg = document.getElementById("bg");
 const type = document.getElementById("type");
 const click = document.getElementById("click");
 
-type.volume = 0.05;   // vorher höher → jetzt sehr leise
-click.volume = 0.08;  // Abschicken leiser
+type.volume = 0.08;
+click.volume = 0.08;
 bg.volume = 0.4;
 
 /* ENTER */
@@ -265,7 +290,7 @@ enterBtn.onclick = ()=>{
     setTimeout(()=>overlay.remove(),1000);
 };
 
-/* ⭐ STARS */
+/* STARS */
 
 for(let i=0;i<120;i++){
     const s=document.createElement("div");
@@ -275,13 +300,13 @@ for(let i=0;i<120;i++){
     sky.appendChild(s);
 }
 
-/* 🌠 SHOOTING STARS */
+/* SHOOTING STARS */
 
 setInterval(()=>{
     if(Math.random()<0.5){
         const s=document.createElement("div");
         s.className="shooting-star";
-        s.style.left=(window.innerWidth*Math.random())+"px";
+        s.style.left=(Math.random()*window.innerWidth)+"px";
         s.style.top="-20px";
         s.style.animation="shoot 1.5s linear forwards";
         sky.appendChild(s);
@@ -289,54 +314,49 @@ setInterval(()=>{
     }
 },6000);
 
-/* 🔊 TYPING FIX (langsamer + stoppt sofort) */
+/* TYPING SOUND */
 
-let typing = false;
+let typing=false;
 let timeout;
 
-input.addEventListener("input", ()=>{
+input.addEventListener("input",()=>{
 
-    // Sound nur kurz triggern
-    type.currentTime = 0;
-
+    type.currentTime=0;
     type.play().catch(()=>{});
 
-    typing = true;
+    typing=true;
 
-    // viel schneller stoppen
     clearTimeout(timeout);
 
-    timeout = setTimeout(()=>{
-
+    timeout=setTimeout(()=>{
         type.pause();
-        type.currentTime = 0;
-        typing = false;
-
-    }, 80); // 👈 WICHTIG: vorher 400 → jetzt 150–200ms
+        type.currentTime=0;
+        typing=false;
+    },180);
 });
 
 /* SEND */
 
 async function sendThought(){
 
-    const text = input.value.trim();
+    const text=input.value.trim();
     if(!text) return;
 
-    click.currentTime = 0;
+    click.currentTime=0;
     click.play().catch(()=>{});
 
     await db.collection("Gedanken").add({
         text,
         device,
-        time: firebase.firestore.FieldValue.serverTimestamp()
+        time:firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    input.value = "";
+    input.value="";
 
     load();
 }
 
-send.onclick = sendThought;
+send.onclick=sendThought;
 
 input.addEventListener("keydown",(e)=>{
     if(e.key==="Enter"){
@@ -347,50 +367,56 @@ input.addEventListener("keydown",(e)=>{
 
 /* LOAD */
 
-let thoughts = [];
+let thoughts=[];
 
 async function load(){
 
-    const snap = await db.collection("Gedanken").get();
+    const snap=await db.collection("Gedanken").get();
 
-    const list = [];
+    let list=[];
+
     snap.forEach(d=>{
-        const t = d.data().text;
-        if(t) list.push(t);
+        const data=d.data();
+        if(data.text){
+            list.push({
+                text:data.text,
+                time:data.time?data.time.toMillis():0
+            });
+        }
     });
 
-    thoughts = [...new Set(list)];
+    /* NEU: nach Zeit sortieren (neueste zuerst) */
+    list.sort((a,b)=>b.time-a.time);
+
+    thoughts=list.map(x=>x.text);
 
     render();
 }
 
-/* RENDER (max 4, kein overlap chaos) */
+/* RENDER (max 4, neueste bevorzugt) */
 
 function render(){
 
     sky.querySelectorAll(".thought").forEach(e=>e.remove());
 
-    if(thoughts.length === 0) return;
+    if(thoughts.length===0) return;
 
-    const count = Math.min(4, thoughts.length);
+    const count=Math.min(4,thoughts.length);
 
-    const shuffled = [...thoughts].sort(()=>Math.random()-0.5);
+    const newestFirst=thoughts.slice(0,count);
 
     for(let i=0;i<count;i++){
 
-        const div = document.createElement("div");
-        div.className = "thought";
+        const div=document.createElement("div");
+        div.className="thought";
 
-        div.innerText = shuffled[i];
+        div.innerText=newestFirst[i];
 
-        const x = 80 + Math.random()*(window.innerWidth-160);
-        const y = 80 + Math.random()*(window.innerHeight-160);
+        div.style.left=(80+Math.random()*(window.innerWidth-160))+"px";
+        div.style.top=(80+Math.random()*(window.innerHeight-160))+"px";
 
-        div.style.left = x + "px";
-        div.style.top = y + "px";
-
-        div.style.fontSize =
-            Math.max(14, Math.min(20, window.innerWidth/60)) + "px";
+        div.style.fontSize=
+            Math.max(14,Math.min(20,window.innerWidth/60))+"px";
 
         sky.appendChild(div);
     }
@@ -400,7 +426,7 @@ function render(){
 
 function loop(){
     load();
-    setTimeout(loop, (2 + Math.random()*2)*60000);
+    setTimeout(loop,(2+Math.random()*2)*60000);
 }
 
 load();
