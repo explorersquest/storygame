@@ -419,9 +419,10 @@ function render(){
 
     const count = Math.min(4, thoughts.length);
 
-    const shuffled = [...thoughts].sort(()=>Math.random()-0.5);
+    const shuffled = [...thoughts]
+        .sort(()=>Math.random()-0.5);
 
-    /* 🎯 4 feste "Zonen" im Bildschirm */
+    /* 4 feste Bereiche */
     const zones = [
         {x:0.25, y:0.25},
         {x:0.75, y:0.25},
@@ -436,22 +437,55 @@ function render(){
 
         div.innerText = shuffled[i];
 
+        div.style.fontSize =
+            Math.max(
+                14,
+                Math.min(20, window.innerWidth / 60)
+            ) + "px";
+
+        /* erstmal unsichtbar hinzufügen */
+        div.style.visibility = "hidden";
+
+        sky.appendChild(div);
+
+        /* echte Größe messen */
+        const w = div.offsetWidth;
+        const h = div.offsetHeight;
+
         const zone = zones[i];
 
-        /* kleine Zufallsabweichung innerhalb der Zone */
-        const offsetX = (Math.random() - 0.5) * 120;
-        const offsetY = (Math.random() - 0.5) * 120;
+        /* Basisposition */
+        let x =
+            window.innerWidth * zone.x
+            + (Math.random()-0.5) * 120;
 
-        const x = window.innerWidth * zone.x + offsetX;
-        const y = window.innerHeight * zone.y + offsetY;
+        let y =
+            window.innerHeight * zone.y
+            + (Math.random()-0.5) * 120;
+
+        /* Bildschirmgrenzen beachten */
+        const margin = 30;
+
+        x = Math.max(
+            margin,
+            Math.min(
+                x,
+                window.innerWidth - w - margin
+            )
+        );
+
+        y = Math.max(
+            margin,
+            Math.min(
+                y,
+                window.innerHeight - h - margin
+            )
+        );
 
         div.style.left = x + "px";
         div.style.top = y + "px";
 
-        div.style.fontSize =
-            Math.max(14, Math.min(20, window.innerWidth/60)) + "px";
-
-        sky.appendChild(div);
+        div.style.visibility = "visible";
     }
 }
 
