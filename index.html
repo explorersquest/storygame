@@ -312,33 +312,6 @@ html, body{
     }
 }
 
-/* ========================= */
-/* NEW: MOON MOUSE GLOW ONLY */
-/* ========================= */
-
-#glow{
-    position:fixed;
-    width:200px;
-    height:200px;
-
-    border-radius:50%;
-
-    pointer-events:none;
-
-    transform:translate(-50%, -50%);
-
-    background:radial-gradient(circle,
-        rgba(140,170,255,0.25),
-        rgba(140,170,255,0.10),
-        transparent 70%);
-
-    filter:blur(18px);
-
-    mix-blend-mode:screen;
-
-    z-index:5;
-}
-
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -347,9 +320,6 @@ html, body{
 </head>
 
 <body>
-
-<!-- NEW GLOW ELEMENT -->
-<div id="glow"></div>
 
 <div id="title">falls du was loswerden willst</div>
 
@@ -400,7 +370,7 @@ db.collection("Login").add({
     time: firebase.firestore.FieldValue.serverTimestamp()
 });
 
-/* ELEMENTS */
+/* ELEMENTE */
 
 const enterBtn = document.getElementById("enterBtn");
 const overlay = document.getElementById("overlay");
@@ -408,13 +378,16 @@ const input = document.getElementById("input");
 const send = document.getElementById("send");
 const sky = document.getElementById("sky");
 const holdBtn = document.getElementById("holdBtn");
-const glow = document.getElementById("glow");
 
 /* AUDIO */
 
 const bg = document.getElementById("bg");
 const type = document.getElementById("type");
 const click = document.getElementById("click");
+
+type.volume = 0.08;
+click.volume = 0.08;
+bg.volume = 0.4;
 
 /* ENTER */
 
@@ -429,11 +402,104 @@ enterBtn.onclick = ()=>{
     },1000);
 };
 
-/* REST OF YOUR ORIGINAL CODE (UNCHANGED) */
+/* STARS */
 
-let device2 = device; // untouched system continues
+for(let i=0;i<120;i++){
+
+    const s=document.createElement("div");
+
+    s.className="star";
+
+    s.style.top=Math.random()*100+"%";
+    s.style.left=Math.random()*100+"%";
+
+    sky.appendChild(s);
+}
+
+/* SHOOTING STARS */
+
+setInterval(()=>{
+
+    if(Math.random()<0.5){
+
+        const s=document.createElement("div");
+
+        s.className="shooting-star";
+
+        s.style.left=(Math.random()*window.innerWidth)+"px";
+        s.style.top="-20px";
+
+        s.style.animation="shoot 1.5s linear forwards";
+
+        sky.appendChild(s);
+
+        setTimeout(()=>{
+            s.remove();
+        },1500);
+    }
+
+},6000);
+
+/* TYPING SOUND */
+
+let timeout;
+
+input.addEventListener("input",()=>{
+
+    type.currentTime=0;
+
+    type.play().catch(()=>{});
+
+    clearTimeout(timeout);
+
+    timeout=setTimeout(()=>{
+
+        type.pause();
+        type.currentTime=0;
+
+    },180);
+});
+
+/* SEND */
+
+async function sendThought(){
+
+    const text=input.value.trim();
+
+    if(!text) return;
+
+    click.currentTime=0;
+
+    click.play().catch(()=>{});
+
+    await db.collection("Gedanken").add({
+        text,
+        device,
+        time:firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    input.value="";
+
+    load();
+}
+
+send.onclick=sendThought;
+
+input.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Enter"){
+
+        e.preventDefault();
+
+        sendThought();
+    }
+});
+
+/* THOUGHTS */
 
 let thoughts=[];
+
+/* LOAD */
 
 async function load(){
 
@@ -442,95 +508,179 @@ async function load(){
     let list=[];
 
     snap.forEach(d=>{
+
         const data=d.data();
+
         if(data.text){
-            list.push({text:data.text});
+
+            list.push({
+                text:data.text,
+                time:data.time
+                    ? data.time.toMillis()
+                    : 0
+            });
         }
     });
 
+    list.sort((a,b)=>b.time-a.time);
+
     thoughts=list.map(x=>x.text);
+
     render();
 }
+
+/* RENDER */
 
 function render(){
 
     sky.querySelectorAll(".thought")
         .forEach(e=>e.remove());
 
-    if(!thoughts.length) return;
+    if(thoughts.length === 0) return;
 
     const text =
-        thoughts[Math.floor(Math.random()*thoughts.length)];
+        thoughts[
+            Math.floor(
+                Math.random()*thoughts.length
+            )
+        ];
 
-    const div=document.createElement("div");
+    const div = document.createElement("div");
 
-    div.className="thought";
-    div.innerText=text;
+    div.className = "thought";
 
-    div.style.left="50%";
-    div.style.top="50%";
+    div.innerText = text;
 
-    div.style.transform="translate(-50%,-50%)";
+    div.style.fontSize =
+        Math.max(
+            16,
+            Math.min(24, window.innerWidth / 45)
+        ) + "px";
+
+    div.style.maxWidth =
+        Math.min(window.innerWidth * 0.7, 700)
+        + "px";
+
+    div.style.left = "50%";
+    div.style.top = "50%";
 
     sky.appendChild(div);
 }
 
+/* HOLD SYSTEM */
+
+let hold = false;
+
+function startHold(){
+
+    hold = true;
+
+    holdBtn.classList.add("holding");
+}
+
+function stopHold(){
+
+    hold = false;
+
+    holdBtn.classList.remove("holding");
+}
+
+/* MOUSE */
+
+holdBtn.addEventListener(
+    "mousedown",
+    startHold
+);
+
+window.addEventListener(
+    "mouseup",
+    stopHold
+);
+
+/* TOUCH */
+
+holdBtn.addEventListener(
+    "touchstart",
+    startHold
+);
+
+window.addEventListener(
+    "touchend",
+    stopHold
+);
+
 /* LOOP */
 
-let hold=false;
+async function loop(){
 
-function loop(){
-    if(!hold) load();
-    setTimeout(loop,12000+Math.random()*8000);
+    if(!hold){
+
+        await load();
+    }
+
+    const next =
+        (12 + Math.random()*8) * 1000;
+
+    setTimeout(loop, next);
 }
 
 load();
 loop();
 
-/* HOLD */
-
-holdBtn.onmousedown=()=>{hold=true;holdBtn.classList.add("holding");}
-window.onmouseup=()=>{hold=false;holdBtn.classList.remove("holding");}
-
 /* ========================= */
-/* NEW: MOON + MOUSE GLOW    */
+/* MOON MOUSE GLOW (ADD-ON)  */
 /* ========================= */
 
-let mx=window.innerWidth/2;
-let my=window.innerHeight/2;
+const glow = document.createElement("div");
+glow.style.position = "fixed";
+glow.style.width = "160px";
+glow.style.height = "160px";
+glow.style.borderRadius = "50%";
+glow.style.pointerEvents = "none";
+glow.style.transform = "translate(-50%, -50%)";
+glow.style.background =
+    "radial-gradient(circle, rgba(140,170,255,0.25), rgba(140,170,255,0.08), transparent 70%)";
+glow.style.filter = "blur(18px)";
+glow.style.mixBlendMode = "screen";
+glow.style.zIndex = "5";
+document.body.appendChild(glow);
 
-let gx=mx;
-let gy=my;
+/* mouse tracking */
+let mx = innerWidth / 2;
+let my = innerHeight / 2;
+let gx = mx;
+let gy = my;
 
-window.addEventListener("mousemove",(e)=>{
-    mx=e.clientX;
-    my=e.clientY;
+window.addEventListener("mousemove", (e) => {
+    mx = e.clientX;
+    my = e.clientY;
 });
 
-function moonStrength(){
+/* moon phase strength */
+function moonStrength() {
+    const now = new Date();
+    const lunarCycle = 29.530588 * 24 * 60 * 60 * 1000;
+    const base = new Date("2024-01-11T00:00:00Z").getTime();
+    const phase = ((now.getTime() - base) % lunarCycle) / lunarCycle;
 
-    const now=new Date();
-    const cycle=29.53*24*60*60*1000;
-    const known=new Date("2024-01-11").getTime();
-
-    const phase=((now-known)%cycle)/cycle;
-
-    return Math.abs(Math.cos(phase*Math.PI));
+    return 0.5 + 0.5 * Math.cos(phase * 2 * Math.PI);
 }
 
-const strength=moonStrength();
+/* animation loop */
+function animateGlow() {
 
-glow.style.width=120+strength*200+"px";
-glow.style.height=120+strength*200+"px";
-glow.style.opacity=0.05+strength*0.25;
+    const strength = moonStrength();
 
-function animateGlow(){
+    gx += (mx - gx) * 0.12;
+    gy += (my - gy) * 0.12;
 
-    gx+=(mx-gx)*0.08;
-    gy+=(my-gy)*0.08;
+    glow.style.left = gx + "px";
+    glow.style.top = gy + "px";
 
-    glow.style.left=gx+"px";
-    glow.style.top=gy+"px";
+    glow.style.width = (120 + strength * 240) + "px";
+    glow.style.height = (120 + strength * 240) + "px";
+
+    glow.style.opacity = 0.05 + strength * 0.28;
 
     requestAnimationFrame(animateGlow);
 }
