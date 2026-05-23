@@ -58,6 +58,8 @@ html, body{
     backdrop-filter:blur(10px);
 
     z-index:9999;
+
+    transition:opacity 1s ease;
 }
 
 /* ENTER */
@@ -98,43 +100,55 @@ html, body{
     pointer-events:none;
 }
 
-/* THOUGHTS */
+/* THOUGHT */
 
 @keyframes heartbeat {
-    0%   { transform: scale(1);   opacity: 0.72; }
-    25%  { transform: scale(1.01); opacity: 0.78; }
-    50%  { transform: scale(1);   opacity: 0.74; }
-    75%  { transform: scale(1.01); opacity: 0.8; }
-    100% { transform: scale(1);   opacity: 0.72; }
+    0%   { transform: translate(-50%, -50%) scale(1); opacity: 0.72; }
+    25%  { transform: translate(-50%, -50%) scale(1.01); opacity: 0.78; }
+    50%  { transform: translate(-50%, -50%) scale(1); opacity: 0.74; }
+    75%  { transform: translate(-50%, -50%) scale(1.01); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.72; }
+}
+
+@keyframes fadein{
+    from{
+        opacity:0;
+        transform:
+            translate(-50%, -50%)
+            scale(0.96);
+    }
+
+    to{
+        opacity:0.9;
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
 }
 
 .thought{
     opacity:0.9;
-    
-    position:absolute;
 
-    max-width:360px;
+    position:absolute;
 
     color:rgba(255,255,255,0.78);
 
     text-shadow:
         0 0 10px rgba(255,255,255,0.15);
 
-    font-size:18px;
-
-    line-height:1.4;
+    line-height:1.5;
 
     overflow-wrap:break-word;
 
-    padding:0;
+    text-align:center;
 
-    background:none;
+    animation:
+        heartbeat 10s ease-in-out infinite,
+        fadein 1.5s ease;
 
-    backdrop-filter:none;
-
-    border-radius:0;
-
-    animation: heartbeat 10s ease-in-out infinite;
+    transition:
+        opacity 1.2s ease,
+        transform 1.2s ease;
 }
 
 /* INPUT */
@@ -157,6 +171,8 @@ html, body{
     background:rgba(255,255,255,0.06);
 
     backdrop-filter: blur(14px);
+
+    z-index:100;
 }
 
 #input{
@@ -180,6 +196,10 @@ html, body{
         );
 }
 
+#input::placeholder{
+    color:rgba(255,255,255,0.5);
+}
+
 #send{
     border:none;
     border-radius:14px;
@@ -189,6 +209,65 @@ html, body{
     color:white;
 
     cursor:pointer;
+
+    transition:0.2s;
+}
+
+#send:hover{
+    background:rgba(255,255,255,0.16);
+}
+
+/* HOLD BUTTON */
+
+#holdWrap{
+    position:fixed;
+    bottom:105px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:100;
+}
+
+#holdBtn{
+    border:none;
+
+    padding:12px 26px;
+
+    border-radius:999px;
+
+    background:rgba(255,255,255,0.08);
+
+    color:rgba(255,255,255,0.8);
+
+    backdrop-filter:blur(10px);
+
+    cursor:pointer;
+
+    transition:
+        transform 0.15s,
+        background 0.2s,
+        box-shadow 0.2s;
+}
+
+#holdBtn:hover{
+    background:rgba(255,255,255,0.12);
+}
+
+#holdBtn.holding{
+
+    transform:scale(1.08);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(160,180,255,0.35),
+            rgba(255,255,255,0.12)
+        );
+
+    box-shadow:
+        0 0 30px rgba(160,180,255,0.35),
+        inset 0 0 12px rgba(255,255,255,0.08);
+
+    color:white;
 }
 
 /* STARS */
@@ -222,8 +301,15 @@ html, body{
 }
 
 @keyframes shoot{
-    from{transform:translate(0,0) rotate(-45deg);opacity:1;}
-    to{transform:translate(-1000px,1000px) rotate(-45deg);opacity:0;}
+    from{
+        transform:translate(0,0) rotate(-45deg);
+        opacity:1;
+    }
+
+    to{
+        transform:translate(-1000px,1000px) rotate(-45deg);
+        opacity:0;
+    }
 }
 
 </style>
@@ -242,6 +328,10 @@ html, body{
 </div>
 
 <div id="sky"></div>
+
+<div id="holdWrap">
+    <button id="holdBtn">Festhalten</button>
+</div>
 
 <div id="bar">
     <input id="input" maxlength="400" placeholder="Schreib einen Gedanken...">
@@ -287,6 +377,7 @@ const overlay = document.getElementById("overlay");
 const input = document.getElementById("input");
 const send = document.getElementById("send");
 const sky = document.getElementById("sky");
+const holdBtn = document.getElementById("holdBtn");
 
 /* AUDIO */
 
@@ -301,53 +392,71 @@ bg.volume = 0.4;
 /* ENTER */
 
 enterBtn.onclick = ()=>{
+
     bg.play().catch(()=>{});
-    overlay.style.opacity=0;
-    setTimeout(()=>overlay.remove(),1000);
+
+    overlay.style.opacity = 0;
+
+    setTimeout(()=>{
+        overlay.remove();
+    },1000);
 };
 
 /* STARS */
 
 for(let i=0;i<120;i++){
+
     const s=document.createElement("div");
+
     s.className="star";
+
     s.style.top=Math.random()*100+"%";
     s.style.left=Math.random()*100+"%";
+
     sky.appendChild(s);
 }
 
 /* SHOOTING STARS */
 
 setInterval(()=>{
+
     if(Math.random()<0.5){
+
         const s=document.createElement("div");
+
         s.className="shooting-star";
+
         s.style.left=(Math.random()*window.innerWidth)+"px";
         s.style.top="-20px";
+
         s.style.animation="shoot 1.5s linear forwards";
+
         sky.appendChild(s);
-        setTimeout(()=>s.remove(),1500);
+
+        setTimeout(()=>{
+            s.remove();
+        },1500);
     }
+
 },6000);
 
 /* TYPING SOUND */
 
-let typing=false;
 let timeout;
 
 input.addEventListener("input",()=>{
 
     type.currentTime=0;
-    type.play().catch(()=>{});
 
-    typing=true;
+    type.play().catch(()=>{});
 
     clearTimeout(timeout);
 
     timeout=setTimeout(()=>{
+
         type.pause();
         type.currentTime=0;
-        typing=false;
+
     },180);
 });
 
@@ -356,9 +465,11 @@ input.addEventListener("input",()=>{
 async function sendThought(){
 
     const text=input.value.trim();
+
     if(!text) return;
 
     click.currentTime=0;
+
     click.play().catch(()=>{});
 
     await db.collection("Gedanken").add({
@@ -375,15 +486,20 @@ async function sendThought(){
 send.onclick=sendThought;
 
 input.addEventListener("keydown",(e)=>{
+
     if(e.key==="Enter"){
+
         e.preventDefault();
+
         sendThought();
     }
 });
 
-/* LOAD */
+/* THOUGHTS */
 
 let thoughts=[];
+
+/* LOAD */
 
 async function load(){
 
@@ -392,16 +508,20 @@ async function load(){
     let list=[];
 
     snap.forEach(d=>{
+
         const data=d.data();
+
         if(data.text){
+
             list.push({
                 text:data.text,
-                time:data.time?data.time.toMillis():0
+                time:data.time
+                    ? data.time.toMillis()
+                    : 0
             });
         }
     });
 
-    /* NEU: nach Zeit sortieren (neueste zuerst) */
     list.sort((a,b)=>b.time-a.time);
 
     thoughts=list.map(x=>x.text);
@@ -409,91 +529,99 @@ async function load(){
     render();
 }
 
-/* RENDER (max 4, neueste bevorzugt) */
+/* RENDER */
 
 function render(){
 
-    sky.querySelectorAll(".thought").forEach(e=>e.remove());
+    sky.querySelectorAll(".thought")
+        .forEach(e=>e.remove());
 
     if(thoughts.length === 0) return;
 
-    const count = Math.min(4, thoughts.length);
-
-    const shuffled = [...thoughts]
-        .sort(()=>Math.random()-0.5);
-
-    /* 4 feste Bereiche */
-    const zones = [
-        {x:0.25, y:0.25},
-        {x:0.75, y:0.25},
-        {x:0.25, y:0.75},
-        {x:0.75, y:0.75}
-    ];
-
-    for(let i=0;i<count;i++){
-
-        const div = document.createElement("div");
-        div.className = "thought";
-
-        div.innerText = shuffled[i];
-
-        div.style.fontSize =
-            Math.max(
-                14,
-                Math.min(20, window.innerWidth / 60)
-            ) + "px";
-
-        /* erstmal unsichtbar hinzufügen */
-        div.style.visibility = "hidden";
-
-        sky.appendChild(div);
-
-        /* echte Größe messen */
-        const w = div.offsetWidth;
-        const h = div.offsetHeight;
-
-        const zone = zones[i];
-
-        /* Basisposition */
-        let x =
-            window.innerWidth * zone.x
-            + (Math.random()-0.5) * 120;
-
-        let y =
-            window.innerHeight * zone.y
-            + (Math.random()-0.5) * 120;
-
-        /* Bildschirmgrenzen beachten */
-        const margin = 30;
-
-        x = Math.max(
-            margin,
-            Math.min(
-                x,
-                window.innerWidth - w - margin
+    const text =
+        thoughts[
+            Math.floor(
+                Math.random()*thoughts.length
             )
-        );
+        ];
 
-        y = Math.max(
-            margin,
-            Math.min(
-                y,
-                window.innerHeight - h - margin
-            )
-        );
+    const div = document.createElement("div");
 
-        div.style.left = x + "px";
-        div.style.top = y + "px";
+    div.className = "thought";
 
-        div.style.visibility = "visible";
-    }
+    div.innerText = text;
+
+    div.style.fontSize =
+        Math.max(
+            16,
+            Math.min(24, window.innerWidth / 45)
+        ) + "px";
+
+    div.style.maxWidth =
+        Math.min(window.innerWidth * 0.7, 700)
+        + "px";
+
+    div.style.left = "50%";
+    div.style.top = "50%";
+
+    sky.appendChild(div);
 }
 
-/* LOOP 2–4 min */
+/* HOLD SYSTEM */
 
-function loop(){
-    load();
-    setTimeout(loop,(2+Math.random()*2)*60000);
+let hold = false;
+
+function startHold(){
+
+    hold = true;
+
+    holdBtn.classList.add("holding");
+}
+
+function stopHold(){
+
+    hold = false;
+
+    holdBtn.classList.remove("holding");
+}
+
+/* MOUSE */
+
+holdBtn.addEventListener(
+    "mousedown",
+    startHold
+);
+
+window.addEventListener(
+    "mouseup",
+    stopHold
+);
+
+/* TOUCH */
+
+holdBtn.addEventListener(
+    "touchstart",
+    startHold
+);
+
+window.addEventListener(
+    "touchend",
+    stopHold
+);
+
+/* LOOP */
+
+async function loop(){
+
+    if(!hold){
+
+        await load();
+    }
+
+    const next =
+        (12 + Math.random()*8) * 1000;
+
+    setTimeout(loop, next);
 }
 
 load();
